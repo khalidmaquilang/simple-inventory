@@ -16,4 +16,14 @@ class EditSupplier extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    /**
+     * Hide Relationship manager on Edit
+     *
+     * @return array
+     */
+    public function getRelationManagers(): array
+    {
+        return [];
+    }
 }
