@@ -2,11 +2,10 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderItem;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PurchaseOrderItemFactory extends Factory
 {

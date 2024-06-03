@@ -2,9 +2,8 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\Customer;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CustomerFactory extends Factory
 {
@@ -25,8 +24,8 @@ class CustomerFactory extends Factory
             'email' => $this->faker->safeEmail(),
             'phone' => $this->faker->phoneNumber(),
             'address' => $this->faker->text(),
-            'status' => $this->faker->randomElement(["active","inactive"]),
-            'gender' => $this->faker->randomElement(["male","female"]),
+            'status' => $this->faker->randomElement(['active', 'inactive']),
+            'gender' => $this->faker->randomElement(['male', 'female']),
         ];
     }
 }

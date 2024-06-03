@@ -3,27 +3,30 @@
 namespace App\Filament\Resources;
 
 use App\Enums\StatusEnum;
-use App\Filament\Resources\CustomerResource\Pages;
-use App\Models\Customer;
+use App\Filament\Resources\SupplierResource\Pages;
+use App\Models\Supplier;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class CustomerResource extends Resource
+class SupplierResource extends Resource
 {
-    protected static ?string $model = Customer::class;
+    protected static ?string $model = Supplier::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $navigationIcon = 'heroicon-o-truck';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                Forms\Components\TextInput::make('company_name')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('contact_person')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
@@ -32,15 +35,6 @@ class CustomerResource extends Resource
                 Forms\Components\TextInput::make('phone')
                     ->tel()
                     ->maxLength(255),
-                Forms\Components\Select::make('gender')
-                    ->options([
-                        'male' => 'Male',
-                        'female' => 'Female',
-                    ])
-                    ->required(),
-                Forms\Components\Textarea::make('address')
-                    ->required()
-                    ->columnSpanFull(),
                 Forms\Components\Select::make('status')
                     ->options(StatusEnum::class)
                     ->required(),
@@ -51,14 +45,14 @@ class CustomerResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                Tables\Columns\TextColumn::make('company_name')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('contact_person')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('gender')
-                    ->formatStateUsing(fn ($state) => ucfirst($state)),
                 Tables\Columns\TextColumn::make('status')
                     ->badge(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -93,9 +87,9 @@ class CustomerResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCustomers::route('/'),
-            'create' => Pages\CreateCustomer::route('/create'),
-            'edit' => Pages\EditCustomer::route('/{record}/edit'),
+            'index' => Pages\ListSuppliers::route('/'),
+            'create' => Pages\CreateSupplier::route('/create'),
+            'edit' => Pages\EditSupplier::route('/{record}/edit'),
         ];
     }
 }

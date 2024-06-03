@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->text('address');
-            $table->enum('status', ["active","inactive"]);
-            $table->enum('gender', ["male","female"]);
+            $table->enum('status', ['active', 'inactive']);
+            $table->enum('gender', ['male', 'female']);
             $table->timestamps();
         });
     }
