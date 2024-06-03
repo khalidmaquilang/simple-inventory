@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,6 +19,7 @@ class SubCategory extends Model
     protected $casts = [
         'id' => 'integer',
         'category_id' => 'integer',
+        'status' => StatusEnum::class,
     ];
 
     public function category(): BelongsTo
