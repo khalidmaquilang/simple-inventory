@@ -17,6 +17,6 @@ class Customer extends Model
      */
     protected $casts = [
         'id' => 'integer',
-        'status' => StatusEnum::class
+        'status' => StatusEnum::class,
     ];
 }

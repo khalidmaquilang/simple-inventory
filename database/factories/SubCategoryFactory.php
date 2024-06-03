@@ -2,10 +2,9 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\Category;
 use App\Models\SubCategory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SubCategoryFactory extends Factory
 {
@@ -24,7 +23,7 @@ class SubCategoryFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'description' => $this->faker->text(),
-            'status' => $this->faker->randomElement(["active","inactive"]),
+            'status' => $this->faker->randomElement(['active', 'inactive']),
             'category_id' => Category::factory(),
         ];
     }
