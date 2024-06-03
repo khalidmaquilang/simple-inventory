@@ -9,7 +9,7 @@ enum PurchaseOrderEnum: string implements HasColor, HasLabel
 {
     case PENDING = 'pending';
     case RECEIVED = 'received';
-    case PARTIALLY_RECEIVED = 'partially received';
+    case PARTIALLY_RECEIVED = 'partially_received';
     case CANCELLED = 'cancelled';
 
     /**
