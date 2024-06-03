@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,7 +17,6 @@ class Product extends Model
      */
     protected $casts = [
         'id' => 'integer',
-        'purchase_price' => 'decimal',
-        'selling_price' => 'decimal',
+        'status' => StatusEnum::class,
     ];
 }
