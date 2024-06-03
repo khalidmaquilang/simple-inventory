@@ -6,6 +6,8 @@ models:
     address: text
     status: enum:active,inactive
     gender: enum:male,female
+    relationships:
+      hasMany: Sale
 
   Supplier:
     company_name: string

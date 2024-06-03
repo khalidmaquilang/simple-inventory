@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\StatusEnum;
 use App\Filament\Resources\CustomerResource\Pages;
+use App\Filament\Resources\CustomerResource\RelationManagers\SalesRelationManager;
 use App\Models\Customer;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -74,6 +75,7 @@ class CustomerResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -86,7 +88,7 @@ class CustomerResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            SalesRelationManager::class,
         ];
     }
 
@@ -96,6 +98,7 @@ class CustomerResource extends Resource
             'index' => Pages\ListCustomers::route('/'),
             'create' => Pages\CreateCustomer::route('/create'),
             'edit' => Pages\EditCustomer::route('/{record}/edit'),
+            'view' => Pages\ViewCustomer::route('/{record}'),
         ];
     }
 }
