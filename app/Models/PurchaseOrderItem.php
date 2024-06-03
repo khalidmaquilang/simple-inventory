@@ -17,7 +17,6 @@ class PurchaseOrderItem extends Model
      */
     protected $casts = [
         'id' => 'integer',
-        'unit_cost' => 'decimal',
         'purchase_order_id' => 'integer',
         'product_id' => 'integer',
     ];
