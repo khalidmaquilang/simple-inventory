@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SaleResource\Pages;
+use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Sale;
 use Awcodes\TableRepeater\Components\TableRepeater;
@@ -33,6 +34,9 @@ class SaleResource extends Resource
                     ->required(),
                 Forms\Components\Select::make('customer_id')
                     ->relationship('customer', 'name')
+                    ->createOptionForm(Customer::getForm())
+                    ->searchable()
+                    ->optionsLimit(10)
                     ->required(),
                 TableRepeater::make('saleItems')
                     ->relationship()
