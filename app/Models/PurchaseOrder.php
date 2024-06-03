@@ -20,8 +20,6 @@ class PurchaseOrder extends Model
         'id' => 'integer',
         'order_date' => 'date',
         'expected_delivery_date' => 'date',
-        'total_amount' => 'decimal',
-        'paid_amount' => 'decimal',
         'supplier_id' => 'integer',
         'payment_type_id' => 'integer',
     ];

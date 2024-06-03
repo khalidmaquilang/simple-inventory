@@ -20,8 +20,6 @@ class Sale extends Model
         'id' => 'integer',
         'sale_date' => 'date',
         'vat' => 'double',
-        'total_amount' => 'decimal',
-        'paid_amount' => 'decimal',
         'customer_id' => 'integer',
         'payment_type_id' => 'integer',
     ];

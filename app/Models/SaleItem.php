@@ -17,7 +17,6 @@ class SaleItem extends Model
      */
     protected $casts = [
         'id' => 'integer',
-        'unit_cost' => 'decimal',
         'sale_id' => 'integer',
         'product_id' => 'integer',
     ];
