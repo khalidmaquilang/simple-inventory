@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('purchase_orders', function (Blueprint $table) {
+        Schema::create('sales', function (Blueprint $table) {
             $table->id();
-            $table->string('purchase_code')->unique();
-            $table->date('order_date');
-            $table->date('expected_delivery_date')->nullable();
-            $table->enum('status', ['pending', 'received', 'partially']);
+            $table->string('invoice_number');
+            $table->date('sale_date');
+            $table->double('vat');
             $table->decimal('total_amount');
             $table->decimal('paid_amount');
-            $table->foreignId('supplier_id');
+            $table->foreignId('customer_id');
             $table->foreignId('payment_type_id');
+            $table->foreignId('user_id');
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('purchase_orders');
+        Schema::dropIfExists('sales');
     }
 };

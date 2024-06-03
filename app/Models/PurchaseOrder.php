@@ -23,6 +23,7 @@ class PurchaseOrder extends Model
         'expected_delivery_date' => 'date',
         'supplier_id' => 'integer',
         'payment_type_id' => 'integer',
+        'user_id' => 'integer',
         'status' => PurchaseOrderEnum::class,
     ];
 
@@ -34,6 +35,11 @@ class PurchaseOrder extends Model
     public function paymentType(): BelongsTo
     {
         return $this->belongsTo(PaymentType::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function purchaseOrderItems(): HasMany
