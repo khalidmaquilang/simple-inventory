@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PurchaseOrderEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,6 +23,7 @@ class PurchaseOrder extends Model
         'expected_delivery_date' => 'date',
         'supplier_id' => 'integer',
         'payment_type_id' => 'integer',
+        'status' => PurchaseOrderEnum::class,
     ];
 
     public function supplier(): BelongsTo
