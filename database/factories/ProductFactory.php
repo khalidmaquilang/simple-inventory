@@ -2,9 +2,8 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ProductFactory extends Factory
 {
@@ -26,7 +25,7 @@ class ProductFactory extends Factory
             'purchase_price' => $this->faker->randomFloat(0, 0, 9999999999.),
             'selling_price' => $this->faker->randomFloat(0, 0, 9999999999.),
             'description' => $this->faker->text(),
-            'status' => $this->faker->randomElement(["active","inactive"]),
+            'status' => $this->faker->randomElement(['active', 'inactive']),
         ];
     }
 }

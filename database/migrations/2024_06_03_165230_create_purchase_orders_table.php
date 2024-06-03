@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('purchase_code')->unique();
             $table->date('order_date');
             $table->date('expected_delivery_date')->nullable();
-            $table->enum('status', ["pending","received","partially"]);
+            $table->enum('status', ['pending', 'received', 'partially']);
             $table->decimal('total_amount');
             $table->decimal('paid_amount');
             $table->foreignId('supplier_id');

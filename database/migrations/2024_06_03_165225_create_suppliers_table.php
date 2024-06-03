@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('contact_person');
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
-            $table->enum('status', ["active","inactive"]);
+            $table->enum('status', ['active', 'inactive']);
             $table->timestamps();
         });
     }

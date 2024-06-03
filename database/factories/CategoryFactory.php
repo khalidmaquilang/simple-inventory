@@ -2,9 +2,8 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\Category;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CategoryFactory extends Factory
 {
@@ -23,7 +22,7 @@ class CategoryFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'description' => $this->faker->text(),
-            'status' => $this->faker->randomElement(["active","inactive"]),
+            'status' => $this->faker->randomElement(['active', 'inactive']),
         ];
     }
 }
