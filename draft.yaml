@@ -44,7 +44,7 @@ models:
     purchase_code: string unique
     order_date: date
     expected_delivery_date: date nullable
-    status: enum:pending,received,partially received,cancelled
+    status: enum:pending,received,partially_received,cancelled
     total_amount: decimal
     paid_amount: decimal
     relationships:

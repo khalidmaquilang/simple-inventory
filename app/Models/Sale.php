@@ -24,6 +24,16 @@ class Sale extends Model
         'payment_type_id' => 'integer',
     ];
 
+    /**
+     * @return string
+     */
+    public function getSubTotal(): string
+    {
+        return number_format($this->saleItems->sum(function ($item) {
+            return $item->quantity * $item->unit_cost;
+        }), 2);
+    }
+
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);

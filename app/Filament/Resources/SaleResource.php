@@ -2,10 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\PurchaseOrderEnum;
-use App\Filament\Resources\PurchaseOrderResource\Pages;
+use App\Filament\Resources\SaleResource\Pages;
 use App\Models\Product;
-use App\Models\PurchaseOrder;
+use App\Models\Sale;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use Filament\Forms;
@@ -14,32 +13,28 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class PurchaseOrderResource extends Resource
+class SaleResource extends Resource
 {
-    protected static ?string $model = PurchaseOrder::class;
+    protected static ?string $model = Sale::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\DatePicker::make('order_date')
-                    ->required(),
-                Forms\Components\DatePicker::make('expected_delivery_date'),
-                Forms\Components\TextInput::make('purchase_code')
+                Forms\Components\TextInput::make('invoice_number')
                     ->unique(ignoreRecord: true)
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Select::make('supplier_id')
-                    ->relationship('supplier', 'id')
+                Forms\Components\DatePicker::make('sale_date')
                     ->required(),
-                Forms\Components\Select::make('status')
-                    ->options(PurchaseOrderEnum::class)
+                Forms\Components\Select::make('customer_id')
+                    ->relationship('customer', 'name')
                     ->required(),
-                TableRepeater::make('purchaseOrderItems')
+                TableRepeater::make('saleItems')
                     ->relationship()
                     ->headers([
                         Header::make('sku')
@@ -55,7 +50,8 @@ class PurchaseOrderResource extends Resource
                         Forms\Components\Hidden::make('name'),
                         Forms\Components\Select::make('product_id')
                             ->relationship('product', 'name')
-                            ->live()
+                            ->dehydrated()
+                            ->lazy()
                             ->afterStateUpdated(function ($state, Forms\Set $set) {
                                 if (empty($state)) {
                                     $set('sku', '');
@@ -112,14 +108,25 @@ class PurchaseOrderResource extends Resource
 
                         return $data;
                     })
-                    ->live()
+                    ->lazy()
                     ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
-                        self::updateTotals($get, $set);
+                        self::updateSubTotal($get, $set);
                     })
                     ->columnSpan('full'),
                 Forms\Components\Section::make('Payment')
                     ->columns(2)
                     ->schema([
+                        Forms\Components\TextInput::make('sub_total')
+                            ->lazy()
+                            ->disabled(),
+                        Forms\Components\TextInput::make('vat')
+                            ->label('VAT (%)')
+                            ->lazy()
+                            ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get) {
+                                self::updateTotalAmount($get, $set);
+                            })
+                            ->required()
+                            ->numeric(),
                         Forms\Components\TextInput::make('paid_amount')
                             ->required()
                             ->minValue(0)
@@ -127,7 +134,6 @@ class PurchaseOrderResource extends Resource
                             ->numeric(),
                         Forms\Components\TextInput::make('total_amount')
                             ->minValue(0)
-                            ->lazy()
                             ->disabled()
                             ->dehydrated()
                             ->numeric(),
@@ -142,23 +148,26 @@ class PurchaseOrderResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('purchase_code')
+                Tables\Columns\TextColumn::make('invoice_number')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('supplier.id')
+                Tables\Columns\TextColumn::make('sale_date')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('vat')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_amount')
-                    ->formatStateUsing(fn ($state): string => number_format($state, 2)),
-                Tables\Columns\TextColumn::make('remaining_amount')
-                    ->getStateUsing(function ($record): float {
-                        return $record->total_amount - $record->paid_amount;
-                    })
-                    ->formatStateUsing(fn ($state): string => number_format($state, 2)),
-                Tables\Columns\TextColumn::make('order_date')
-                    ->date()
+                    ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->badge(),
+                Tables\Columns\TextColumn::make('paid_amount')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('customer.name')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('paymentType.name')
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -191,16 +200,21 @@ class PurchaseOrderResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPurchaseOrders::route('/'),
-            'create' => Pages\CreatePurchaseOrder::route('/create'),
-            'edit' => Pages\EditPurchaseOrder::route('/{record}/edit'),
+            'index' => Pages\ListSales::route('/'),
+            'create' => Pages\CreateSale::route('/create'),
+            'edit' => Pages\EditSale::route('/{record}/edit'),
         ];
     }
 
-    public static function updateTotals(Forms\Get $get, Forms\Set $set): void
+    /**
+     * @param  Forms\Get  $get
+     * @param  Forms\Set  $set
+     * @return void
+     */
+    public static function updateSubTotal(Forms\Get $get, Forms\Set $set): void
     {
         // Retrieve all selected products and remove empty rows
-        $selectedProducts = collect($get('purchaseOrderItems'))->filter(fn ($item) => ! empty($item['product_id']) && ! empty($item['quantity']));
+        $selectedProducts = collect($get('saleItems'))->filter(fn ($item) => ! empty($item['product_id']) && ! empty($item['quantity']));
 
         // Calculate subtotal based on the selected products and quantities
         $subtotal = $selectedProducts->reduce(function ($subtotal, $product) {
@@ -208,6 +222,24 @@ class PurchaseOrderResource extends Resource
         }, 0);
 
         // Update the state with the new values
-        $set('total_amount', number_format($subtotal, 2));
+        $set('sub_total', number_format($subtotal, 2));
+        self::updateTotalAmount($get, $set);
+    }
+
+    /**
+     * @param  Forms\Get  $get
+     * @param  Forms\Set  $set
+     * @return void
+     */
+    public static function updateTotalAmount(Forms\Get $get, Forms\Set $set): void
+    {
+        $subTotal = $get('sub_total');
+        $vatField = $get('vat');
+        if (empty($subTotal) || empty($vatField)) {
+            $subTotal = 0;
+        }
+        $vat = $subTotal * ($vatField / 100);
+
+        $set('total_amount', number_format($subTotal + $vat, 2));
     }
 }
