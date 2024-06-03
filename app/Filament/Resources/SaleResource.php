@@ -168,6 +168,8 @@ class SaleResource extends Resource
                 Tables\Columns\TextColumn::make('paymentType.name')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Created By'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

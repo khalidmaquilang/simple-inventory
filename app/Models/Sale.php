@@ -22,6 +22,7 @@ class Sale extends Model
         'vat' => 'double',
         'customer_id' => 'integer',
         'payment_type_id' => 'integer',
+        'user_id' => 'integer',
     ];
 
     /**
@@ -42,6 +43,11 @@ class Sale extends Model
     public function paymentType(): BelongsTo
     {
         return $this->belongsTo(PaymentType::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function saleItems(): HasMany

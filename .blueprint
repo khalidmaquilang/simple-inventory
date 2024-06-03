@@ -10,17 +10,17 @@ created:
     - database/factories/SaleFactory.php
     - database/factories/SaleItemFactory.php
     - database/factories/SettingFactory.php
-    - database/migrations/2024_06_03_165224_create_customers_table.php
-    - database/migrations/2024_06_03_165225_create_suppliers_table.php
-    - database/migrations/2024_06_03_165226_create_categories_table.php
-    - database/migrations/2024_06_03_165227_create_sub_categories_table.php
-    - database/migrations/2024_06_03_165228_create_products_table.php
-    - database/migrations/2024_06_03_165229_create_payment_types_table.php
-    - database/migrations/2024_06_03_165230_create_purchase_orders_table.php
-    - database/migrations/2024_06_03_165231_create_purchase_order_items_table.php
-    - database/migrations/2024_06_03_165232_create_sales_table.php
-    - database/migrations/2024_06_03_165233_create_sale_items_table.php
-    - database/migrations/2024_06_03_165234_create_settings_table.php
+    - database/migrations/2024_06_03_223116_create_customers_table.php
+    - database/migrations/2024_06_03_223117_create_suppliers_table.php
+    - database/migrations/2024_06_03_223118_create_categories_table.php
+    - database/migrations/2024_06_03_223119_create_sub_categories_table.php
+    - database/migrations/2024_06_03_223120_create_products_table.php
+    - database/migrations/2024_06_03_223121_create_payment_types_table.php
+    - database/migrations/2024_06_03_223122_create_purchase_orders_table.php
+    - database/migrations/2024_06_03_223123_create_purchase_order_items_table.php
+    - database/migrations/2024_06_03_223124_create_sales_table.php
+    - database/migrations/2024_06_03_223125_create_sale_items_table.php
+    - database/migrations/2024_06_03_223126_create_settings_table.php
     - app/Models/Customer.php
     - app/Models/Supplier.php
     - app/Models/Category.php
@@ -33,14 +33,15 @@ created:
     - app/Models/SaleItem.php
     - app/Models/Setting.php
 models:
-    Customer: { name: string, email: 'string nullable', phone: 'string nullable', address: text, status: 'enum:active,inactive', gender: 'enum:male,female' }
-    Supplier: { company_name: string, contact_person: string, email: 'string nullable', phone: 'string nullable', status: 'enum:active,inactive' }
+    User: {  }
+    Customer: { name: string, email: 'string nullable', phone: 'string nullable', address: text, status: 'enum:active,inactive', gender: 'enum:male,female', relationships: { hasMany: Sale, belongsTo: User } }
+    Supplier: { company_name: string, contact_person: string, email: 'string nullable', phone: 'string nullable', status: 'enum:active,inactive', relationships: { belongsTo: User } }
     Category: { name: string, description: 'text nullable', status: 'enum:active,inactive', relationships: { hasMany: SubCategory } }
     SubCategory: { name: string, description: 'text nullable', status: 'enum:active,inactive', relationships: { belongsTo: Category } }
     Product: { sku: 'string unique', name: string, purchase_price: decimal, selling_price: decimal, description: 'text nullable', status: 'enum:active,inactive' }
     PaymentType: { name: string, description: 'text nullable' }
-    PurchaseOrder: { purchase_code: 'string unique', order_date: date, expected_delivery_date: 'date nullable', status: 'enum:pending,received,partially received,cancelled', total_amount: decimal, paid_amount: decimal, relationships: { belongsTo: 'Supplier, PaymentType', hasMany: PurchaseOrderItem } }
+    PurchaseOrder: { purchase_code: 'string unique', order_date: date, expected_delivery_date: 'date nullable', status: 'enum:pending,received,partially_received,cancelled', total_amount: decimal, paid_amount: decimal, relationships: { belongsTo: 'Supplier, PaymentType, User', hasMany: PurchaseOrderItem } }
     PurchaseOrderItem: { sku: string, name: string, quantity: integer, unit_cost: decimal, relationships: { belongsTo: 'PurchaseOrder, Product' } }
-    Sale: { invoice_number: string, sale_date: date, vat: double, total_amount: decimal, paid_amount: decimal, relationships: { belongsTo: 'Customer, PaymentType', hasMany: SaleItem } }
+    Sale: { invoice_number: string, sale_date: date, vat: double, total_amount: decimal, paid_amount: decimal, relationships: { belongsTo: 'Customer, PaymentType, User', hasMany: SaleItem } }
     SaleItem: { sku: string, name: string, quantity: integer, unit_cost: decimal, relationships: { belongsTo: 'Sale, Product' } }
     Setting: { company_name: string, phone: string, email: string, address: text, currency: string }

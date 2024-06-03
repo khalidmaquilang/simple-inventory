@@ -8,6 +8,7 @@ models:
     gender: enum:male,female
     relationships:
       hasMany: Sale
+      belongsTo: User
 
   Supplier:
     company_name: string
@@ -15,6 +16,8 @@ models:
     email: string nullable
     phone: string nullable
     status: enum:active,inactive
+    relationships:
+      belongsTo: User
 
   Category:
     name: string
@@ -50,7 +53,7 @@ models:
     total_amount: decimal
     paid_amount: decimal
     relationships:
-      belongsTo: Supplier, PaymentType
+      belongsTo: Supplier, PaymentType, User
       hasMany: PurchaseOrderItem
 
   PurchaseOrderItem:
@@ -68,7 +71,7 @@ models:
     total_amount: decimal
     paid_amount: decimal
     relationships:
-      belongsTo: Customer, PaymentType
+      belongsTo: Customer, PaymentType, User
       hasMany: SaleItem
 
   SaleItem:

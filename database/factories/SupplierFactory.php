@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Supplier;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SupplierFactory extends Factory
@@ -25,6 +26,7 @@ class SupplierFactory extends Factory
             'email' => $this->faker->safeEmail(),
             'phone' => $this->faker->phoneNumber(),
             'status' => $this->faker->randomElement(['active', 'inactive']),
+            'user_id' => User::factory(),
         ];
     }
 }
