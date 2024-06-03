@@ -1,0 +1,85 @@
+models:
+  Customer:
+    name: string
+    email: string nullable
+    phone: string nullable
+    address: text
+    status: enum:active,inactive
+    gender: enum:male,female
+
+  Supplier:
+    company_name: string
+    contact_person: string
+    email: string nullable
+    phone: string nullable
+    status: enum:active,inactive
+
+  Category:
+    name: string
+    description: text nullable
+    status: enum:active,inactive
+    relationships:
+      hasMany: SubCategory
+
+  SubCategory:
+    name: string
+    description: text nullable
+    status: enum:active,inactive
+    relationships:
+      belongsTo: Category
+
+  Product:
+    sku: string unique
+    name: string
+    purchase_price: decimal
+    selling_price: decimal
+    description: text nullable
+    status: enum:active,inactive
+
+  PaymentType:
+    name: string
+    description: text nullable
+
+  PurchaseOrder:
+    purchase_code: string unique
+    order_date: date
+    expected_delivery_date: date nullable
+    status: enum:pending,received,partially received,cancelled
+    total_amount: decimal
+    paid_amount: decimal
+    relationships:
+      belongsTo: Supplier, PaymentType
+      hasMany: PurchaseOrderItem
+
+  PurchaseOrderItem:
+    sku: string
+    name: string
+    quantity: integer
+    unit_cost: decimal
+    relationships:
+      belongsTo: PurchaseOrder, Product
+
+  Sale:
+    invoice_number: string
+    sale_date: date
+    vat: double
+    total_amount: decimal
+    paid_amount: decimal
+    relationships:
+      belongsTo: Customer, PaymentType
+      hasMany: SaleItem
+
+  SaleItem:
+    sku: string
+    name: string
+    quantity: integer
+    unit_cost: decimal
+    relationships:
+      belongsTo: Sale, Product
+
+  Setting:
+    company_name: string
+    phone: string
+    email: string
+    address: text
+    currency: string
