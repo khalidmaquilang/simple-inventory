@@ -2,11 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\StatusEnum;
 use App\Filament\Resources\CustomerResource\Pages;
 use App\Filament\Resources\CustomerResource\RelationManagers\SalesRelationManager;
 use App\Models\Customer;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -23,29 +21,7 @@ class CustomerResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('phone')
-                    ->tel()
-                    ->maxLength(255),
-                Forms\Components\Select::make('gender')
-                    ->options([
-                        'male' => 'Male',
-                        'female' => 'Female',
-                    ])
-                    ->required(),
-                Forms\Components\Textarea::make('address')
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\Select::make('status')
-                    ->options(StatusEnum::class)
-                    ->required(),
-            ]);
+            ->schema(Customer::getForm());
     }
 
     public static function table(Table $table): Table
