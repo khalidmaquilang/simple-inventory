@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -17,6 +18,7 @@ class Category extends Model
      */
     protected $casts = [
         'id' => 'integer',
+        'status' => StatusEnum::class,
     ];
 
     public function subCategories(): HasMany
