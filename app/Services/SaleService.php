@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Sale;
+use App\Models\Setting;
 use Illuminate\Http\Response;
 use LaravelDaily\Invoices\Classes\Buyer;
 use LaravelDaily\Invoices\Classes\InvoiceItem;
@@ -24,12 +25,13 @@ class SaleService
             ],
         ]);
 
+        $setting = Setting::first();
         $seller = new Party([
-            'name' => $customer->name,
+            'name' => $setting->company_name,
             'custom_fields' => [
-                'email' => $customer->email,
-                'phone' => $customer->phone,
-                'address' => $customer->address,
+                'email' => $setting->email,
+                'phone' => $setting->phone,
+                'address' => $setting->address,
             ],
         ]);
 

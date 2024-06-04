@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CustomerResource\RelationManagers;
 
+use App\Models\Sale;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -22,8 +23,11 @@ class SalesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('paymentType.name'),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->url(fn ($record) => route('filament.app.resources.sales.edit', $record)),
+                Tables\Actions\Action::make('Download Invoice')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('success')
+                    ->url(fn (Sale $record) => route('sales.generate-invoice', $record))
+                    ->openUrlInNewTab(),
             ]);
     }
 }
