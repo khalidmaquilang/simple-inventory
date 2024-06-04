@@ -2,7 +2,14 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Resources\CustomerResource;
+use App\Filament\Resources\ProductResource;
+use App\Filament\Resources\PurchaseOrderResource\Widgets\PurchaseOrdersChart;
+use App\Filament\Resources\SaleResource\Widgets\SalesChart;
+use App\Filament\Resources\SupplierResource;
 use App\Http\Middleware\OnboardingMiddleware;
+use Awcodes\Overlook\OverlookPlugin;
+use Awcodes\Overlook\Widgets\OverlookWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -10,7 +17,6 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -18,6 +24,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 
 class AppPanelProvider extends PanelProvider
 {
@@ -38,8 +45,9 @@ class AppPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                OverlookWidget::class,
+                PurchaseOrdersChart::class,
+                SalesChart::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -56,6 +64,24 @@ class AppPanelProvider extends PanelProvider
                 Authenticate::class,
                 OnboardingMiddleware::class,
             ])
-            ->viteTheme('resources/css/filament/app/theme.css');
+            ->viteTheme('resources/css/filament/app/theme.css')
+            ->plugins([
+                OverlookPlugin::make()
+                    ->sort(2)
+                    ->columns([
+                        'default' => 1,
+                        'sm' => 2,
+                        'md' => 3,
+                        'lg' => 3,
+                        'xl' => 3,
+                        '2xl' => null,
+                    ])
+                    ->includes([
+                        CustomerResource::class,
+                        SupplierResource::class,
+                        ProductResource::class,
+                    ]),
+                FilamentApexChartsPlugin::make(),
+            ]);
     }
 }
