@@ -3,12 +3,15 @@
 namespace App\Filament\Resources\PurchaseOrderResource\Widgets;
 
 use App\Models\PurchaseOrder;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class PurchaseOrdersChart extends ApexChartWidget
 {
+    use HasWidgetShield;
+
     /**
      * Chart Id
      *
