@@ -7,9 +7,10 @@ use App\Filament\Resources\ProductResource;
 use App\Filament\Resources\PurchaseOrderResource\Widgets\PurchaseOrdersChart;
 use App\Filament\Resources\SaleResource\Widgets\SalesChart;
 use App\Filament\Resources\SupplierResource;
+use App\Filament\Widgets\OverlookWidget;
 use App\Http\Middleware\OnboardingMiddleware;
 use Awcodes\Overlook\OverlookPlugin;
-use Awcodes\Overlook\Widgets\OverlookWidget;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -66,6 +67,7 @@ class AppPanelProvider extends PanelProvider
             ])
             ->viteTheme('resources/css/filament/app/theme.css')
             ->plugins([
+                FilamentShieldPlugin::make(),
                 OverlookPlugin::make()
                     ->sort(2)
                     ->columns([

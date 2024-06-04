@@ -3,12 +3,15 @@
 namespace App\Filament\Resources\SaleResource\Widgets;
 
 use App\Models\Sale;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class SalesChart extends ApexChartWidget
 {
+    use HasWidgetShield;
+
     /**
      * Chart Id
      *

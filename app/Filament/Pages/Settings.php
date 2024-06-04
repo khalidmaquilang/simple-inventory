@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Http\Middleware\OnboardingMiddleware;
 use App\Models\Currency;
 use App\Models\Setting;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -18,7 +19,7 @@ use Filament\Support\Exceptions\Halt;
 
 class Settings extends Page implements HasForms
 {
-    use InteractsWithForms;
+    use HasPageShield, InteractsWithForms;
 
     public ?array $data = [];
 
@@ -58,7 +59,6 @@ class Settings extends Page implements HasForms
                     ->required(),
                 Select::make('currency')
                     ->options(Currency::getCurrencyList())
-                    ->searchable()
                     ->required(),
 
             ])
