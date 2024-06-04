@@ -6,6 +6,7 @@ use App\Filament\Resources\SaleResource;
 use App\Models\Sale;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use pxlrbt\FilamentExcel\Actions\Pages\ExportAction;
 
 class EditSale extends EditRecord
 {
@@ -14,6 +15,7 @@ class EditSale extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            ExportAction::make(),
             Actions\DeleteAction::make(),
         ];
     }
