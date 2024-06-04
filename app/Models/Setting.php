@@ -17,4 +17,12 @@ class Setting extends Model
     protected $casts = [
         'id' => 'integer',
     ];
+
+    /**
+     * @return string
+     */
+    public static function getCurrency(): string
+    {
+        return self::first()->currency;
+    }
 }

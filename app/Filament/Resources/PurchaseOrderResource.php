@@ -6,6 +6,7 @@ use App\Enums\PurchaseOrderEnum;
 use App\Filament\Resources\PurchaseOrderResource\Pages;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
+use App\Models\Setting;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use Filament\Forms;
@@ -24,6 +25,8 @@ class PurchaseOrderResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $currency = Setting::getCurrency();
+
         return $form
             ->schema([
                 Forms\Components\DatePicker::make('order_date')
@@ -94,6 +97,7 @@ class PurchaseOrderResource extends Resource
                             ->required()
                             ->numeric(),
                         Forms\Components\TextInput::make('unit_cost')
+                            ->suffix($currency)
                             ->lazy()
                             ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
                                 $quantity = $get('quantity');
@@ -105,6 +109,7 @@ class PurchaseOrderResource extends Resource
                             ->required()
                             ->numeric(),
                         Forms\Components\TextInput::make('total_cost')
+                            ->suffix($currency)
                             ->disabled(),
                     ])
                     ->mutateRelationshipDataBeforeFillUsing(function (array $data) {
@@ -122,11 +127,13 @@ class PurchaseOrderResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('paid_amount')
                             ->required()
+                            ->suffix($currency)
                             ->minValue(0)
                             ->maxValue(fn ($get) => $get('total_amount') ?? 0)
                             ->numeric(),
                         Forms\Components\TextInput::make('total_amount')
                             ->minValue(0)
+                            ->suffix($currency)
                             ->lazy()
                             ->disabled()
                             ->dehydrated()
@@ -140,6 +147,8 @@ class PurchaseOrderResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $currency = Setting::getCurrency();
+
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('purchase_code')
@@ -148,12 +157,12 @@ class PurchaseOrderResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_amount')
-                    ->formatStateUsing(fn ($state): string => number_format($state, 2)),
+                    ->formatStateUsing(fn ($state): string => number_format($state, 2).' '.$currency),
                 Tables\Columns\TextColumn::make('remaining_amount')
                     ->getStateUsing(function ($record): float {
                         return $record->total_amount - $record->paid_amount;
                     })
-                    ->formatStateUsing(fn ($state): string => number_format($state, 2)),
+                    ->formatStateUsing(fn ($state): string => number_format($state, 2).' '.$currency),
                 Tables\Columns\TextColumn::make('order_date')
                     ->date()
                     ->sortable(),

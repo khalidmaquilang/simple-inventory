@@ -3,8 +3,10 @@
 namespace App\Filament\Pages;
 
 use App\Http\Middleware\OnboardingMiddleware;
+use App\Models\Currency;
 use App\Models\Setting;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -54,8 +56,9 @@ class Settings extends Page implements HasForms
                     ->required(),
                 Textarea::make('address')
                     ->required(),
-                TextInput::make('currency')
-                    ->default('PHP')
+                Select::make('currency')
+                    ->options(Currency::getCurrencyList())
+                    ->searchable()
                     ->required(),
 
             ])
