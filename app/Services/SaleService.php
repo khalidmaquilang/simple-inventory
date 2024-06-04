@@ -51,7 +51,9 @@ class SaleService
             ->taxRate($sale->vat)
             ->series($sale->invoice_number)
             ->serialNumberFormat('{SERIES}')
-            ->addItems($items);
+            ->addItems($items)
+            ->currencyCode(Setting::getCurrency())
+            ->currencySymbol('');
 
         return $invoice->stream();
     }

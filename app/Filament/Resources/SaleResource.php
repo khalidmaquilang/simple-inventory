@@ -6,6 +6,7 @@ use App\Filament\Resources\SaleResource\Pages;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Sale;
+use App\Models\Setting;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use Filament\Forms;
@@ -24,6 +25,8 @@ class SaleResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $currency = Setting::getCurrency();
+
         return $form
             ->schema([
                 Forms\Components\TextInput::make('invoice_number')
@@ -95,6 +98,7 @@ class SaleResource extends Resource
                             ->numeric(),
                         Forms\Components\TextInput::make('unit_cost')
                             ->lazy()
+                            ->suffix($currency)
                             ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
                                 $quantity = $get('quantity');
                                 if (empty($quantity)) {
@@ -105,6 +109,7 @@ class SaleResource extends Resource
                             ->required()
                             ->numeric(),
                         Forms\Components\TextInput::make('total_cost')
+                            ->suffix($currency)
                             ->disabled(),
                     ])
                     ->mutateRelationshipDataBeforeFillUsing(function (array $data) {
@@ -122,9 +127,11 @@ class SaleResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('sub_total')
                             ->lazy()
+                            ->suffix($currency)
                             ->disabled(),
                         Forms\Components\TextInput::make('vat')
-                            ->label('VAT (%)')
+                            ->label('VAT')
+                            ->suffix('%')
                             ->lazy()
                             ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get) {
                                 self::updateTotalAmount($get, $set);
@@ -132,11 +139,13 @@ class SaleResource extends Resource
                             ->required()
                             ->numeric(),
                         Forms\Components\TextInput::make('paid_amount')
+                            ->suffix($currency)
                             ->required()
                             ->minValue(0)
                             ->maxValue(fn ($get) => $get('total_amount') ?? 0)
                             ->numeric(),
                         Forms\Components\TextInput::make('total_amount')
+                            ->suffix($currency)
                             ->minValue(0)
                             ->disabled()
                             ->dehydrated()
@@ -150,6 +159,8 @@ class SaleResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $currency = Setting::getCurrency();
+
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('invoice_number')
@@ -161,11 +172,9 @@ class SaleResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_amount')
-                    ->numeric()
-                    ->sortable(),
+                    ->formatStateUsing(fn ($state): string => number_format($state, 2).' '.$currency),
                 Tables\Columns\TextColumn::make('paid_amount')
-                    ->numeric()
-                    ->sortable(),
+                    ->formatStateUsing(fn ($state): string => number_format($state, 2).' '.$currency),
                 Tables\Columns\TextColumn::make('customer.name')
                     ->numeric()
                     ->sortable(),
