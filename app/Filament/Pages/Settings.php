@@ -7,6 +7,7 @@ use App\Models\Currency;
 use App\Models\Setting;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -57,6 +58,9 @@ class Settings extends Page implements HasForms
                     ->required(),
                 Textarea::make('address')
                     ->required(),
+                FileUpload::make('company_logo')
+                    ->image()
+                    ->maxSize(2048),
                 Select::make('currency')
                     ->options(Currency::getCurrencyList())
                     ->required(),

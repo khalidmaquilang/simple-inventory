@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
             $table->string('company_name');
+            $table->string('company_logo')->nullable();
             $table->string('phone');
             $table->string('email');
             $table->text('address');
