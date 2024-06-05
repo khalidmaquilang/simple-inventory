@@ -30,7 +30,7 @@ class Settings extends Page implements HasForms
 
     protected static ?string $navigationGroup = 'Admin Menu';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 4;
 
     protected static string|array $withoutRouteMiddleware = [OnboardingMiddleware::class];
 

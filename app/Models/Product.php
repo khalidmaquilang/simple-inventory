@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
@@ -27,6 +29,10 @@ class Product extends Model
     public static function getForm(): array
     {
         return [
+            Select::make('category_id')
+                ->relationship('category', 'name')
+                ->searchable()
+                ->required(),
             TextInput::make('sku')
                 ->label('SKU')
                 ->unique(ignoreRecord: true)
@@ -44,5 +50,13 @@ class Product extends Model
             Textarea::make('description')
                 ->columnSpanFull(),
         ];
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 }
