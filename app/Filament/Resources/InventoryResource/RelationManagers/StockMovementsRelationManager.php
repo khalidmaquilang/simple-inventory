@@ -18,16 +18,30 @@ class StockMovementsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('reference_number'),
-                Forms\Components\TextInput::make('quantity')
-                    ->hint('For outgoing products, use negative values.')
-                    ->minValue(fn () => ($this->getOwnerRecord()->quantity_on_hand) * -1)
-                    ->numeric()
-                    ->required(),
-                Forms\Components\Select::make('type')
-                    ->options(StockMovementEnum::class)
-                    ->required(),
-                Forms\Components\Textarea::make('note'),
+                Forms\Components\Fieldset::make('Stock Movement')
+                    ->schema([
+                        Forms\Components\TextInput::make('reference_number'),
+                        Forms\Components\TextInput::make('quantity')
+                            ->hint('For outgoing products, use negative values.')
+                            ->minValue(fn () => ($this->getOwnerRecord()->quantity_on_hand) * -1)
+                            ->numeric()
+                            ->required(),
+                        Forms\Components\Select::make('type')
+                            ->options(StockMovementEnum::class)
+                            ->required(),
+                        Forms\Components\Textarea::make('note')
+                    ]),
+                Forms\Components\Fieldset::make('From/To')
+                    ->schema([
+                        Forms\Components\Select::make('customer_id')
+                            ->hint('Optional')
+                            ->relationship('customer', 'name')
+                            ->nullable(),
+                        Forms\Components\Select::make('supplier_id')
+                            ->hint('Optional')
+                            ->relationship('supplier', 'company_name')
+                            ->nullable(),
+                    ])
             ]);
     }
 
@@ -44,11 +58,13 @@ class StockMovementsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('quantity'),
                 Tables\Columns\TextColumn::make('type')
                     ->badge(),
+                Tables\Columns\TextColumn::make('supplier.company_name'),
+                Tables\Columns\TextColumn::make('customer.name'),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Created By'),
             ])
             ->filters([
-                //
+                
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
