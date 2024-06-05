@@ -17,4 +17,25 @@ class Setting extends Model
     protected $casts = [
         'id' => 'integer',
     ];
+
+    /**
+     * @return string
+     */
+    public static function getCurrency(): string
+    {
+        return self::first()->currency;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getCompanyLogo(): string
+    {
+        $logo = self::first()->company_logo;
+        if (empty($logo)) {
+            return '';
+        }
+
+        return storage_path('app/public/'.$logo);
+    }
 }

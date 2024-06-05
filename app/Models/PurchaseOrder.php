@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
+use App\Enums\PurchaseOrderEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PurchaseOrder extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that should be cast to native types.
@@ -20,10 +22,10 @@ class PurchaseOrder extends Model
         'id' => 'integer',
         'order_date' => 'date',
         'expected_delivery_date' => 'date',
-        'total_amount' => 'decimal',
-        'paid_amount' => 'decimal',
         'supplier_id' => 'integer',
         'payment_type_id' => 'integer',
+        'user_id' => 'integer',
+        'status' => PurchaseOrderEnum::class,
     ];
 
     public function supplier(): BelongsTo
@@ -34,6 +36,11 @@ class PurchaseOrder extends Model
     public function paymentType(): BelongsTo
     {
         return $this->belongsTo(PaymentType::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function purchaseOrderItems(): HasMany

@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Sale extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that should be cast to native types.
@@ -20,11 +21,20 @@ class Sale extends Model
         'id' => 'integer',
         'sale_date' => 'date',
         'vat' => 'double',
-        'total_amount' => 'decimal',
-        'paid_amount' => 'decimal',
         'customer_id' => 'integer',
         'payment_type_id' => 'integer',
+        'user_id' => 'integer',
     ];
+
+    /**
+     * @return string
+     */
+    public function getSubTotal(): string
+    {
+        return number_format($this->saleItems->sum(function ($item) {
+            return $item->quantity * $item->unit_cost;
+        }), 2);
+    }
 
     public function customer(): BelongsTo
     {
@@ -34,6 +44,11 @@ class Sale extends Model
     public function paymentType(): BelongsTo
     {
         return $this->belongsTo(PaymentType::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function saleItems(): HasMany

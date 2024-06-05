@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\Supplier;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SupplierFactory extends Factory
 {
@@ -25,7 +25,8 @@ class SupplierFactory extends Factory
             'contact_person' => $this->faker->word(),
             'email' => $this->faker->safeEmail(),
             'phone' => $this->faker->phoneNumber(),
-            'status' => $this->faker->randomElement(["active","inactive"]),
+            'status' => $this->faker->randomElement(['active', 'inactive']),
+            'user_id' => User::factory(),
         ];
     }
 }
