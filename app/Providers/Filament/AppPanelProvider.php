@@ -25,6 +25,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
 use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 
 class AppPanelProvider extends PanelProvider
@@ -84,6 +85,11 @@ class AppPanelProvider extends PanelProvider
                         ProductResource::class,
                     ]),
                 FilamentApexChartsPlugin::make(),
+                FilamentEditProfilePlugin::make()
+                    ->setTitle('My Profile')
+                    ->setNavigationLabel('My Profile')
+                    ->setIcon('heroicon-o-user')
+                    ->shouldShowDeleteAccountForm(false),
             ]);
     }
 }
