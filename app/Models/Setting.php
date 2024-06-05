@@ -25,4 +25,12 @@ class Setting extends Model
     {
         return self::first()->currency;
     }
+
+    /**
+     * @return string
+     */
+    public static function getCompanyLogo(): string
+    {
+        return storage_path('app/public/'.self::first()->company_logo);
+    }
 }

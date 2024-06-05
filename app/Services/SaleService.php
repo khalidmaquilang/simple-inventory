@@ -53,7 +53,8 @@ class SaleService
             ->serialNumberFormat('{SERIES}')
             ->addItems($items)
             ->currencyCode(Setting::getCurrency())
-            ->currencySymbol('');
+            ->currencySymbol('')
+            ->logo(Setting::getCompanyLogo());
 
         return $invoice->stream();
     }
