@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\StatusEnum;
 use App\Filament\Resources\ProductResource\Pages;
 use App\Models\Product;
 use Filament\Forms;
@@ -39,9 +38,6 @@ class ProductResource extends Resource
                     ->numeric(),
                 Forms\Components\Textarea::make('description')
                     ->columnSpanFull(),
-                Forms\Components\Select::make('status')
-                    ->options(StatusEnum::class)
-                    ->required(),
             ]);
     }
 
@@ -60,8 +56,6 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('selling_price')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->badge(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

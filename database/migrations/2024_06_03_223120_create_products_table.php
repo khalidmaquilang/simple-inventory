@@ -18,8 +18,8 @@ return new class extends Migration
             $table->decimal('purchase_price');
             $table->decimal('selling_price');
             $table->text('description')->nullable();
-            $table->enum('status', ['active', 'inactive']);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

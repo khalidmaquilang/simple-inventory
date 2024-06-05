@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->enum('status', ['active', 'inactive']);
             $table->foreignId('category_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

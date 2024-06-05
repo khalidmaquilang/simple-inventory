@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use App\Enums\StatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that should be cast to native types.
@@ -17,6 +17,5 @@ class Product extends Model
      */
     protected $casts = [
         'id' => 'integer',
-        'status' => StatusEnum::class,
     ];
 }

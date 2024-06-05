@@ -21,6 +21,7 @@ return new class extends Migration
             $table->enum('gender', ['male', 'female']);
             $table->foreignId('user_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
