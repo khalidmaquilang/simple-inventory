@@ -31,6 +31,11 @@ class Setting extends Model
      */
     public static function getCompanyLogo(): string
     {
-        return storage_path('app/public/'.self::first()->company_logo);
+        $logo = self::first()->company_logo;
+        if (empty($logo)) {
+            return '';
+        }
+
+        return storage_path('app/public/'.$logo);
     }
 }
