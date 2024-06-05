@@ -17,6 +17,7 @@
         "laravel/tinker": "^2.9",
         "laraveldaily/laravel-invoices": "^4.0",
         "leandrocfe/filament-apex-charts": "^3.1",
+        "malzariey/filament-daterangepicker-filter": "^2.7",
         "pxlrbt/filament-excel": "^2.3"
     },
     "require-dev": {

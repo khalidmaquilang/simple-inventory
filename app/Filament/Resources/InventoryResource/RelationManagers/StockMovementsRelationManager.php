@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class StockMovementsRelationManager extends RelationManager
 {
@@ -29,7 +30,7 @@ class StockMovementsRelationManager extends RelationManager
                         Forms\Components\Select::make('type')
                             ->options(StockMovementEnum::class)
                             ->required(),
-                        Forms\Components\Textarea::make('note')
+                        Forms\Components\Textarea::make('note'),
                     ]),
                 Forms\Components\Fieldset::make('From/To')
                     ->schema([
@@ -41,7 +42,7 @@ class StockMovementsRelationManager extends RelationManager
                             ->hint('Optional')
                             ->relationship('supplier', 'company_name')
                             ->nullable(),
-                    ])
+                    ]),
             ]);
     }
 
@@ -53,18 +54,20 @@ class StockMovementsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('reference_number'),
+                Tables\Columns\TextColumn::make('reference_number')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('quantity_before_adjustment'),
                 Tables\Columns\TextColumn::make('quantity'),
                 Tables\Columns\TextColumn::make('type')
-                    ->badge(),
+                    ->badge()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('supplier.company_name'),
                 Tables\Columns\TextColumn::make('customer.name'),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Created By'),
             ])
             ->filters([
-                
+                DateRangeFilter::make('created_at'),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
