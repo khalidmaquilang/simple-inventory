@@ -33,15 +33,8 @@ class PurchaseOrderResource extends Resource
                 Forms\Components\DatePicker::make('order_date')
                     ->required(),
                 Forms\Components\DatePicker::make('expected_delivery_date'),
-                Forms\Components\TextInput::make('purchase_code')
-                    ->unique(ignoreRecord: true)
-                    ->required()
-                    ->maxLength(255),
                 Forms\Components\Select::make('supplier_id')
-                    ->relationship('supplier', 'id')
-                    ->required(),
-                Forms\Components\Select::make('status')
-                    ->options(PurchaseOrderEnum::class)
+                    ->relationship('supplier', 'company_name')
                     ->required(),
                 TableRepeater::make('purchaseOrderItems')
                     ->relationship()
@@ -71,6 +64,7 @@ class PurchaseOrderResource extends Resource
                                 $product = Product::find($state);
                                 $set('sku', $product->sku);
                                 $set('name', $product->name);
+                                $set('unit_cost', $product->purchase_price);
                             })
                             ->rules([
                                 function ($component) {
@@ -99,7 +93,6 @@ class PurchaseOrderResource extends Resource
                             ->numeric(),
                         Forms\Components\TextInput::make('unit_cost')
                             ->suffix($currency)
-                            ->lazy()
                             ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
                                 $quantity = $get('quantity');
                                 if (empty($quantity)) {
@@ -107,8 +100,8 @@ class PurchaseOrderResource extends Resource
                                 }
                                 $set('total_cost', number_format($quantity * $state, 2));
                             })
-                            ->required()
-                            ->numeric(),
+                            ->disabled()
+                            ->dehydrated(),
                         Forms\Components\TextInput::make('total_cost')
                             ->suffix($currency)
                             ->disabled(),
@@ -126,18 +119,18 @@ class PurchaseOrderResource extends Resource
                 Forms\Components\Section::make('Payment')
                     ->columns(2)
                     ->schema([
-                        Forms\Components\TextInput::make('paid_amount')
-                            ->required()
-                            ->suffix($currency)
-                            ->minValue(0)
-                            ->maxValue(fn ($get) => $get('total_amount') ?? 0)
-                            ->numeric(),
                         Forms\Components\TextInput::make('total_amount')
                             ->minValue(0)
                             ->suffix($currency)
                             ->lazy()
                             ->disabled()
                             ->dehydrated()
+                            ->numeric(),
+                        Forms\Components\TextInput::make('paid_amount')
+                            ->required()
+                            ->suffix($currency)
+                            ->minValue(0)
+                            ->maxValue(fn ($get) => $get('total_amount') ?? 0)
                             ->numeric(),
                         Forms\Components\Select::make('payment_type_id')
                             ->relationship('paymentType', 'name')
@@ -184,7 +177,7 @@ class PurchaseOrderResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -206,7 +199,7 @@ class PurchaseOrderResource extends Resource
         return [
             'index' => Pages\ListPurchaseOrders::route('/'),
             'create' => Pages\CreatePurchaseOrder::route('/create'),
-            'edit' => Pages\EditPurchaseOrder::route('/{record}/edit'),
+            'view' => Pages\ViewPurchaseOrder::route('/{record}'),
         ];
     }
 

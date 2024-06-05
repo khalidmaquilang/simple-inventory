@@ -3,12 +3,14 @@
 namespace App\Providers;
 
 use App\Models\Customer;
+use App\Models\GoodsReceipt;
 use App\Models\Inventory;
 use App\Models\PurchaseOrder;
 use App\Models\Sale;
 use App\Models\StockMovement;
 use App\Models\Supplier;
 use App\Observers\CustomerObserver;
+use App\Observers\GoodsReceiptObserver;
 use App\Observers\InventoryObserver;
 use App\Observers\PurchaseOrderObserver;
 use App\Observers\SaleObserver;
@@ -39,5 +41,6 @@ class AppServiceProvider extends ServiceProvider
         Sale::observe(SaleObserver::class);
         Inventory::observe(InventoryObserver::class);
         StockMovement::observe(StockMovementObserver::class);
+        GoodsReceipt::observe(GoodsReceiptObserver::class);
     }
 }
