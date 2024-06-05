@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\StatusEnum;
 use App\Filament\Resources\SubCategoryResource\Pages;
 use App\Models\SubCategory;
 use Filament\Forms;
@@ -33,9 +32,6 @@ class SubCategoryResource extends Resource
                     ->maxLength(255),
                 Forms\Components\Textarea::make('description')
                     ->columnSpanFull(),
-                Forms\Components\Select::make('status')
-                    ->options(StatusEnum::class)
-                    ->required(),
             ]);
     }
 
@@ -48,8 +44,6 @@ class SubCategoryResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->badge(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

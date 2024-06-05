@@ -23,6 +23,7 @@ return new class extends Migration
             $table->foreignId('payment_type_id');
             $table->foreignId('user_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

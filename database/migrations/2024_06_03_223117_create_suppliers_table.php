@@ -20,6 +20,7 @@ return new class extends Migration
             $table->enum('status', ['active', 'inactive']);
             $table->foreignId('user_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use App\Enums\StatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that should be cast to native types.
@@ -18,7 +18,6 @@ class Category extends Model
      */
     protected $casts = [
         'id' => 'integer',
-        'status' => StatusEnum::class,
     ];
 
     public function subCategories(): HasMany
