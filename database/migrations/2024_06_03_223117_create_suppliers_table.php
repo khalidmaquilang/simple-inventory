@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->enum('status', ['active', 'inactive']);
-            $table->foreignId('user_id');
+            $table->foreignId('user_id')->index();
             $table->timestamps();
             $table->softDeletes();
         });

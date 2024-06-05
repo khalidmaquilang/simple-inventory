@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('stock_movements', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id');
-            $table->foreignId('inventory_id');
+            $table->foreignId('user_id')->index();
+            $table->foreignId('inventory_id')->index();
             $table->foreignId('customer_id')->nullable();
             $table->foreignId('supplier_id')->nullable();
             $table->string('reference_number')->nullable();

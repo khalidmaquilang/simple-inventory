@@ -20,7 +20,7 @@ return new class extends Migration
             $table->decimal('paid_amount');
             $table->foreignId('customer_id');
             $table->foreignId('payment_type_id');
-            $table->foreignId('user_id');
+            $table->foreignId('user_id')->index();
             $table->timestamps();
             $table->softDeletes();
         });

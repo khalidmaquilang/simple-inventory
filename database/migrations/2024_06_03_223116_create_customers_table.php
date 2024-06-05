@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('address');
             $table->enum('status', ['active', 'inactive']);
             $table->enum('gender', ['male', 'female']);
-            $table->foreignId('user_id');
+            $table->foreignId('user_id')->index();
             $table->timestamps();
             $table->softDeletes();
         });
