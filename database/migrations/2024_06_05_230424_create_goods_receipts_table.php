@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('name');
             $table->integer('quantity');
             $table->foreignId('product_id');
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

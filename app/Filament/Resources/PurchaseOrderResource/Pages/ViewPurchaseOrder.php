@@ -4,7 +4,6 @@ namespace App\Filament\Resources\PurchaseOrderResource\Pages;
 
 use App\Filament\Resources\PurchaseOrderResource;
 use App\Models\Setting;
-use Filament\Actions;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -15,6 +14,8 @@ use Filament\Support\Enums\FontWeight;
 class ViewPurchaseOrder extends ViewRecord
 {
     protected static string $resource = PurchaseOrderResource::class;
+
+    protected $listeners = ['refresh' => '$refresh'];
 
     public function infolist(Infolist $infolist): Infolist
     {
@@ -42,8 +43,8 @@ class ViewPurchaseOrder extends ViewRecord
                                 TextEntry::make('paid_amount')
                                     ->formatStateUsing(fn ($state) => number_format($state, 2).' '.$currency),
                                 TextEntry::make('paymentType.name'),
-                            ])
-                    ])
+                            ]),
+                    ]),
 
             ]);
     }

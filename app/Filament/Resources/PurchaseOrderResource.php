@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\PurchaseOrderEnum;
 use App\Filament\Resources\PurchaseOrderResource\Pages;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
@@ -14,7 +13,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class PurchaseOrderResource extends Resource
 {
@@ -161,7 +159,8 @@ class PurchaseOrderResource extends Resource
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->badge(),
+                    ->badge()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Created By'),
                 Tables\Columns\TextColumn::make('created_at')
@@ -178,12 +177,19 @@ class PurchaseOrderResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    ExportBulkAction::make(),
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('Completed')
+                        ->requiresConfirmation()
+                        ->color('success')
+                        ->icon('heroicon-m-check')
+                        ->action(fn ($record) => $record->setCompleted()),
+                    Tables\Actions\Action::make('Cancelled')
+                        ->requiresConfirmation()
+                        ->color('danger')
+                        ->icon('heroicon-m-x-mark')
+                        ->action(fn ($record) => $record->setCancelled()),
+                ])
+                    ->visible(fn ($record) => $record->isAvailable()),
             ]);
     }
 

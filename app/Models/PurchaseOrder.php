@@ -30,6 +30,14 @@ class PurchaseOrder extends Model
     ];
 
     /**
+     * @var string[]
+     */
+    protected $with = [
+        'purchaseOrderItems',
+        'goodsReceipts',
+    ];
+
+    /**
      * @return string
      */
     public static function generateCode(): string
@@ -42,6 +50,32 @@ class PurchaseOrder extends Model
 
         // PO-2024010100001
         return "PO-{$date}{$code}";
+    }
+
+    /**
+     * @return void
+     */
+    public function setCompleted(): void
+    {
+        $this->status = PurchaseOrderEnum::RECEIVED;
+        $this->save();
+    }
+
+    /**
+     * @return void
+     */
+    public function setCancelled(): void
+    {
+        $this->status = PurchaseOrderEnum::CANCELLED;
+        $this->save();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAvailable()
+    {
+        return $this->status === PurchaseOrderEnum::PENDING || $this->status === PurchaseOrderEnum::PARTIALLY_RECEIVED;
     }
 
     /**

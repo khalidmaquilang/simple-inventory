@@ -31,7 +31,7 @@ enum PurchaseOrderEnum: string implements HasColor, HasLabel
     public function getColor(): string
     {
         return match ($this) {
-            self::PENDING => 'primary',
+            self::PENDING => 'info',
             self::RECEIVED => 'success',
             self::PARTIALLY_RECEIVED => 'warning',
             self::CANCELLED => 'danger',

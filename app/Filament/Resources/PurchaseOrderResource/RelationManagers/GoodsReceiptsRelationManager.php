@@ -2,13 +2,13 @@
 
 namespace App\Filament\Resources\PurchaseOrderResource\RelationManagers;
 
+use App\Models\Product;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class GoodsReceiptsRelationManager extends RelationManager
 {
@@ -20,21 +20,52 @@ class GoodsReceiptsRelationManager extends RelationManager
             ->schema([
                 Forms\Components\DatePicker::make('received_date')
                     ->required(),
+                Forms\Components\Hidden::make('sku'),
+                Forms\Components\Hidden::make('name'),
+                Forms\Components\Select::make('product_id')
+                    ->relationship('product', 'name',
+                        modifyQueryUsing: function (Builder $query) {
+                            // Get all purchase order items associated with the purchase order
+                            $product_ids = $this->getOwnerRecord()->purchaseOrderItems->pluck('product_id')->toArray();
+                            $query->whereIn('id', $product_ids);
+                        })
+                    ->afterStateUpdated(function ($set, $state) {
+                        $product = Product::find($state);
+                        $set('sku', $product->sku);
+                        $set('name', $product->name);
+                    })
+                    ->required(),
+                Forms\Components\TextInput::make('quantity')
+                    ->numeric()
+                    ->required(),
+                Forms\Components\Textarea::make('notes'),
             ]);
     }
 
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('id')
+            ->recordTitleAttribute('grn_code')
             ->columns([
-                Tables\Columns\TextColumn::make('id'),
+                Tables\Columns\TextColumn::make('grn_code')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('product.name'),
+                Tables\Columns\TextColumn::make('quantity'),
+                Tables\Columns\TextColumn::make('received_date')
+                    ->date(),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Created By'),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->after(fn ($livewire) => $livewire->dispatch('refresh'))
+                    ->visible(fn () => $this->getOwnerRecord()->isAvailable()),
+            ])
+            ->actions([
+                Tables\Actions\ViewAction::make(),
             ]);
     }
 
