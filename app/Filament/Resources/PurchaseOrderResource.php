@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\PurchaseOrderEnum;
 use App\Filament\Resources\PurchaseOrderResource\Pages;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
@@ -10,11 +9,11 @@ use App\Models\Setting;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class PurchaseOrderResource extends Resource
 {
@@ -33,15 +32,8 @@ class PurchaseOrderResource extends Resource
                 Forms\Components\DatePicker::make('order_date')
                     ->required(),
                 Forms\Components\DatePicker::make('expected_delivery_date'),
-                Forms\Components\TextInput::make('purchase_code')
-                    ->unique(ignoreRecord: true)
-                    ->required()
-                    ->maxLength(255),
                 Forms\Components\Select::make('supplier_id')
-                    ->relationship('supplier', 'id')
-                    ->required(),
-                Forms\Components\Select::make('status')
-                    ->options(PurchaseOrderEnum::class)
+                    ->relationship('supplier', 'company_name')
                     ->required(),
                 TableRepeater::make('purchaseOrderItems')
                     ->relationship()
@@ -71,6 +63,7 @@ class PurchaseOrderResource extends Resource
                                 $product = Product::find($state);
                                 $set('sku', $product->sku);
                                 $set('name', $product->name);
+                                $set('unit_cost', $product->purchase_price);
                             })
                             ->rules([
                                 function ($component) {
@@ -99,7 +92,6 @@ class PurchaseOrderResource extends Resource
                             ->numeric(),
                         Forms\Components\TextInput::make('unit_cost')
                             ->suffix($currency)
-                            ->lazy()
                             ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
                                 $quantity = $get('quantity');
                                 if (empty($quantity)) {
@@ -107,8 +99,8 @@ class PurchaseOrderResource extends Resource
                                 }
                                 $set('total_cost', number_format($quantity * $state, 2));
                             })
-                            ->required()
-                            ->numeric(),
+                            ->disabled()
+                            ->dehydrated(),
                         Forms\Components\TextInput::make('total_cost')
                             ->suffix($currency)
                             ->disabled(),
@@ -126,22 +118,32 @@ class PurchaseOrderResource extends Resource
                 Forms\Components\Section::make('Payment')
                     ->columns(2)
                     ->schema([
-                        Forms\Components\TextInput::make('paid_amount')
-                            ->required()
-                            ->suffix($currency)
-                            ->minValue(0)
-                            ->maxValue(fn ($get) => $get('total_amount') ?? 0)
-                            ->numeric(),
                         Forms\Components\TextInput::make('total_amount')
                             ->minValue(0)
                             ->suffix($currency)
                             ->lazy()
                             ->disabled()
                             ->dehydrated()
-                            ->numeric(),
+                            ->mutateDehydratedStateUsing(function ($state) {
+                                return floatval(str_replace(',', '', $state));
+                            }),
                         Forms\Components\Select::make('payment_type_id')
                             ->relationship('paymentType', 'name')
                             ->required(),
+                        Forms\Components\Group::make([
+                            Forms\Components\TextInput::make('paid_amount')
+                                ->suffix($currency)
+                                ->required()
+                                ->minValue(0)
+                                ->maxValue(fn ($get) => floatval(str_replace(',', '', $get('total_amount'))) ?? 0)
+                                ->numeric(),
+                            Forms\Components\Actions::make([
+                                Forms\Components\Actions\Action::make('pay_full')
+                                    ->label('Pay in full')
+                                    ->color('success')
+                                    ->action(fn ($set, $get) => $set('paid_amount', $get('total_amount'))),
+                            ]),
+                        ]),
                     ]),
             ]);
     }
@@ -160,15 +162,13 @@ class PurchaseOrderResource extends Resource
                 Tables\Columns\TextColumn::make('total_amount')
                     ->formatStateUsing(fn ($state): string => number_format($state, 2).' '.$currency),
                 Tables\Columns\TextColumn::make('remaining_amount')
-                    ->getStateUsing(function ($record): float {
-                        return $record->total_amount - $record->paid_amount;
-                    })
                     ->formatStateUsing(fn ($state): string => number_format($state, 2).' '.$currency),
                 Tables\Columns\TextColumn::make('order_date')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->badge(),
+                    ->badge()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Created By'),
                 Tables\Columns\TextColumn::make('created_at')
@@ -184,14 +184,38 @@ class PurchaseOrderResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\Action::make('Pay Amount')
+                    ->form([
+                        TextInput::make('paid_amount')
+                            ->hint(function ($record) {
+                                return 'You need to pay '.$record->formatted_remaining_amount;
+                            })
+                            ->minValue(1)
+                            ->maxValue(function ($record): float {
+                                return $record->remaining_amount;
+                            })
+                            ->numeric()
+                            ->required(),
+                    ])
+                    ->color('info')
+                    ->icon('heroicon-m-banknotes')
+                    ->visible(fn ($record) => $record->remaining_amount > 0),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('Completed')
+                        ->requiresConfirmation()
+                        ->color('success')
+                        ->icon('heroicon-m-check')
+                        ->action(fn ($record) => $record->setCompleted()),
+                    Tables\Actions\Action::make('Cancelled')
+                        ->requiresConfirmation()
+                        ->color('danger')
+                        ->icon('heroicon-m-x-mark')
+                        ->action(fn ($record) => $record->setCancelled()),
+                ])
+                    ->visible(fn ($record) => $record->isAvailable()),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    ExportBulkAction::make(),
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->defaultSort('created_at', 'desc');
     }
 
     public static function getRelations(): array
@@ -206,7 +230,7 @@ class PurchaseOrderResource extends Resource
         return [
             'index' => Pages\ListPurchaseOrders::route('/'),
             'create' => Pages\CreatePurchaseOrder::route('/create'),
-            'edit' => Pages\EditPurchaseOrder::route('/{record}/edit'),
+            'view' => Pages\ViewPurchaseOrder::route('/{record}'),
         ];
     }
 
@@ -217,7 +241,7 @@ class PurchaseOrderResource extends Resource
 
         // Calculate subtotal based on the selected products and quantities
         $subtotal = $selectedProducts->reduce(function ($subtotal, $product) {
-            return $subtotal + ($product['unit_cost'] * $product['quantity']);
+            return $subtotal + ((float) $product['unit_cost'] * $product['quantity']);
         }, 0);
 
         // Update the state with the new values

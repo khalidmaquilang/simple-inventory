@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\DiscountTypeEnum;
 use App\Filament\Resources\SaleResource\Pages;
 use App\Models\Customer;
 use App\Models\Product;
@@ -30,10 +31,6 @@ class SaleResource extends Resource
 
         return $form
             ->schema([
-                Forms\Components\TextInput::make('invoice_number')
-                    ->unique(ignoreRecord: true)
-                    ->required()
-                    ->maxLength(255),
                 Forms\Components\DatePicker::make('sale_date')
                     ->required(),
                 Forms\Components\Select::make('customer_id')
@@ -42,6 +39,8 @@ class SaleResource extends Resource
                     ->searchable()
                     ->optionsLimit(10)
                     ->required(),
+                Forms\Components\Textarea::make('notes')
+                    ->columnSpanFull(),
                 TableRepeater::make('saleItems')
                     ->relationship()
                     ->headers([
@@ -58,12 +57,12 @@ class SaleResource extends Resource
                         Forms\Components\Hidden::make('name'),
                         Forms\Components\Select::make('product_id')
                             ->relationship('product', 'name')
-                            ->dehydrated()
                             ->lazy()
                             ->afterStateUpdated(function ($state, Forms\Set $set) {
                                 if (empty($state)) {
                                     $set('sku', '');
                                     $set('name', '');
+                                    $set('unit_cost', '');
 
                                     return;
                                 }
@@ -71,6 +70,7 @@ class SaleResource extends Resource
                                 $product = Product::find($state);
                                 $set('sku', $product->sku);
                                 $set('name', $product->name);
+                                $set('unit_cost', $product->selling_price);
                             })
                             ->rules([
                                 function ($component) {
@@ -107,8 +107,8 @@ class SaleResource extends Resource
                                 }
                                 $set('total_cost', number_format($quantity * $state, 2));
                             })
-                            ->required()
-                            ->numeric(),
+                            ->disabled()
+                            ->dehydrated(),
                         Forms\Components\TextInput::make('total_cost')
                             ->suffix($currency)
                             ->disabled(),
@@ -124,14 +124,14 @@ class SaleResource extends Resource
                     })
                     ->columnSpan('full'),
                 Forms\Components\Section::make('Payment')
-                    ->columns(2)
+                    ->columns(1)
                     ->schema([
                         Forms\Components\TextInput::make('sub_total')
                             ->lazy()
                             ->suffix($currency)
                             ->disabled(),
                         Forms\Components\TextInput::make('vat')
-                            ->label('VAT')
+                            ->label('VAT (Value-Added Tax)')
                             ->suffix('%')
                             ->lazy()
                             ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get) {
@@ -139,12 +139,24 @@ class SaleResource extends Resource
                             })
                             ->required()
                             ->numeric(),
-                        Forms\Components\TextInput::make('paid_amount')
-                            ->suffix($currency)
-                            ->required()
-                            ->minValue(0)
-                            ->maxValue(fn ($get) => $get('total_amount') ?? 0)
-                            ->numeric(),
+                        Forms\Components\Group::make([
+                            Forms\Components\TextInput::make('discount')
+                                ->default(0)
+                                ->lazy()
+                                ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get) {
+                                    self::updateTotalAmount($get, $set);
+                                })
+                                ->numeric(),
+                            Forms\Components\ToggleButtons::make('discount_type')
+                                ->options(DiscountTypeEnum::class)
+                                ->default(DiscountTypeEnum::FIXED->value)
+                                ->lazy()
+                                ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get) {
+                                    self::updateTotalAmount($get, $set);
+                                })
+                                ->grouped(),
+                        ])
+                            ->columns(2),
                         Forms\Components\TextInput::make('total_amount')
                             ->suffix($currency)
                             ->minValue(0)
@@ -154,6 +166,21 @@ class SaleResource extends Resource
                         Forms\Components\Select::make('payment_type_id')
                             ->relationship('paymentType', 'name')
                             ->required(),
+                        Forms\Components\Group::make([
+                            Forms\Components\TextInput::make('paid_amount')
+                                ->suffix($currency)
+                                ->required()
+                                ->minValue(0)
+                                ->maxValue(fn ($get) => floatval(str_replace(',', '', $get('total_amount'))) ?? 0)
+                                ->numeric(),
+                            Forms\Components\Actions::make([
+                                Forms\Components\Actions\Action::make('pay_full')
+                                    ->label('Pay in full')
+                                    ->color('success')
+                                    ->action(fn ($set, $get) => $set('paid_amount', $get('total_amount')))
+                                    ->visible(fn ($operation) => $operation === 'create'),
+                            ]),
+                        ]),
                     ]),
             ]);
     }
@@ -197,7 +224,7 @@ class SaleResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\Action::make('Download Invoice')
                     ->icon('heroicon-o-document-arrow-down')
                     ->color('success')
@@ -224,7 +251,6 @@ class SaleResource extends Resource
         return [
             'index' => Pages\ListSales::route('/'),
             'create' => Pages\CreateSale::route('/create'),
-            'edit' => Pages\EditSale::route('/{record}/edit'),
         ];
     }
 
@@ -257,11 +283,34 @@ class SaleResource extends Resource
     {
         $subTotal = $get('sub_total');
         $vatField = $get('vat');
+        $discount = $get('discount');
+        $discountType = $get('discount_type');
+
         if (empty($subTotal) || empty($vatField)) {
             $subTotal = 0;
         }
+
+        if (! empty($discount)) {
+            $subTotal = self::calculateAfterDiscount($subTotal, $discount, $discountType);
+        }
+
         $vat = $subTotal * ($vatField / 100);
 
         $set('total_amount', number_format($subTotal + $vat, 2));
+    }
+
+    /**
+     * @param  float  $subTotal
+     * @param  float  $discount
+     * @param  string  $discountType
+     * @return float
+     */
+    public static function calculateAfterDiscount(float $subTotal, float $discount, string $discountType): float
+    {
+        if ($discountType === DiscountTypeEnum::FIXED->value) {
+            return $subTotal - $discount;
+        }
+
+        return $subTotal * (1 - ($discount / 100));
     }
 }

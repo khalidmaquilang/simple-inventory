@@ -24,13 +24,7 @@ models:
     description: text nullable
     status: enum:active,inactive
     relationships:
-      hasMany: SubCategory
-
-  SubCategory:
-    name: string
-    description: text nullable
-    status: enum:active,inactive
-    relationships:
+      hasMany: Category
       belongsTo: Category
 
   Product:

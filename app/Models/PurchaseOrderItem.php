@@ -21,6 +21,24 @@ class PurchaseOrderItem extends Model
         'product_id' => 'integer',
     ];
 
+    /**
+     * @var string[]
+     */
+    protected $appends = [
+        'quantity_received',
+    ];
+
+    /**
+     * @return int
+     */
+    public function getQuantityReceivedAttribute(): int
+    {
+        return $this->purchaseOrder
+            ->goodsReceipts()
+            ->where('product_id', $this->product_id)
+            ->sum('quantity');
+    }
+
     public function purchaseOrder(): BelongsTo
     {
         return $this->belongsTo(PurchaseOrder::class);
