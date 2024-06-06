@@ -3,7 +3,6 @@
 namespace App\Observers;
 
 use App\Enums\PurchaseOrderEnum;
-use App\Enums\StockMovementEnum;
 use App\Models\GoodsReceipt;
 use Illuminate\Database\Eloquent\Model;
 
@@ -31,7 +30,6 @@ class GoodsReceiptObserver extends BaseObserver
             quantity: $goodsReceipt->quantity,
             unitCost: $goodsReceipt->unit_cost,
             userId: $goodsReceipt->user_id,
-            type: StockMovementEnum::PURCHASE,
             supplierId: $goodsReceipt->purchaseOrder->supplier_id,
             referenceNumber: $goodsReceipt->grn_code,
         ));

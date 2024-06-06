@@ -7,7 +7,7 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class GoodsReceiptCreated
+class SaleCreated
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -19,7 +19,7 @@ class GoodsReceiptCreated
         public int $quantity,
         public float $unitCost,
         public int $userId,
-        public ?string $supplierId = null,
+        public ?string $customerId = null,
         public string $referenceNumber = '',
     ) {
         //

@@ -56,6 +56,7 @@ class SaleService
             ->addItems($items)
             ->currencyCode(Setting::getCurrency())
             ->currencySymbol('')
+            ->payUntilDays(0)
             ->logo(Setting::getCompanyLogo());
 
         return $invoice->stream();
