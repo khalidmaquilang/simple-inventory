@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\InventoryResource\Pages;
 use App\Models\Inventory;
 use App\Models\Product;
+use App\Models\Setting;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -30,6 +31,11 @@ class InventoryResource extends Resource
                     ->unique(ignoreRecord: true)
                     ->required(),
                 Forms\Components\TextInput::make('quantity_on_hand')
+                    ->required()
+                    ->numeric(),
+                Forms\Components\TextInput::make('average_price')
+                    ->suffix(Setting::getCurrency())
+                    ->default(0)
                     ->required()
                     ->numeric(),
             ]);
