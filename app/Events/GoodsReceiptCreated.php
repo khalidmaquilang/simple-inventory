@@ -3,7 +3,6 @@
 namespace App\Events;
 
 use App\Enums\StockMovementEnum;
-use App\Models\GoodsReceipt;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -25,8 +24,7 @@ class GoodsReceiptCreated
         public ?string $supplierId = null,
         public ?string $customerId = null,
         public string $referenceNumber = '',
-    )
-    {
+    ) {
         //
     }
 

@@ -17,7 +17,7 @@ class GoodsReceipt extends Model
     protected $appends = [
         'total_cost',
         'formatted_total_cost',
-        'formatted_unit_cost'
+        'formatted_unit_cost',
     ];
 
     /**

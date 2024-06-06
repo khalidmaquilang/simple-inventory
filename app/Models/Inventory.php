@@ -15,7 +15,7 @@ class Inventory extends Model
      * @var string[]
      */
     protected $appends = [
-        'formatted_average_cost'
+        'formatted_average_cost',
     ];
 
     /**

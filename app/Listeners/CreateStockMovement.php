@@ -2,8 +2,6 @@
 
 namespace App\Listeners;
 
-use App\Enums\PurchaseOrderEnum;
-use App\Enums\StockMovementEnum;
 use App\Events\GoodsReceiptCreated;
 use App\Models\Inventory;
 use App\Models\StockMovement;

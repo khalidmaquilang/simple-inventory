@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('invoice_number');
             $table->date('sale_date');
             $table->double('vat');
+            $table->decimal('discount');
+            $table->enum('discount_type', \App\Enums\DiscountTypeEnum::toArray());
             $table->decimal('total_amount');
             $table->decimal('paid_amount');
             $table->foreignId('customer_id');

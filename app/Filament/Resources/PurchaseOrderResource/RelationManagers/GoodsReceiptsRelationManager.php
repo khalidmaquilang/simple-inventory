@@ -36,6 +36,7 @@ class GoodsReceiptsRelationManager extends RelationManager
                             $set('sku', '');
                             $set('name', '');
                             $set('unit_cost', '');
+
                             return;
                         }
 

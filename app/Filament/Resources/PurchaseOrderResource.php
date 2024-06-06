@@ -192,7 +192,8 @@ class PurchaseOrderResource extends Resource
                         ->action(fn ($record) => $record->setCancelled()),
                 ])
                     ->visible(fn ($record) => $record->isAvailable()),
-            ]);
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 
     public static function getRelations(): array
@@ -218,7 +219,7 @@ class PurchaseOrderResource extends Resource
 
         // Calculate subtotal based on the selected products and quantities
         $subtotal = $selectedProducts->reduce(function ($subtotal, $product) {
-            return $subtotal + ((float)$product['unit_cost'] * $product['quantity']);
+            return $subtotal + ((float) $product['unit_cost'] * $product['quantity']);
         }, 0);
 
         // Update the state with the new values
