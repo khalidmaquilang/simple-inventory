@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Enums\StockMovementEnum;
 use App\Models\GoodsReceipt;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -15,7 +16,15 @@ class GoodsReceiptCreated
     /**
      * Create a new event instance.
      */
-    public function __construct(public GoodsReceipt $goodsReceipt)
+    public function __construct(
+        public int $productId,
+        public int $quantity,
+        public int $userId,
+        public StockMovementEnum $type,
+        public ?string $supplierId = null,
+        public ?string $customerId = null,
+        public string $referenceNumber = '',
+    )
     {
         //
     }

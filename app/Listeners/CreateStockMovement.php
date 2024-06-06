@@ -13,33 +13,35 @@ class CreateStockMovement
     /**
      * Handle the event.
      */
-    public function handle(GoodsReceiptCreated $event): void
+    public function handle($event): void
     {
-        $goodsReceipt = $event->goodsReceipt;
+        $productId = $event->productId;
+        $userId = $event->userId;
+        $supplierId = $event->supplierId;
+        $customerId = $event->customerId;
+        $referenceNumber = $event->referenceNumber;
+        $quantity = $event->quantity;
+        $type = $event->type;
 
-        $inventory = Inventory::where('product_id', $goodsReceipt->product_id)->first();
+        $inventory = Inventory::where('product_id', $productId)->first();
         if (empty($inventory)) {
-            $inventory = $this->createInventory($goodsReceipt->product_id, $goodsReceipt->user_id);
+            $inventory = $this->createInventory($productId, $userId);
         }
 
         StockMovement::create([
             'inventory_id' => $inventory->id,
-            'user_id' => $goodsReceipt->user_id,
-            'supplier_id' => $goodsReceipt->purchaseOrder->supplier_id,
-            'reference_number' => $goodsReceipt->grn_code,
+            'user_id' => $userId,
+            'supplier_id' => $supplierId,
+            'customer_id' => $customerId,
+            'reference_number' => $referenceNumber,
             'quantity_before_adjustment' => $inventory->quantity_on_hand,
-            'quantity' => $goodsReceipt->quantity,
-            'type' => StockMovementEnum::PURCHASE->value,
+            'quantity' => $quantity,
+            'type' => $type,
         ]);
 
         // update inventory onhand
         $inventory->update([
-            'quantity_on_hand' => $inventory->quantity_on_hand + $goodsReceipt->quantity,
-        ]);
-
-        // update purchase order status
-        $goodsReceipt->purchaseOrder->update([
-            'status' => PurchaseOrderEnum::PARTIALLY_RECEIVED->value,
+            'quantity_on_hand' => $inventory->quantity_on_hand + $quantity,
         ]);
     }
 
