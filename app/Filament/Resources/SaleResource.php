@@ -39,6 +39,8 @@ class SaleResource extends Resource
                     ->searchable()
                     ->optionsLimit(10)
                     ->required(),
+                Forms\Components\Textarea::make('notes')
+                    ->columnSpanFull(),
                 TableRepeater::make('saleItems')
                     ->relationship()
                     ->headers([
