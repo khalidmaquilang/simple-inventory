@@ -26,6 +26,10 @@ class PurchaseOrderItemsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('unit_cost')
                     ->formatStateUsing(fn ($state) => number_format($state, 2).' '.$currency),
                 Tables\Columns\TextColumn::make('quantity_received'),
+                Tables\Columns\TextColumn::make('remaining_quantity')
+                    ->getStateUsing(function ($record): float {
+                        return $record->quantity - $record->quantity_received;
+                    }),
             ])
             ->filters([
                 //

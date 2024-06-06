@@ -123,12 +123,14 @@ class PurchaseOrderResource extends Resource
                             ->lazy()
                             ->disabled()
                             ->dehydrated()
-                            ->numeric(),
+                            ->mutateDehydratedStateUsing(function ($state) {
+                                return floatval(str_replace(',', '', $state));
+                            }),
                         Forms\Components\TextInput::make('paid_amount')
                             ->required()
                             ->suffix($currency)
                             ->minValue(0)
-                            ->maxValue(fn ($get) => $get('total_amount') ?? 0)
+                            ->maxValue(fn ($get) => floatval(str_replace(',', '', $get('total_amount'))) ?? 0)
                             ->numeric(),
                         Forms\Components\Select::make('payment_type_id')
                             ->relationship('paymentType', 'name')
@@ -216,7 +218,7 @@ class PurchaseOrderResource extends Resource
 
         // Calculate subtotal based on the selected products and quantities
         $subtotal = $selectedProducts->reduce(function ($subtotal, $product) {
-            return $subtotal + ($product['unit_cost'] * $product['quantity']);
+            return $subtotal + ((float)$product['unit_cost'] * $product['quantity']);
         }, 0);
 
         // Update the state with the new values

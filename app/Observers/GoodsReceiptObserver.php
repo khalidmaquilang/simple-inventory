@@ -29,10 +29,11 @@ class GoodsReceiptObserver extends BaseObserver
         event(new \App\Events\GoodsReceiptCreated(
             productId: $goodsReceipt->product_id,
             quantity: $goodsReceipt->quantity,
+            unitCost: $goodsReceipt->unit_cost,
             userId: $goodsReceipt->user_id,
             type: StockMovementEnum::PURCHASE,
-            referenceNumber: $goodsReceipt->grn_code,
             supplierId: $goodsReceipt->purchaseOrder->supplier_id,
+            referenceNumber: $goodsReceipt->grn_code,
         ));
 
         $goodsReceipt->purchaseOrder->update([

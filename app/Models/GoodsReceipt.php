@@ -12,6 +12,15 @@ class GoodsReceipt extends Model
     use HasFactory;
 
     /**
+     * @var string[]
+     */
+    protected $appends = [
+        'total_cost',
+        'formatted_total_cost',
+        'formatted_unit_cost'
+    ];
+
+    /**
      * @return string
      */
     public static function generateCode(): string
@@ -24,6 +33,30 @@ class GoodsReceipt extends Model
 
         // PO-2024010100001
         return "GRN-{$date}{$code}";
+    }
+
+    /**
+     * @return float
+     */
+    public function getTotalCostAttribute(): float
+    {
+        return $this->quantity * $this->unit_cost;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormattedTotalCostAttribute(): string
+    {
+        return number_format($this->getTotalCostAttribute(), 2).' '.Setting::getCurrency();
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormattedUnitCostAttribute(): string
+    {
+        return number_format($this->unit_cost, 2).' '.Setting::getCurrency();
     }
 
     /**

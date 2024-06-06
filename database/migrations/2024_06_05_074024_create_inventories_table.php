@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->index();
             $table->foreignId('product_id');
             $table->integer('quantity_on_hand');
-            $table->decimal('average_price');
+            $table->decimal('average_cost');
             $table->timestamps();
         });
     }

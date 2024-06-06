@@ -30,14 +30,6 @@ class PurchaseOrder extends Model
     ];
 
     /**
-     * @var string[]
-     */
-    protected $with = [
-        'purchaseOrderItems',
-        'goodsReceipts',
-    ];
-
-    /**
      * @return string
      */
     public static function generateCode(): string

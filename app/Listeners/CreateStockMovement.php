@@ -13,7 +13,7 @@ class CreateStockMovement
     /**
      * Handle the event.
      */
-    public function handle($event): void
+    public function handle(GoodsReceiptCreated $event): void
     {
         $productId = $event->productId;
         $userId = $event->userId;
@@ -21,6 +21,7 @@ class CreateStockMovement
         $customerId = $event->customerId;
         $referenceNumber = $event->referenceNumber;
         $quantity = $event->quantity;
+        $unitCost = $event->unitCost;
         $type = $event->type;
 
         $inventory = Inventory::where('product_id', $productId)->first();
@@ -39,7 +40,10 @@ class CreateStockMovement
             'type' => $type,
         ]);
 
-        // update inventory onhand
+        // update average cost
+        $inventory->updateAverageCost($quantity, $unitCost);
+
+        // update inventory onhand and average cost
         $inventory->update([
             'quantity_on_hand' => $inventory->quantity_on_hand + $quantity,
         ]);
@@ -56,6 +60,7 @@ class CreateStockMovement
             'user_id' => $userId,
             'product_id' => $productId,
             'quantity_on_hand' => 0,
+            'average_cost' => 0,
         ]);
     }
 }

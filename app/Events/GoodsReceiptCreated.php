@@ -19,6 +19,7 @@ class GoodsReceiptCreated
     public function __construct(
         public int $productId,
         public int $quantity,
+        public float $unitCost,
         public int $userId,
         public StockMovementEnum $type,
         public ?string $supplierId = null,

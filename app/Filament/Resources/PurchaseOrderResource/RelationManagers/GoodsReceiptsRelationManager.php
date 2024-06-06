@@ -22,17 +22,26 @@ class GoodsReceiptsRelationManager extends RelationManager
                     ->required(),
                 Forms\Components\Hidden::make('sku'),
                 Forms\Components\Hidden::make('name'),
+                Forms\Components\Hidden::make('unit_cost'),
                 Forms\Components\Select::make('product_id')
                     ->relationship('product', 'name',
                         modifyQueryUsing: function (Builder $query) {
-                            // Get all purchase order items associated with the purchase order
+                            // Get all purchase order items
                             $product_ids = $this->getOwnerRecord()->purchaseOrderItems->pluck('product_id')->toArray();
                             $query->whereIn('id', $product_ids);
                         })
                     ->afterStateUpdated(function ($set, $state) {
                         $product = Product::find($state);
+                        if (empty($product)) {
+                            $set('sku', '');
+                            $set('name', '');
+                            $set('unit_cost', '');
+                            return;
+                        }
+
                         $set('sku', $product->sku);
                         $set('name', $product->name);
+                        $set('unit_cost', $product->purchase_price);
                     })
                     ->required(),
                 Forms\Components\TextInput::make('quantity')
@@ -51,10 +60,14 @@ class GoodsReceiptsRelationManager extends RelationManager
                     ->searchable(),
                 Tables\Columns\TextColumn::make('product.name'),
                 Tables\Columns\TextColumn::make('quantity'),
+                Tables\Columns\TextColumn::make('formatted_unit_cost')
+                    ->label('Unit cost'),
+                Tables\Columns\TextColumn::make('formatted_total_cost')
+                    ->label('Total cost'),
                 Tables\Columns\TextColumn::make('received_date')
                     ->date(),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('Created By'),
+                    ->label('Created by'),
             ])
             ->filters([
                 //

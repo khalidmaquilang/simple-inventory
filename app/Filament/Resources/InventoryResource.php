@@ -33,7 +33,7 @@ class InventoryResource extends Resource
                 Forms\Components\TextInput::make('quantity_on_hand')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('average_price')
+                Forms\Components\TextInput::make('average_cost')
                     ->suffix(Setting::getCurrency())
                     ->default(0)
                     ->required()
@@ -43,13 +43,16 @@ class InventoryResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $currency = Setting::getCurrency();
+
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('product.name')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('quantity_on_hand')
-                    ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('formatted_average_cost')
+                    ->label('Average Cost'),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Created By'),
                 Tables\Columns\TextColumn::make('created_at')

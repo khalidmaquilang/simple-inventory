@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('sku');
             $table->string('name');
             $table->integer('quantity');
+            $table->decimal('unit_cost');
             $table->foreignId('product_id');
             $table->text('notes')->nullable();
             $table->timestamps();
