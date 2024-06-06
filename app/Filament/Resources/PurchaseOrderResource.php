@@ -9,6 +9,7 @@ use App\Models\Setting;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -126,15 +127,23 @@ class PurchaseOrderResource extends Resource
                             ->mutateDehydratedStateUsing(function ($state) {
                                 return floatval(str_replace(',', '', $state));
                             }),
-                        Forms\Components\TextInput::make('paid_amount')
-                            ->required()
-                            ->suffix($currency)
-                            ->minValue(0)
-                            ->maxValue(fn ($get) => floatval(str_replace(',', '', $get('total_amount'))) ?? 0)
-                            ->numeric(),
                         Forms\Components\Select::make('payment_type_id')
                             ->relationship('paymentType', 'name')
                             ->required(),
+                        Forms\Components\Group::make([
+                            Forms\Components\TextInput::make('paid_amount')
+                                ->suffix($currency)
+                                ->required()
+                                ->minValue(0)
+                                ->maxValue(fn ($get) => floatval(str_replace(',', '', $get('total_amount'))) ?? 0)
+                                ->numeric(),
+                            Forms\Components\Actions::make([
+                                Forms\Components\Actions\Action::make('pay_full')
+                                    ->label('Pay in full')
+                                    ->color('success')
+                                    ->action(fn ($set, $get) => $set('paid_amount', $get('total_amount'))),
+                            ]),
+                        ]),
                     ]),
             ]);
     }
@@ -153,9 +162,6 @@ class PurchaseOrderResource extends Resource
                 Tables\Columns\TextColumn::make('total_amount')
                     ->formatStateUsing(fn ($state): string => number_format($state, 2).' '.$currency),
                 Tables\Columns\TextColumn::make('remaining_amount')
-                    ->getStateUsing(function ($record): float {
-                        return $record->total_amount - $record->paid_amount;
-                    })
                     ->formatStateUsing(fn ($state): string => number_format($state, 2).' '.$currency),
                 Tables\Columns\TextColumn::make('order_date')
                     ->date()
@@ -179,6 +185,22 @@ class PurchaseOrderResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
+                Tables\Actions\Action::make('Pay Amount')
+                    ->form([
+                        TextInput::make('paid_amount')
+                            ->hint(function ($record) {
+                                return 'You need to pay '.$record->formatted_remaining_amount;
+                            })
+                            ->minValue(1)
+                            ->maxValue(function ($record): float {
+                                return $record->remaining_amount;
+                            })
+                            ->numeric()
+                            ->required(),
+                    ])
+                    ->color('info')
+                    ->icon('heroicon-m-banknotes')
+                    ->visible(fn ($record) => $record->remaining_amount > 0),
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('Completed')
                         ->requiresConfirmation()

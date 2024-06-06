@@ -122,14 +122,14 @@ class SaleResource extends Resource
                     })
                     ->columnSpan('full'),
                 Forms\Components\Section::make('Payment')
-                    ->columns(2)
+                    ->columns(1)
                     ->schema([
                         Forms\Components\TextInput::make('sub_total')
                             ->lazy()
                             ->suffix($currency)
                             ->disabled(),
                         Forms\Components\TextInput::make('vat')
-                            ->label('VAT')
+                            ->label('VAT (Value-Added Tax)')
                             ->suffix('%')
                             ->lazy()
                             ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get) {
@@ -137,27 +137,24 @@ class SaleResource extends Resource
                             })
                             ->required()
                             ->numeric(),
-                        Forms\Components\TextInput::make('discount')
-                            ->default(0)
-                            ->lazy()
-                            ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get) {
-                                self::updateTotalAmount($get, $set);
-                            })
-                            ->numeric(),
-                        Forms\Components\ToggleButtons::make('discount_type')
-                            ->options(DiscountTypeEnum::class)
-                            ->default(DiscountTypeEnum::FIXED->value)
-                            ->lazy()
-                            ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get) {
-                                self::updateTotalAmount($get, $set);
-                            })
-                            ->grouped(),
-                        Forms\Components\TextInput::make('paid_amount')
-                            ->suffix($currency)
-                            ->required()
-                            ->minValue(0)
-                            ->maxValue(fn ($get) => floatval(str_replace(',', '', $get('total_amount'))) ?? 0)
-                            ->numeric(),
+                        Forms\Components\Group::make([
+                            Forms\Components\TextInput::make('discount')
+                                ->default(0)
+                                ->lazy()
+                                ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get) {
+                                    self::updateTotalAmount($get, $set);
+                                })
+                                ->numeric(),
+                            Forms\Components\ToggleButtons::make('discount_type')
+                                ->options(DiscountTypeEnum::class)
+                                ->default(DiscountTypeEnum::FIXED->value)
+                                ->lazy()
+                                ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get) {
+                                    self::updateTotalAmount($get, $set);
+                                })
+                                ->grouped(),
+                        ])
+                            ->columns(2),
                         Forms\Components\TextInput::make('total_amount')
                             ->suffix($currency)
                             ->minValue(0)
@@ -167,6 +164,21 @@ class SaleResource extends Resource
                         Forms\Components\Select::make('payment_type_id')
                             ->relationship('paymentType', 'name')
                             ->required(),
+                        Forms\Components\Group::make([
+                            Forms\Components\TextInput::make('paid_amount')
+                                ->suffix($currency)
+                                ->required()
+                                ->minValue(0)
+                                ->maxValue(fn ($get) => floatval(str_replace(',', '', $get('total_amount'))) ?? 0)
+                                ->numeric(),
+                            Forms\Components\Actions::make([
+                                Forms\Components\Actions\Action::make('pay_full')
+                                    ->label('Pay in full')
+                                    ->color('success')
+                                    ->action(fn ($set, $get) => $set('paid_amount', $get('total_amount')))
+                                    ->visible(fn ($operation) => $operation === 'create'),
+                            ]),
+                        ]),
                     ]),
             ]);
     }
@@ -210,7 +222,7 @@ class SaleResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\Action::make('Download Invoice')
                     ->icon('heroicon-o-document-arrow-down')
                     ->color('success')
@@ -237,7 +249,6 @@ class SaleResource extends Resource
         return [
             'index' => Pages\ListSales::route('/'),
             'create' => Pages\CreateSale::route('/create'),
-            'edit' => Pages\EditSale::route('/{record}/edit'),
         ];
     }
 

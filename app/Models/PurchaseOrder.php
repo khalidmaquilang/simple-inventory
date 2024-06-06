@@ -30,6 +30,30 @@ class PurchaseOrder extends Model
     ];
 
     /**
+     * @var string[]
+     */
+    protected $appends = [
+        'remaining_amount',
+        'formatted_remaining_amount',
+    ];
+
+    /**
+     * @return float
+     */
+    public function getRemainingAmountAttribute(): float
+    {
+        return $this->total_amount - $this->paid_amount;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormattedRemainingAmountAttribute(): string
+    {
+        return number_format($this->getRemainingAmountAttribute(), 2).' '.Setting::getCurrency();
+    }
+
+    /**
      * @return string
      */
     public static function generateCode(): string
