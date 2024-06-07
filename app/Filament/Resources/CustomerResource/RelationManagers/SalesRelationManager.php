@@ -6,6 +6,7 @@ use App\Models\Sale;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class SalesRelationManager extends RelationManager
 {
@@ -15,12 +16,16 @@ class SalesRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('invoice_number'),
+                Tables\Columns\TextColumn::make('invoice_number')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('sale_date')
                     ->date(),
                 Tables\Columns\TextColumn::make('total_amount'),
                 Tables\Columns\TextColumn::make('paid_amount'),
                 Tables\Columns\TextColumn::make('paymentType.name'),
+            ])
+            ->filters([
+                DateRangeFilter::make('sale_date'),
             ])
             ->actions([
                 Tables\Actions\Action::make('Download Invoice')

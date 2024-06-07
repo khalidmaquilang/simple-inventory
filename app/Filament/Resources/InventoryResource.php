@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Exports\InventoryExporter;
 use App\Filament\Resources\InventoryResource\Pages;
 use App\Models\Inventory;
 use App\Models\Product;
+use App\Models\Setting;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -32,18 +34,26 @@ class InventoryResource extends Resource
                 Forms\Components\TextInput::make('quantity_on_hand')
                     ->required()
                     ->numeric(),
+                Forms\Components\TextInput::make('average_cost')
+                    ->suffix(Setting::getCurrency())
+                    ->default(0)
+                    ->required()
+                    ->numeric(),
             ]);
     }
 
     public static function table(Table $table): Table
     {
+        $currency = Setting::getCurrency();
+
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('product.name')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('quantity_on_hand')
-                    ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('formatted_average_cost')
+                    ->label('Average Cost'),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Created By'),
                 Tables\Columns\TextColumn::make('created_at')
@@ -57,6 +67,10 @@ class InventoryResource extends Resource
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                Tables\Actions\ExportAction::make()
+                    ->exporter(InventoryExporter::class),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

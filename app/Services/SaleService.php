@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\DiscountTypeEnum;
 use App\Models\Sale;
 use App\Models\Setting;
 use Illuminate\Http\Response;
@@ -49,11 +50,13 @@ class SaleService
             ->buyer($buyer)
             ->seller($seller)
             ->taxRate($sale->vat)
+            ->totalDiscount($sale->discount, $sale->discount_type === DiscountTypeEnum::PERCENTAGE)
             ->series($sale->invoice_number)
             ->serialNumberFormat('{SERIES}')
             ->addItems($items)
             ->currencyCode(Setting::getCurrency())
             ->currencySymbol('')
+            ->payUntilDays($sale->pay_until)
             ->logo(Setting::getCompanyLogo());
 
         return $invoice->stream();

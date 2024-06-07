@@ -11,12 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('inventories', function (Blueprint $table) {
+        Schema::create('goods_receipts', function (Blueprint $table) {
             $table->id();
+            $table->string('grn_code')->unique()->index();
+            $table->foreignId('purchase_order_id')->index();
             $table->foreignId('user_id')->index();
+            $table->date('received_date');
+            $table->string('sku');
+            $table->string('name');
+            $table->integer('quantity');
+            $table->decimal('unit_cost');
             $table->foreignId('product_id');
-            $table->integer('quantity_on_hand');
-            $table->decimal('average_cost');
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inventories');
+        Schema::dropIfExists('goods_receipts');
     }
 };

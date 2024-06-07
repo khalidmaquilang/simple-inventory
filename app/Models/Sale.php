@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\DiscountTypeEnum;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,7 +26,47 @@ class Sale extends Model
         'customer_id' => 'integer',
         'payment_type_id' => 'integer',
         'user_id' => 'integer',
+        'discount_type' => DiscountTypeEnum::class,
     ];
+
+    /**
+     * @var string[]
+     */
+    protected $appends = [
+        'remaining_amount',
+        'formatted_remaining_amount',
+    ];
+
+    /**
+     * @return float
+     */
+    public function getRemainingAmountAttribute(): float
+    {
+        return $this->total_amount - $this->paid_amount;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormattedRemainingAmountAttribute(): string
+    {
+        return number_format($this->getRemainingAmountAttribute(), 2).' '.Setting::getCurrency();
+    }
+
+    /**
+     * @return string
+     */
+    public static function generateCode(): string
+    {
+        // get all records that are generated today
+        $code = (self::whereDate('created_at', Carbon::today())->max('id') ?? 0) + 1;
+        $code = str_pad($code, 5, '0', STR_PAD_LEFT);
+
+        $date = now()->format('Ymd');
+
+        // INV-2024010100001
+        return "INV-{$date}{$code}";
+    }
 
     /**
      * @return string

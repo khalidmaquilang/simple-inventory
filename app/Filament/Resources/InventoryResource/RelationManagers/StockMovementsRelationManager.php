@@ -6,6 +6,7 @@ use App\Enums\StockMovementEnum;
 use App\Models\StockMovement;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Resources\Components\Tab;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -81,6 +82,21 @@ class StockMovementsRelationManager extends RelationManager
             ->actions([
                 Tables\Actions\ViewAction::make(),
             ]);
+    }
+
+    public function getTabs(): array
+    {
+        return [
+            'all' => Tab::make('All Stock Movements'),
+            'purchase' => Tab::make('Purchase')
+                ->modifyQueryUsing(fn ($query) => $query->where('type', StockMovementEnum::PURCHASE)),
+            'sale' => Tab::make('Sale')
+                ->modifyQueryUsing(fn ($query) => $query->where('type', StockMovementEnum::SALE)),
+            'adjustment' => Tab::make('Adjustment')
+                ->modifyQueryUsing(fn ($query) => $query->where('type', StockMovementEnum::ADJUSTMENT)),
+            'return' => Tab::make('Return')
+                ->modifyQueryUsing(fn ($query) => $query->where('type', StockMovementEnum::RETURN)),
+        ];
     }
 
     /**

@@ -31,7 +31,6 @@ class Product extends Model
         return [
             Select::make('category_id')
                 ->relationship('category', 'name')
-                ->searchable()
                 ->required(),
             TextInput::make('sku')
                 ->label('SKU')
