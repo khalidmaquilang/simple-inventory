@@ -7,6 +7,7 @@ use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class PurchaseOrdersRelationManager extends RelationManager
 {
@@ -28,6 +29,9 @@ class PurchaseOrdersRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('purchase_code')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('order_date')
+                    ->date()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('total_amount')
                     ->formatStateUsing(fn ($state): string => number_format($state, 2)),
                 Tables\Columns\TextColumn::make('remaining_amount')
@@ -35,11 +39,12 @@ class PurchaseOrdersRelationManager extends RelationManager
                         return $record->total_amount - $record->paid_amount;
                     })
                     ->formatStateUsing(fn ($state): string => number_format($state, 2)),
-                Tables\Columns\TextColumn::make('order_date')
-                    ->date()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge(),
+                Tables\Columns\TextColumn::make('user.name'),
+            ])
+            ->filters([
+                DateRangeFilter::make('order_date'),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

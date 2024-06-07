@@ -158,6 +158,9 @@ class PurchaseOrderResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('purchase_code')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('order_date')
+                    ->date()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('supplier.company_name')
                     ->numeric()
                     ->sortable(),
@@ -165,9 +168,6 @@ class PurchaseOrderResource extends Resource
                     ->formatStateUsing(fn ($state): string => number_format($state, 2).' '.$currency),
                 Tables\Columns\TextColumn::make('remaining_amount')
                     ->formatStateUsing(fn ($state): string => number_format($state, 2).' '.$currency),
-                Tables\Columns\TextColumn::make('order_date')
-                    ->date()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->sortable(),
