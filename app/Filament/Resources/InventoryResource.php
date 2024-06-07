@@ -8,6 +8,7 @@ use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\Setting;
 use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -74,6 +75,22 @@ class InventoryResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
+                Tables\Actions\Action::make('Adjust Avg Cost')
+                    ->fillForm(fn ($record): array => [
+                        'average_cost' => $record->average_cost,
+                    ])
+                    ->form([
+                        TextInput::make('average_cost')
+                            ->minValue(0)
+                            ->numeric()
+                            ->required(),
+                    ])
+                    ->color('info')
+                    ->icon('heroicon-m-chart-pie')
+                    ->action(function ($record, array $data) {
+                        $record->average_cost = $data['average_cost'];
+                        $record->save();
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
