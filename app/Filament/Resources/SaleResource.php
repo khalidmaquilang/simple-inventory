@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Enums\DiscountTypeEnum;
+use App\Filament\Exports\SaleExporter;
 use App\Filament\Resources\SaleResource\Pages;
 use App\Models\Customer;
 use App\Models\Product;
@@ -222,6 +223,10 @@ class SaleResource extends Resource
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                Tables\Actions\ExportAction::make()
+                    ->exporter(SaleExporter::class),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

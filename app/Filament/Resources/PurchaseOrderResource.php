@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Exports\PurchaseOrderExporter;
 use App\Filament\Resources\PurchaseOrderResource\Pages;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
@@ -156,7 +157,7 @@ class PurchaseOrderResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('purchase_code')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('supplier.id')
+                Tables\Columns\TextColumn::make('supplier.company_name')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_amount')
@@ -182,6 +183,10 @@ class PurchaseOrderResource extends Resource
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                Tables\Actions\ExportAction::make()
+                    ->exporter(PurchaseOrderExporter::class),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
