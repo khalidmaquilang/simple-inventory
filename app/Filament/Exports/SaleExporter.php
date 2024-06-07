@@ -3,6 +3,7 @@
 namespace App\Filament\Exports;
 
 use App\Models\Sale;
+use Carbon\Carbon;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
@@ -19,7 +20,11 @@ class SaleExporter extends Exporter
     {
         return [
             ExportColumn::make('invoice_number'),
-            ExportColumn::make('sale_date'),
+            ExportColumn::make('sale_date')
+                ->formatStateUsing(fn ($state) => Carbon::parse($state)->format('M d, Y')),
+            ExportColumn::make('pay_until')
+                ->label('Due Date')
+                ->formatStateUsing(fn ($state) => now()->addDays($state)->format('M d, Y')),
             ExportColumn::make('vat'),
             ExportColumn::make('discount'),
             ExportColumn::make('discount_type')

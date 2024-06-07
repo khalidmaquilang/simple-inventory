@@ -20,6 +20,7 @@ return new class extends Migration
             $table->enum('discount_type', \App\Enums\DiscountTypeEnum::toArray());
             $table->decimal('total_amount');
             $table->decimal('paid_amount');
+            $table->unsignedInteger('pay_until');
             $table->text('notes')->nullable();
             $table->foreignId('customer_id');
             $table->foreignId('payment_type_id');
