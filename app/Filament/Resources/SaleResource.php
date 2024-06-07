@@ -12,10 +12,12 @@ use App\Models\Setting;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class SaleResource extends Resource
@@ -33,6 +35,11 @@ class SaleResource extends Resource
         return $form
             ->schema([
                 Forms\Components\DatePicker::make('sale_date')
+                    ->required(),
+                Forms\Components\TextInput::make('pay_until')
+                    ->label('Due in (days)')
+                    ->hint('0 if today')
+                    ->numeric()
                     ->required(),
                 Forms\Components\Select::make('customer_id')
                     ->relationship('customer', 'name')
@@ -197,13 +204,14 @@ class SaleResource extends Resource
                 Tables\Columns\TextColumn::make('sale_date')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('vat')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('pay_until')
+                    ->label('Due Date')
+                    ->formatStateUsing(fn ($state) => now()->addDays($state)->format('M d, Y')),
                 Tables\Columns\TextColumn::make('total_amount')
                     ->formatStateUsing(fn ($state): string => number_format($state, 2).' '.$currency),
-                Tables\Columns\TextColumn::make('paid_amount')
-                    ->formatStateUsing(fn ($state): string => number_format($state, 2).' '.$currency),
+                Tables\Columns\TextColumn::make('formatted_remaining_amount')
+                    ->label('Remaining Amount')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('customer.name')
                     ->numeric()
                     ->sortable(),
@@ -222,7 +230,7 @@ class SaleResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                DateRangeFilter::make('sale_date'),
             ])
             ->headerActions([
                 Tables\Actions\ExportAction::make()
@@ -230,11 +238,42 @@ class SaleResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\Action::make('Download Invoice')
-                    ->icon('heroicon-o-document-arrow-down')
-                    ->color('success')
-                    ->url(fn (Sale $record) => route('sales.generate-invoice', $record))
-                    ->openUrlInNewTab(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('Pay Amount')
+                        ->form([
+                            TextInput::make('paid_amount')
+                                ->hint(function ($record) {
+                                    return 'You need to pay '.$record->formatted_remaining_amount;
+                                })
+                                ->minValue(1)
+                                ->maxValue(function ($record): float {
+                                    return $record->remaining_amount;
+                                })
+                                ->numeric()
+                                ->required()
+                                ->hintAction(
+                                    Forms\Components\Actions\Action::make('pay_in_full')
+                                        ->icon('heroicon-m-arrow-down-tray')
+                                        ->action(function (Forms\Set $set, $state, $record) {
+                                            $set('paid_amount', $record->remaining_amount);
+                                        })
+                                ),
+                        ])
+                        ->color('info')
+                        ->icon('heroicon-m-banknotes')
+                        ->visible(fn ($record) => $record->remaining_amount > 0)
+                        ->action(function ($record) use ($table) {
+                            $data = $table->getLivewire()->getMountedTableAction()->getFormData();
+
+                            $record->paid_amount += $data['paid_amount'];
+                            $record->save();
+                        }),
+                    Tables\Actions\Action::make('Download Invoice')
+                        ->icon('heroicon-o-document-arrow-down')
+                        ->color('success')
+                        ->url(fn (Sale $record) => route('sales.generate-invoice', $record))
+                        ->openUrlInNewTab(),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

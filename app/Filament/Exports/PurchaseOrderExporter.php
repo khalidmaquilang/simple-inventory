@@ -3,6 +3,7 @@
 namespace App\Filament\Exports;
 
 use App\Models\PurchaseOrder;
+use Carbon\Carbon;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
@@ -19,8 +20,10 @@ class PurchaseOrderExporter extends Exporter
     {
         return [
             ExportColumn::make('purchase_code'),
-            ExportColumn::make('order_date'),
-            ExportColumn::make('expected_delivery_date'),
+            ExportColumn::make('order_date')
+                ->formatStateUsing(fn ($state) => Carbon::parse($state)->format('M d, Y')),
+            ExportColumn::make('expected_delivery_date')
+                ->formatStateUsing(fn ($state) => empty($state) ? '' : Carbon::parse($state)->format('M d, Y')),
             ExportColumn::make('status')
                 ->formatStateUsing(fn ($state) => $state->getLabel() ?? ''),
             ExportColumn::make('total_amount'),
