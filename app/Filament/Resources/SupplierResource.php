@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Enums\StatusEnum;
+use App\Filament\Exports\SupplierExporter;
 use App\Filament\Resources\SupplierResource\Pages;
 use App\Filament\Resources\SupplierResource\RelationManagers\PurchaseOrdersRelationManager;
 use App\Models\Supplier;
@@ -69,6 +70,10 @@ class SupplierResource extends Resource
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                Tables\Actions\ExportAction::make()
+                    ->exporter(SupplierExporter::class),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

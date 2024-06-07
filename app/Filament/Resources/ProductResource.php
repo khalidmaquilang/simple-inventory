@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Exports\ProductExporter;
 use App\Filament\Resources\ProductResource\Pages;
 use App\Models\Product;
 use Filament\Forms\Form;
@@ -50,6 +51,10 @@ class ProductResource extends Resource
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                Tables\Actions\ExportAction::make()
+                    ->exporter(ProductExporter::class),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Exports\CustomerExporter;
 use App\Filament\Resources\CustomerResource\Pages;
 use App\Filament\Resources\CustomerResource\RelationManagers\SalesRelationManager;
 use App\Models\Customer;
@@ -52,6 +53,10 @@ class CustomerResource extends Resource
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                Tables\Actions\ExportAction::make()
+                    ->exporter(CustomerExporter::class),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
