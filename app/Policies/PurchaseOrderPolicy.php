@@ -39,7 +39,7 @@ class PurchaseOrderPolicy
      */
     public function update(User $user, PurchaseOrder $purchaseOrder): bool
     {
-        return $user->can('update_purchase::order') && $purchaseOrder->isAvailable();
+        return $user->can('update_purchase::order');
     }
 
     /**

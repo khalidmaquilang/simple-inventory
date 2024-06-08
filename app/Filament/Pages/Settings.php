@@ -85,7 +85,7 @@ class Settings extends Page implements HasForms
 
             $setting = Setting::first();
             if (empty($setting)) {
-                Setting::create($data);
+                Setting::create(array_merge($data, ['company_id' => session('company_id')]));
             } else {
                 $setting->update($data);
             }

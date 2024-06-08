@@ -75,7 +75,7 @@ class TodayOverview extends BaseWidget
             return DB::table($tableName)
                 ->selectRaw('SUM(total_amount - paid_amount) as total_due')
                 ->whereDate($column, $today)
-                ->value('total_due');
+                ->value('total_due') ?? 0;
         });
     }
 
@@ -92,7 +92,7 @@ class TodayOverview extends BaseWidget
             return DB::table($tableName)
                 ->selectRaw('SUM(total_amount) as total_amount')
                 ->whereDate($column, $today)
-                ->value('total_amount');
+                ->value('total_amount') ?? 0;
         });
     }
 

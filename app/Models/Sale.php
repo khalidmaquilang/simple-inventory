@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\DiscountTypeEnum;
+use App\Models\Traits\TenantTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Sale extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, TenantTrait;
 
     /**
      * The attributes that should be cast to native types.

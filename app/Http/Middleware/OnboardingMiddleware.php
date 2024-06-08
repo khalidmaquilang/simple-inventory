@@ -16,11 +16,15 @@ class OnboardingMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if (empty(session('company_id'))) {
+            return $next($request);
+        }
+
         $setting = Setting::first();
         if (! empty($setting)) {
             return $next($request);
         }
 
-        return redirect(route('filament.app.pages.settings'));
+        return redirect(route('filament.app.pages.settings', ['tenant' => session('company_id')]));
     }
 }

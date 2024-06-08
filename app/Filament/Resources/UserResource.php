@@ -38,7 +38,10 @@ class UserResource extends Resource
                     ->required(fn (string $context): bool => $context === 'create')
                     ->maxLength(255),
                 Forms\Components\Select::make('roles')
-                    ->relationship('roles', 'name')
+                    ->relationship(name: 'roles', titleAttribute: 'name')
+                    ->saveRelationshipsUsing(function ($record, $state) {
+                        $record->roles()->syncWithPivotValues($state, [config('permission.column_names.team_foreign_key') => getPermissionsTeamId()]);
+                    })
                     ->multiple()
                     ->preload()
                     ->searchable(),

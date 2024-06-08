@@ -11,18 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('customers', function (Blueprint $table) {
+        Schema::create('companies', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('slug');
+            $table->timestamps();
+        });
+
+        Schema::create('company_user', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->index();
-            $table->string('name');
-            $table->string('email')->nullable();
-            $table->string('phone')->nullable();
-            $table->text('address');
-            $table->enum('status', ['active', 'inactive']);
-            $table->enum('gender', ['male', 'female']);
             $table->foreignId('user_id')->index();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -31,6 +31,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('customers');
+        Schema::dropIfExists('companies');
+        Schema::dropIfExists('company_user');
     }
 };

@@ -71,7 +71,7 @@ class TotalOverview extends BaseWidget
         return cache()->remember('widget-total-due-'.$tableName, 60 * 3, function () use ($tableName) {
             return DB::table($tableName)
                 ->selectRaw('SUM(total_amount - paid_amount) as total_due')
-                ->value('total_due');
+                ->value('total_due') ?? 0;
         });
     }
 
@@ -84,7 +84,7 @@ class TotalOverview extends BaseWidget
         return cache()->remember('widget-total-amount-'.$tableName, 60 * 3, function () use ($tableName) {
             return DB::table($tableName)
                 ->selectRaw('SUM(total_amount) as total_amount')
-                ->value('total_amount');
+                ->value('total_amount') ?? 0;
         });
     }
 
