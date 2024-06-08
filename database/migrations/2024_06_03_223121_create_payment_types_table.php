@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('payment_types', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->index();
             $table->string('name');
             $table->text('description')->nullable();
             $table->softDeletes();

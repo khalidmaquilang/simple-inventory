@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\Setting;
 use Closure;
+use Filament\Facades\Filament;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,11 +17,20 @@ class OnboardingMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // dont block logout
+        if ($request->route()->getName() === 'filament.app.auth.logout') {
+            return $next($request);
+        }
+
+        if (empty(Filament::getTenant()?->id)) {
+            return $next($request);
+        }
+
         $setting = Setting::first();
         if (! empty($setting)) {
             return $next($request);
         }
 
-        return redirect(route('filament.app.pages.settings'));
+        return redirect(route('filament.app.pages.settings', ['tenant' => Filament::getTenant()?->id]));
     }
 }

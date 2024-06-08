@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
 
 class BaseObserver
@@ -13,6 +14,7 @@ class BaseObserver
     {
         if (auth()->check()) {
             $model->user_id = auth()->user()->id;
+            $model->company_id = Filament::getTenant()->id;
         }
     }
 }

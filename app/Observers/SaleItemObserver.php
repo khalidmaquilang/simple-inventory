@@ -4,9 +4,21 @@ namespace App\Observers;
 
 use App\Models\Sale;
 use App\Models\SaleItem;
+use Filament\Facades\Filament;
+use Illuminate\Database\Eloquent\Model;
 
 class SaleItemObserver
 {
+    /**
+     * Handle the Model "creating" event.
+     */
+    public function creating(Model $model): void
+    {
+        if (auth()->check()) {
+            $model->company_id = Filament::getTenant()->id;
+        }
+    }
+
     /**
      * @param  Sale  $sale
      * @return void

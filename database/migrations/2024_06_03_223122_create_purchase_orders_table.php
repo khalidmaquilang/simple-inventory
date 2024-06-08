@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('purchase_orders', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->index();
             $table->string('purchase_code')->unique()->index();
             $table->date('order_date');
             $table->date('expected_delivery_date')->nullable();

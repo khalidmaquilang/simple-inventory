@@ -5,6 +5,7 @@ namespace App\Filament\Resources\PurchaseOrderResource\Widgets;
 use App\Models\PurchaseOrder;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Carbon\Carbon;
+use Filament\Facades\Filament;
 use Illuminate\Support\Facades\DB;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
@@ -74,13 +75,14 @@ class PurchaseOrdersChart extends ApexChartWidget
      */
     protected function getTotalAmountPerDay(): array
     {
-        $purchaseOrders = cache()->remember('purchase_order_widget', now()->addMinutes(5), function () {
+        $purchaseOrders = cache()->remember('purchase_order_widget_'.Filament::getTenant()->id, now()->addMinutes(3), function () {
             return PurchaseOrder::select(
                 DB::raw('DATE_FORMAT(order_date, "%e") as date'),
                 DB::raw('SUM(total_amount) as sum_total_amount')
             )
                 ->whereYear('order_date', Carbon::now()->year)
                 ->whereMonth('order_date', Carbon::now()->month)
+                ->where('company_id', Filament::getTenant()->id)
                 ->groupBy('date')
                 ->orderBy('date')
                 ->get()

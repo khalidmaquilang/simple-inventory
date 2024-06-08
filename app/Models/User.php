@@ -3,16 +3,20 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use BezhanSalleh\FilamentShield\FilamentShield;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
+use Filament\Facades\Filament;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, HasTenants
 {
     use HasFactory, HasPanelShield, HasRoles, Notifiable;
 
@@ -51,23 +55,31 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
-     * @return void
-     */
-    protected static function booted()
-    {
-        if (config('filament-shield.member_user.enabled', false)) {
-            FilamentShield::createRole(name: config('filament-shield.member_user.name'));
-            static::created(fn ($user) => $user->assignRole(config('filament-shield.member_user.name')));
-            static::deleting(fn ($user) => $user->removeRole(config('filament-shield.member_user.name')));
-        }
-    }
-
-    /**
      * @param  Panel  $panel
      * @return bool
      */
     public function canAccessPanel(Panel $panel): bool
     {
         return true;
+    }
+
+    public function companies(): BelongsToMany
+    {
+        return $this->belongsToMany(Company::class);
+    }
+
+    public function company()
+    {
+        return $this->companies()->where('company_id', Filament::getTenant()->id);
+    }
+
+    public function getTenants(Panel $panel): Collection
+    {
+        return $this->companies;
+    }
+
+    public function canAccessTenant(Model $tenant): bool
+    {
+        return $this->companies()->whereKey($tenant)->exists();
     }
 }

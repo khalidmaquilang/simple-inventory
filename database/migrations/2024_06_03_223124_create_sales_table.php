@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->index();
             $table->string('invoice_number');
             $table->date('sale_date');
             $table->double('vat');
