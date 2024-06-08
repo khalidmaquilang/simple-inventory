@@ -17,6 +17,11 @@ class OnboardingMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // dont block logout
+        if ($request->route()->getName() === 'filament.app.auth.logout') {
+            return $next($request);
+        }
+
         if (empty(Filament::getTenant()?->id)) {
             return $next($request);
         }
@@ -26,6 +31,6 @@ class OnboardingMiddleware
             return $next($request);
         }
 
-        return redirect(route('filament.app.pages.settings', ['tenant' => Filament::getTenant()->id]));
+        return redirect(route('filament.app.pages.settings', ['tenant' => Filament::getTenant()?->id]));
     }
 }

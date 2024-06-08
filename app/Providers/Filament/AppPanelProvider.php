@@ -70,7 +70,6 @@ class AppPanelProvider extends PanelProvider
             ->databaseNotifications()
             ->authMiddleware([
                 Authenticate::class,
-                OnboardingMiddleware::class,
             ])
             ->viteTheme('resources/css/filament/app/theme.css')
             ->plugins([
@@ -102,6 +101,7 @@ class AppPanelProvider extends PanelProvider
             ->tenantProfile(EditCompanyProfile::class)
             ->tenantMiddleware([
                 CompaniesPermission::class,
+                OnboardingMiddleware::class,
             ], isPersistent: true);
     }
 }
