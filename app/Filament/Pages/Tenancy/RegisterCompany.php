@@ -12,11 +12,18 @@ use Spatie\Permission\Models\Permission;
 
 class RegisterCompany extends RegisterTenant
 {
+    /**
+     * @return string
+     */
     public static function getLabel(): string
     {
         return 'Register team';
     }
 
+    /**
+     * @param  Form  $form
+     * @return Form
+     */
     public function form(Form $form): Form
     {
         return $form
@@ -29,6 +36,10 @@ class RegisterCompany extends RegisterTenant
             ]);
     }
 
+    /**
+     * @param  array  $data
+     * @return Company
+     */
     protected function handleRegistration(array $data): Company
     {
         $company = Company::create($data);
@@ -40,17 +51,22 @@ class RegisterCompany extends RegisterTenant
         return $company;
     }
 
+    /**
+     * @param  Company  $company
+     * @param $user
+     * @return void
+     */
     protected function createRoles(Company $company, $user)
     {
+        session(['company_id' => $company->id]);
+        setPermissionsTeamId($company->id);
+
         $role = Role::create([
             'name' => config('filament-shield.super_admin.name'),
             'company_id' => $company->id,
         ]);
         $permissions = Permission::all();
         $role->syncPermissions($permissions);
-
-        session(['company_id' => $company->id]);
-        setPermissionsTeamId($company->id);
 
         $user->assignRole($role);
     }

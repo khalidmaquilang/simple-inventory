@@ -40,6 +40,7 @@ class UserResource extends Resource
                     ->required(fn (string $context): bool => $context === 'create')
                     ->maxLength(255),
                 Forms\Components\Select::make('roles')
+                    ->relationship('roles', 'name')
                     ->options(function () {
                         return Role::where('company_id', Filament::getTenant()->id)->pluck('name', 'id')->toArray();
                     })
