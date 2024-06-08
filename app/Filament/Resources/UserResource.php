@@ -64,6 +64,13 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->dateTime()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('roles')
+                    ->formatStateUsing(function ($state) {
+                        $state = '['.$state.']';
+                        $state = collect(json_decode($state));
+
+                        return implode(',', $state->pluck('name')->toArray());
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

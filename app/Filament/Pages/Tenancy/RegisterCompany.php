@@ -4,7 +4,6 @@ namespace App\Filament\Pages\Tenancy;
 
 use App\Models\Company;
 use App\Models\Role;
-use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\RegisterTenant;
@@ -53,7 +52,7 @@ class RegisterCompany extends RegisterTenant
 
     /**
      * @param  Company  $company
-     * @param $user
+     * @param  $user
      * @return void
      */
     protected function createRoles(Company $company, $user)
