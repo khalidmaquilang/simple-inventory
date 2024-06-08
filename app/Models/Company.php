@@ -56,6 +56,14 @@ class Company extends Model implements HasCurrentTenantLabel
     /**
      * @return HasMany
      */
+    public function invites(): HasMany
+    {
+        return $this->hasMany(Invite::class);
+    }
+
+    /**
+     * @return HasMany
+     */
     public function paymentTypes(): HasMany
     {
         return $this->hasMany(PaymentType::class);
