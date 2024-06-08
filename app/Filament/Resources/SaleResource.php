@@ -269,14 +269,16 @@ class SaleResource extends Resource
                     Tables\Actions\Action::make('Download Invoice')
                         ->icon('heroicon-o-document-arrow-down')
                         ->color('success')
-                        ->url(fn (Sale $record) => route('sales.generate-invoice', $record))
+                        ->url(fn (Sale $record) => route('sales.generate-invoice', [
+                            'company' => session('company_id'),
+                            'sale' => $record,
+                        ]))
                         ->openUrlInNewTab(),
                 ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     ExportBulkAction::make(),
-                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

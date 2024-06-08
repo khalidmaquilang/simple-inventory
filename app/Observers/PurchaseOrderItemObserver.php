@@ -5,7 +5,7 @@ namespace App\Observers;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
 
-class BaseObserver
+class PurchaseOrderItemObserver extends BaseObserver
 {
     /**
      * Handle the Model "creating" event.
@@ -13,7 +13,6 @@ class BaseObserver
     public function creating(Model $model): void
     {
         if (auth()->check()) {
-            $model->user_id = auth()->user()->id;
             $model->company_id = Filament::getTenant()->id;
         }
     }

@@ -22,6 +22,22 @@ class Company extends Model implements HasCurrentTenantLabel
     }
 
     /**
+     * @return BelongsToMany
+     */
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function categories(): HasMany
+    {
+        return $this->hasMany(Category::class);
+    }
+
+    /**
      * @return HasMany
      */
     public function customers(): HasMany

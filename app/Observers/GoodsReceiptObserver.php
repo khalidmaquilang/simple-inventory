@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Enums\PurchaseOrderEnum;
 use App\Models\GoodsReceipt;
+use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
 
 class GoodsReceiptObserver extends BaseObserver
@@ -16,6 +17,7 @@ class GoodsReceiptObserver extends BaseObserver
         if (auth()->check()) {
             $model->grn_code = GoodsReceipt::generateCode();
             $model->user_id = auth()->user()->id;
+            $model->company_id = Filament::getTenant()->id;
         }
     }
 

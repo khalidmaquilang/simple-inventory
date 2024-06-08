@@ -5,6 +5,7 @@ namespace App\Filament\Resources\SaleResource\Widgets;
 use App\Models\Sale;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Carbon\Carbon;
+use Filament\Facades\Filament;
 use Illuminate\Support\Facades\DB;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
@@ -74,13 +75,14 @@ class SalesChart extends ApexChartWidget
      */
     protected function getTotalAmountPerDay(): array
     {
-        $salesOrder = cache()->remember('sales_order_widget', now()->addMinutes(5), function () {
+        $salesOrder = cache()->remember('sales_order_widget_'.Filament::getTenant()->id, now()->addMinutes(3), function () {
             return Sale::select(
                 DB::raw('DATE_FORMAT(sale_date, "%e") as date'),
                 DB::raw('SUM(total_amount) as sum_total_amount')
             )
                 ->whereYear('sale_date', Carbon::now()->year)
                 ->whereMonth('sale_date', Carbon::now()->month)
+                ->where('company_id', Filament::getTenant()->id)
                 ->groupBy('date')
                 ->orderBy('date')
                 ->get()

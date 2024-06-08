@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('goods_receipts', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->index();
             $table->string('grn_code')->unique()->index();
             $table->foreignId('purchase_order_id')->index();
             $table->foreignId('user_id')->index();
