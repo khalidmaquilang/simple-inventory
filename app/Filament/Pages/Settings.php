@@ -6,6 +6,7 @@ use App\Http\Middleware\OnboardingMiddleware;
 use App\Models\Currency;
 use App\Models\Setting;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -85,7 +86,7 @@ class Settings extends Page implements HasForms
 
             $setting = Setting::first();
             if (empty($setting)) {
-                Setting::create(array_merge($data, ['company_id' => session('company_id')]));
+                Setting::create(array_merge($data, ['company_id' => Filament::getTenant()->id]));
             } else {
                 $setting->update($data);
             }
