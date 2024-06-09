@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\PurchaseOrderEnum;
 use App\Models\Traits\TenantTrait;
 use Carbon\Carbon;
+use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -51,7 +52,7 @@ class PurchaseOrder extends Model
      */
     public function getFormattedRemainingAmountAttribute(): string
     {
-        return number_format($this->getRemainingAmountAttribute(), 2).' '.Setting::getCurrency();
+        return number_format($this->getRemainingAmountAttribute(), 2).' '.Filament::getTenant()->getCurrency();
     }
 
     /**

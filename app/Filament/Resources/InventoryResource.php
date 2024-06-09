@@ -7,6 +7,7 @@ use App\Filament\Resources\InventoryResource\Pages;
 use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\Setting;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -36,7 +37,7 @@ class InventoryResource extends Resource
                     ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('average_cost')
-                    ->suffix(Setting::getCurrency())
+                    ->suffix(Filament::getTenant()->getCurrency())
                     ->default(0)
                     ->required()
                     ->numeric(),
@@ -45,7 +46,7 @@ class InventoryResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $currency = Setting::getCurrency();
+        $currency = Filament::getTenant()->getCurrency();
 
         return $table
             ->columns([

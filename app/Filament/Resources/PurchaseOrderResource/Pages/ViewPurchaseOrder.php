@@ -4,6 +4,7 @@ namespace App\Filament\Resources\PurchaseOrderResource\Pages;
 
 use App\Filament\Resources\PurchaseOrderResource;
 use App\Models\Setting;
+use Filament\Facades\Filament;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -19,7 +20,7 @@ class ViewPurchaseOrder extends ViewRecord
 
     public function infolist(Infolist $infolist): Infolist
     {
-        $currency = Setting::getCurrency();
+        $currency = Filament::getTenant()->getCurrency();
 
         return $infolist
             ->schema([

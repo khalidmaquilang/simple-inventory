@@ -3,10 +3,16 @@
 namespace App\Filament\Pages\Tenancy;
 
 use App\Models\Company;
+use App\Models\Currency;
 use App\Models\Role;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Pages\Tenancy\RegisterTenant;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
 
 class RegisterCompany extends RegisterTenant
@@ -28,10 +34,26 @@ class RegisterCompany extends RegisterTenant
         return $form
             ->schema([
                 TextInput::make('name')
+                    ->lazy()
+                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
                     ->required(),
                 TextInput::make('slug')
                     ->required()
-                    ->unique(),
+                    ->unique(ignoreRecord: true),
+                TextInput::make('phone')
+                    ->tel()
+                    ->required(),
+                TextInput::make('email')
+                    ->email()
+                    ->required(),
+                Textarea::make('address')
+                    ->required(),
+                FileUpload::make('company_logo')
+                    ->image()
+                    ->maxSize(2048),
+                Select::make('currency')
+                    ->options(Currency::getCurrencyList())
+                    ->required(),
             ]);
     }
 
@@ -41,11 +63,12 @@ class RegisterCompany extends RegisterTenant
      */
     protected function handleRegistration(array $data): Company
     {
-        $company = Company::create($data);
+        $user = auth()->user();
+        $company = Company::create(array_merge($data, ['user_id', $user->id]));
 
-        $company->members()->attach(auth()->user());
+        $company->members()->attach($user);
 
-        $this->createRoles($company, auth()->user());
+        $this->createRoles($company, $user);
 
         return $company;
     }

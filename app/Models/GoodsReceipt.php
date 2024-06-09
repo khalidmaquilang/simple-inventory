@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -48,7 +49,7 @@ class GoodsReceipt extends Model
      */
     public function getFormattedTotalCostAttribute(): string
     {
-        return number_format($this->getTotalCostAttribute(), 2).' '.Setting::getCurrency();
+        return number_format($this->getTotalCostAttribute(), 2).' '.Filament::getTenant()->getCurrency();
     }
 
     /**
@@ -56,7 +57,7 @@ class GoodsReceipt extends Model
      */
     public function getFormattedUnitCostAttribute(): string
     {
-        return number_format($this->unit_cost, 2).' '.Setting::getCurrency();
+        return number_format($this->unit_cost, 2).' '.Filament::getTenant()->getCurrency();
     }
 
     /**

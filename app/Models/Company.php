@@ -14,6 +14,27 @@ class Company extends Model implements HasCurrentTenantLabel
     use HasFactory;
 
     /**
+     * @return string
+     */
+    public function getCurrency(): string
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCompanyLogo(): string
+    {
+        $logo = $this->company_logo;
+        if (empty($logo)) {
+            return '';
+        }
+
+        return storage_path('app/public/'.$logo);
+    }
+
+    /**
      * @return BelongsToMany
      */
     public function members(): BelongsToMany
@@ -99,14 +120,6 @@ class Company extends Model implements HasCurrentTenantLabel
     public function sales(): HasMany
     {
         return $this->hasMany(Sale::class);
-    }
-
-    /**
-     * @return HasOne
-     */
-    public function setting(): HasOne
-    {
-        return $this->hasOne(Setting::class);
     }
 
     /**

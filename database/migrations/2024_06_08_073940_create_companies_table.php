@@ -13,8 +13,14 @@ return new class extends Migration
     {
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->unique();
             $table->string('name');
-            $table->string('slug');
+            $table->string('slug')->unique();
+            $table->string('logo')->nullable();
+            $table->string('phone');
+            $table->string('email');
+            $table->text('address');
+            $table->string('currency');
             $table->timestamps();
         });
 
