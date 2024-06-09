@@ -24,7 +24,7 @@ class Inventory extends Model
      */
     public function getFormattedAverageCostAttribute(): string
     {
-        return number_format($this->average_cost, 2).' '.Setting::getCurrency();
+        return number_format($this->average_cost, 2).' '.$this->company->getCurrency();
     }
 
     /**

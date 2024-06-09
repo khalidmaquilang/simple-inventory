@@ -6,9 +6,9 @@ use App\Filament\Exports\PurchaseOrderExporter;
 use App\Filament\Resources\PurchaseOrderResource\Pages;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
-use App\Models\Setting;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -27,7 +27,7 @@ class PurchaseOrderResource extends Resource
 
     public static function form(Form $form): Form
     {
-        $currency = Setting::getCurrency();
+        $currency = Filament::getTenant()->getCurrency();
 
         return $form
             ->schema([
@@ -152,7 +152,7 @@ class PurchaseOrderResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $currency = Setting::getCurrency();
+        $currency = Filament::getTenant()->getCurrency();
 
         return $table
             ->columns([

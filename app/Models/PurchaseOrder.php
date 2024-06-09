@@ -51,7 +51,7 @@ class PurchaseOrder extends Model
      */
     public function getFormattedRemainingAmountAttribute(): string
     {
-        return number_format($this->getRemainingAmountAttribute(), 2).' '.Setting::getCurrency();
+        return number_format($this->getRemainingAmountAttribute(), 2).' '.$this->company->getCurrency();
     }
 
     /**

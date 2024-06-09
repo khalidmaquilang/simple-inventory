@@ -48,7 +48,7 @@ class GoodsReceipt extends Model
      */
     public function getFormattedTotalCostAttribute(): string
     {
-        return number_format($this->getTotalCostAttribute(), 2).' '.Setting::getCurrency();
+        return number_format($this->getTotalCostAttribute(), 2).' '.$this->company->getCurrency();
     }
 
     /**
@@ -56,7 +56,7 @@ class GoodsReceipt extends Model
      */
     public function getFormattedUnitCostAttribute(): string
     {
-        return number_format($this->unit_cost, 2).' '.Setting::getCurrency();
+        return number_format($this->unit_cost, 2).' '.$this->company->getCurrency();
     }
 
     /**

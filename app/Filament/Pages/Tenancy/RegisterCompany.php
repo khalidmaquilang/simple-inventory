@@ -4,7 +4,7 @@ namespace App\Filament\Pages\Tenancy;
 
 use App\Models\Company;
 use App\Models\Role;
-use Filament\Forms\Components\TextInput;
+use Filament\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\RegisterTenant;
 use Spatie\Permission\Models\Permission;
@@ -26,13 +26,7 @@ class RegisterCompany extends RegisterTenant
     public function form(Form $form): Form
     {
         return $form
-            ->schema([
-                TextInput::make('name')
-                    ->required(),
-                TextInput::make('slug')
-                    ->required()
-                    ->unique(),
-            ]);
+            ->schema(Company::getForm());
     }
 
     /**
@@ -41,11 +35,12 @@ class RegisterCompany extends RegisterTenant
      */
     protected function handleRegistration(array $data): Company
     {
-        $company = Company::create($data);
+        $user = auth()->user();
+        $company = Company::create(array_merge($data, ['user_id' => $user->id]));
 
-        $company->members()->attach(auth()->user());
+        $company->members()->attach($user);
 
-        $this->createRoles($company, auth()->user());
+        $this->createRoles($company, $user);
 
         return $company;
     }
@@ -68,5 +63,15 @@ class RegisterCompany extends RegisterTenant
         $role->syncPermissions($permissions);
 
         $user->assignRole($role);
+    }
+
+    /**
+     * @return Action
+     */
+    public function getRegisterFormAction(): Action
+    {
+        return Action::make('register')
+            ->label('Register Company')
+            ->submit('register');
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Setting;
 use Filament\Facades\Filament;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -97,6 +96,6 @@ class TotalOverview extends BaseWidget
      */
     protected function formatCurrency(float $amount): string
     {
-        return number_format($amount, 2).' '.Setting::getCurrency();
+        return number_format($amount, 2).' '.Filament::getTenant()->getCurrency();
     }
 }

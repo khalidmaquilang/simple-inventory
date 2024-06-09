@@ -8,9 +8,9 @@ use App\Filament\Resources\SaleResource\Pages;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Sale;
-use App\Models\Setting;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -30,7 +30,7 @@ class SaleResource extends Resource
 
     public static function form(Form $form): Form
     {
-        $currency = Setting::getCurrency();
+        $currency = Filament::getTenant()->getCurrency();
 
         return $form
             ->schema([
@@ -195,7 +195,7 @@ class SaleResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $currency = Setting::getCurrency();
+        $currency = Filament::getTenant()->getCurrency();
 
         return $table
             ->columns([
