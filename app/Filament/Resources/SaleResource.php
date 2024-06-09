@@ -6,6 +6,7 @@ use App\Enums\DiscountTypeEnum;
 use App\Filament\Exports\SaleExporter;
 use App\Filament\Resources\SaleResource\Pages;
 use App\Models\Customer;
+use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\Sale;
 use Awcodes\TableRepeater\Components\TableRepeater;
@@ -96,6 +97,15 @@ class SaleResource extends Resource
                             ->required(),
                         Forms\Components\TextInput::make('quantity')
                             ->lazy()
+                            ->minValue(1)
+                            ->maxValue(function (Forms\Get $get): float {
+                                $inventory = Inventory::where('product_id', $get('product_id'))->first();
+                                if (empty($inventory)) {
+                                    return 0;
+                                }
+
+                                return $inventory->quantity_on_hand;
+                            })
                             ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
                                 $cost = $get('unit_cost');
                                 if (empty($cost)) {
@@ -310,7 +320,7 @@ class SaleResource extends Resource
 
         // Calculate subtotal based on the selected products and quantities
         $subtotal = $selectedProducts->reduce(function ($subtotal, $product) {
-            return $subtotal + ($product['unit_cost'] * $product['quantity']);
+            return $subtotal + ((float) $product['unit_cost'] * (float) $product['quantity']);
         }, 0);
 
         // Update the state with the new values
