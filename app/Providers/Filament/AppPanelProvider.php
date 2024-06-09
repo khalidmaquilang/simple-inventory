@@ -97,7 +97,7 @@ class AppPanelProvider extends PanelProvider
                     ->setIcon('heroicon-o-user')
                     ->shouldShowDeleteAccountForm(false),
             ])
-            ->tenant(Company::class)
+            ->tenant(Company::class, slugAttribute: 'slug')
             ->tenantRegistration(RegisterCompany::class)
             ->tenantProfile(EditCompanyProfile::class)
             ->tenantMiddleware([
