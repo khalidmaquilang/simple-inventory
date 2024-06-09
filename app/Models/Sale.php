@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Enums\DiscountTypeEnum;
 use App\Models\Traits\TenantTrait;
 use Carbon\Carbon;
-use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -52,7 +51,7 @@ class Sale extends Model
      */
     public function getFormattedRemainingAmountAttribute(): string
     {
-        return number_format($this->getRemainingAmountAttribute(), 2).' '.Filament::getTenant()->getCurrency();
+        return number_format($this->getRemainingAmountAttribute(), 2).' '.$this->company->getCurrency();
     }
 
     /**

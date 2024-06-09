@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Traits\TenantTrait;
-use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,7 +24,7 @@ class Inventory extends Model
      */
     public function getFormattedAverageCostAttribute(): string
     {
-        return number_format($this->average_cost, 2).' '.Filament::getTenant()->getCurrency();
+        return number_format($this->average_cost, 2).' '.$this->company->getCurrency();
     }
 
     /**

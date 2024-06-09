@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Enums\DiscountTypeEnum;
 use App\Models\Sale;
-use Filament\Facades\Filament;
 use Illuminate\Http\Response;
 use LaravelDaily\Invoices\Classes\Buyer;
 use LaravelDaily\Invoices\Classes\InvoiceItem;
@@ -26,7 +25,7 @@ class SaleService
             ],
         ]);
 
-        $company = Filament::getTenant();
+        $company = $sale->company;
         $seller = new Party([
             'name' => $company->name,
             'custom_fields' => [
