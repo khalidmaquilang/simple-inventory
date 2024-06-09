@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\TenantTrait;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Validation\Rules\Unique;
 
 class Product extends Model
 {
@@ -35,7 +37,12 @@ class Product extends Model
                 ->required(),
             TextInput::make('sku')
                 ->label('SKU')
-                ->unique(ignoreRecord: true)
+                ->unique(ignoreRecord: true, modifyRuleUsing: function (Unique $rule) {
+                    return $rule->where('company_id', Filament::getTenant()->id);
+                })
+                ->validationMessages([
+                    'unique' => 'The SKU has already been taken.',
+                ])
                 ->required()
                 ->maxLength(255),
             TextInput::make('name')
