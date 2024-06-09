@@ -55,15 +55,6 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
         ];
     }
 
-    /**
-     * @param  Panel  $panel
-     * @return bool
-     */
-    public function canAccessPanel(Panel $panel): bool
-    {
-        return true;
-    }
-
     public function companies(): BelongsToMany
     {
         return $this->belongsToMany(Company::class);
@@ -82,5 +73,22 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
     public function canAccessTenant(Model $tenant): bool
     {
         return $this->companies()->whereKey($tenant)->exists();
+    }
+
+    /**
+     * @param  Panel  $panel
+     * @return bool
+     */
+    public function canAccessPanel(Panel $panel): bool
+    {
+        if ($panel->getId() === 'app') {
+            return true;
+        }
+
+        if ($panel->getId() === 'admin' && $this->id === 1) {
+            return true;
+        }
+
+        return false;
     }
 }
