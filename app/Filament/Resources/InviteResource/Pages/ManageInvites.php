@@ -32,7 +32,6 @@ class ManageInvites extends ManageRecords
                             ->danger()
                             ->title('User already exist')
                             ->body('This user is already a member of this company.')
-                            ->persistent()
                             ->send();
 
                         $action->halt();
