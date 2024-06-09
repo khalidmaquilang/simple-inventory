@@ -14,6 +14,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rules\Unique;
 
 class InviteResource extends Resource
 {
@@ -29,7 +30,9 @@ class InviteResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('email')
                     ->email()
-                    ->unique(ignoreRecord: true)
+                    ->unique(ignoreRecord: true, modifyRuleUsing: function (Unique $rule) {
+                        return $rule->where('company_id', Filament::getTenant()->id);
+                    })
                     ->required()
                     ->autofocus()
                     ->autocomplete(false),

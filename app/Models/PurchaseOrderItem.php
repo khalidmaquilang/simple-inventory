@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Traits\TenantTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PurchaseOrderItem extends Model
 {
-    use HasFactory;
+    use HasFactory, TenantTrait;
 
     /**
      * The attributes that should be cast to native types.

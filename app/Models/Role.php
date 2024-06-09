@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Traits\TenantTrait;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Permission\Contracts\Role as RoleContract;
 use Spatie\Permission\Exceptions\RoleAlreadyExists;
 use Spatie\Permission\Guard;
@@ -10,8 +10,6 @@ use Spatie\Permission\PermissionRegistrar;
 
 class Role extends \Spatie\Permission\Models\Role
 {
-    use TenantTrait;
-
     /**
      * @return RoleContract|\Spatie\Permission\Models\Role
      *
@@ -33,5 +31,10 @@ class Role extends \Spatie\Permission\Models\Role
         }
 
         return static::query()->create($attributes);
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
     }
 }
