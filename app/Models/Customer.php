@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\StatusEnum;
 use App\Models\Traits\TenantTrait;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -25,7 +24,6 @@ class Customer extends Model
     protected $casts = [
         'id' => 'integer',
         'user_id' => 'integer',
-        'status' => StatusEnum::class,
     ];
 
     /**
@@ -50,11 +48,7 @@ class Customer extends Model
                 ])
                 ->required(),
             Textarea::make('address')
-                ->required()
                 ->columnSpanFull(),
-            Select::make('status')
-                ->options(StatusEnum::class)
-                ->required(),
         ];
     }
 
