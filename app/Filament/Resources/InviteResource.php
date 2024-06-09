@@ -8,13 +8,12 @@ use App\Models\Invite;
 use App\Models\Role;
 use Filament\Facades\Filament;
 use Filament\Forms;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Notification;
 
 class InviteResource extends Resource
 {
@@ -40,7 +39,8 @@ class InviteResource extends Resource
                     })
                     ->multiple()
                     ->preload()
-                    ->searchable(),
+                    ->searchable()
+                    ->required(),
             ]);
     }
 
@@ -63,12 +63,6 @@ class InviteResource extends Resource
                     ->label('Resend')
                     ->icon('heroicon-o-inbox-stack')
                     ->requiresConfirmation()
-                    ->form([
-                        TextInput::make('email')
-                            ->email()
-                            ->unique()
-                            ->required(),
-                    ])
                     ->action(function ($record) {
                         Mail::to($record->email)->send(new UserInvitationMail($record));
                         Notification::make()
