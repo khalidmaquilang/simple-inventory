@@ -6,7 +6,6 @@ use App\Filament\Exports\PurchaseOrderExporter;
 use App\Filament\Resources\PurchaseOrderResource\Pages;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
-use App\Models\Setting;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use Filament\Facades\Filament;

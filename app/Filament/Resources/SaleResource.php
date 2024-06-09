@@ -8,7 +8,6 @@ use App\Filament\Resources\SaleResource\Pages;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Sale;
-use App\Models\Setting;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use Filament\Facades\Filament;

@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Enums\DiscountTypeEnum;
 use App\Models\Sale;
-use App\Models\Setting;
 use Filament\Facades\Filament;
 use Illuminate\Http\Response;
 use LaravelDaily\Invoices\Classes\Buyer;

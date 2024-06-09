@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\PurchaseOrderResource\RelationManagers;
 
-use App\Models\Setting;
 use Filament\Facades\Filament;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;

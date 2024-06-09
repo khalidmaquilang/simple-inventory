@@ -6,7 +6,6 @@ use App\Filament\Exports\InventoryExporter;
 use App\Filament\Resources\InventoryResource\Pages;
 use App\Models\Inventory;
 use App\Models\Product;
-use App\Models\Setting;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;

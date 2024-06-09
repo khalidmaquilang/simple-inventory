@@ -2,12 +2,17 @@
 
 namespace App\Models;
 
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Set;
 use Filament\Models\Contracts\HasCurrentTenantLabel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Str;
 
 class Company extends Model implements HasCurrentTenantLabel
 {
@@ -26,12 +31,42 @@ class Company extends Model implements HasCurrentTenantLabel
      */
     public function getCompanyLogo(): string
     {
-        $logo = $this->company_logo;
+        $logo = $this->logo;
         if (empty($logo)) {
             return '';
         }
 
         return storage_path('app/public/'.$logo);
+    }
+
+    /**
+     * @return array
+     */
+    public static function getForm(): array
+    {
+        return [
+            TextInput::make('name')
+                ->lazy()
+                ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
+                ->required(),
+            TextInput::make('slug')
+                ->required()
+                ->unique(ignoreRecord: true),
+            TextInput::make('phone')
+                ->tel()
+                ->required(),
+            TextInput::make('email')
+                ->email()
+                ->required(),
+            Textarea::make('address')
+                ->required(),
+            FileUpload::make('logo')
+                ->image()
+                ->maxSize(2048),
+            Select::make('currency')
+                ->options(Currency::getCurrencyList())
+                ->required(),
+        ];
     }
 
     /**

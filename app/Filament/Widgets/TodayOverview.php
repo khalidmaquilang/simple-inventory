@@ -2,7 +2,6 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Setting;
 use Filament\Facades\Filament;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;

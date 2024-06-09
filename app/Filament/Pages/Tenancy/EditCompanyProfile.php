@@ -2,9 +2,10 @@
 
 namespace App\Filament\Pages\Tenancy;
 
-use Filament\Forms\Components\TextInput;
+use App\Models\Company;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\EditTenantProfile;
+use Illuminate\Database\Eloquent\Model;
 
 class EditCompanyProfile extends EditTenantProfile
 {
@@ -16,10 +17,17 @@ class EditCompanyProfile extends EditTenantProfile
     public function form(Form $form): Form
     {
         return $form
-            ->schema([
-                TextInput::make('name'),
-                TextInput::make('slug')
-                    ->unique(ignoreRecord: true),
-            ]);
+            ->schema(Company::getForm());
+    }
+
+    /**
+     * Only the one who created the company can edit
+     *
+     * @param  Model  $tenant
+     * @return bool
+     */
+    public static function canView(Model $tenant): bool
+    {
+        return $tenant->user_id === auth()->id();
     }
 }
