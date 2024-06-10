@@ -16,7 +16,7 @@ class RegisterCompany extends RegisterTenant
      */
     public static function getLabel(): string
     {
-        return 'Register team';
+        return 'Register company';
     }
 
     /**
