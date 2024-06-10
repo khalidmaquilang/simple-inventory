@@ -54,8 +54,8 @@ class InventoryResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('quantity_on_hand')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('formatted_average_cost')
-                    ->label('Average Cost'),
+                Tables\Columns\TextColumn::make('average_cost')
+                    ->money(fn ($record) => $record->company->getCurrency()),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Created By'),
                 Tables\Columns\TextColumn::make('created_at')

@@ -220,9 +220,9 @@ class SaleResource extends Resource
                     ->label('Due Date')
                     ->formatStateUsing(fn ($state) => now()->addDays($state)->format('M d, Y')),
                 Tables\Columns\TextColumn::make('total_amount')
-                    ->formatStateUsing(fn ($state): string => number_format($state, 2).' '.$currency),
-                Tables\Columns\TextColumn::make('formatted_remaining_amount')
-                    ->label('Remaining Amount')
+                    ->money(fn ($record) => $record->company->getCurrency()),
+                Tables\Columns\TextColumn::make('remaining_amount')
+                    ->money(fn ($record) => $record->company->getCurrency())
                     ->sortable(),
                 Tables\Columns\TextColumn::make('customer.name')
                     ->numeric()

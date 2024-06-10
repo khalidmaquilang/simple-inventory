@@ -157,8 +157,6 @@ class PurchaseOrderResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $currency = Filament::getTenant()->getCurrency();
-
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('purchase_code')
@@ -170,9 +168,9 @@ class PurchaseOrderResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_amount')
-                    ->formatStateUsing(fn ($state): string => number_format($state, 2).' '.$currency),
+                    ->money(fn ($record) => $record->company->getCurrency()),
                 Tables\Columns\TextColumn::make('remaining_amount')
-                    ->formatStateUsing(fn ($state): string => number_format($state, 2).' '.$currency),
+                    ->money(fn ($record) => $record->company->getCurrency()),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->sortable(),
