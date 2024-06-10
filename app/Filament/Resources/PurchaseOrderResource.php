@@ -50,6 +50,7 @@ class PurchaseOrderResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('sku')
                             ->readOnly(),
+                        Forms\Components\Hidden::make('unit_cost'),
                         Forms\Components\Hidden::make('name'),
                         Forms\Components\Select::make('product_id')
                             ->relationship('product', 'name')
@@ -58,6 +59,9 @@ class PurchaseOrderResource extends Resource
                                 if (empty($state)) {
                                     $set('sku', '');
                                     $set('name', '');
+                                    $set('quantity', '');
+                                    $set('unit_cost', '');
+                                    $set('formatted_unit_cost', '');
 
                                     return;
                                 }
@@ -66,6 +70,7 @@ class PurchaseOrderResource extends Resource
                                 $set('sku', $product->sku);
                                 $set('name', $product->name);
                                 $set('unit_cost', $product->purchase_price);
+                                $set('formatted_unit_cost', number_format($product->purchase_price, 2));
                             })
                             ->rules([
                                 function ($component) {
@@ -92,7 +97,7 @@ class PurchaseOrderResource extends Resource
                             })
                             ->required()
                             ->numeric(),
-                        Forms\Components\TextInput::make('unit_cost')
+                        Forms\Components\TextInput::make('formatted_unit_cost')
                             ->suffix($currency)
                             ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
                                 $quantity = $get('quantity');
