@@ -106,8 +106,7 @@ class PurchaseOrderResource extends Resource
                                 }
                                 $set('total_cost', number_format($quantity * $state, 2));
                             })
-                            ->disabled()
-                            ->dehydrated(),
+                            ->disabled(),
                         Forms\Components\TextInput::make('total_cost')
                             ->suffix($currency)
                             ->disabled(),
