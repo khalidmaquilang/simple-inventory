@@ -15,6 +15,10 @@ trait TenantTrait
     protected static function booted(): void
     {
         static::addGlobalScope('only_company', function (Builder $builder) {
+            if (empty(Filament::getTenant())) {
+                return;
+            }
+
             $builder->where('company_id', Filament::getTenant()->id);
         });
     }
