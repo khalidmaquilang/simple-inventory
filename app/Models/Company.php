@@ -52,7 +52,10 @@ class Company extends Model implements HasCurrentTenantLabel
                 ->required(),
             TextInput::make('slug')
                 ->required()
-                ->unique(ignoreRecord: true),
+                ->alphaDash()
+                ->prohibitedIf('slug', 'admin')
+                ->unique(ignoreRecord: true)
+                ->mutateStateForValidationUsing(fn (string $state) => strtolower($state)),
             TextInput::make('phone')
                 ->tel()
                 ->required(),
@@ -63,7 +66,7 @@ class Company extends Model implements HasCurrentTenantLabel
                 ->required(),
             FileUpload::make('logo')
                 ->image()
-                ->directory('companies/'.filament()->getTenant()->id)
+                ->directory('companies/'.auth()->user()->id)
                 ->maxSize(2048),
             Select::make('currency')
                 ->options(Currency::getCurrencyList())
