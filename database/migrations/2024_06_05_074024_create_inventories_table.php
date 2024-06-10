@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('inventories', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->index();
             $table->foreignId('user_id')->index();
             $table->foreignId('product_id');
             $table->integer('quantity_on_hand');

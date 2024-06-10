@@ -2,12 +2,11 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Setting;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class OnboardingMiddleware
+class CompanyControllerGuard
 {
     /**
      * Handle an incoming request.
@@ -16,11 +15,10 @@ class OnboardingMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $setting = Setting::first();
-        if (! empty($setting)) {
-            return $next($request);
+        if (! auth()->user()->canAccessTenant($request->company)) {
+            abort(404);
         }
 
-        return redirect(route('filament.app.pages.settings'));
+        return $next($request);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
 use App\Models\Sale;
 use App\Services\SaleService;
 use Illuminate\Http\Response;
@@ -16,7 +17,7 @@ class SaleController extends Controller
      * @param  Sale  $sale
      * @return Response
      */
-    public function generateInvoice(Sale $sale): Response
+    public function generateInvoice(Company $company, Sale $sale): Response
     {
         return $this->saleService->generateInvoice($sale);
     }

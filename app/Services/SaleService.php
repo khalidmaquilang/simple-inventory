@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Enums\DiscountTypeEnum;
 use App\Models\Sale;
-use App\Models\Setting;
 use Illuminate\Http\Response;
 use LaravelDaily\Invoices\Classes\Buyer;
 use LaravelDaily\Invoices\Classes\InvoiceItem;
@@ -26,13 +25,13 @@ class SaleService
             ],
         ]);
 
-        $setting = Setting::first();
+        $company = $sale->company;
         $seller = new Party([
-            'name' => $setting->company_name,
+            'name' => $company->name,
             'custom_fields' => [
-                'email' => $setting->email,
-                'phone' => $setting->phone,
-                'address' => $setting->address,
+                'email' => $company->email,
+                'phone' => $company->phone,
+                'address' => $company->address,
             ],
         ]);
 
@@ -54,10 +53,10 @@ class SaleService
             ->series($sale->invoice_number)
             ->serialNumberFormat('{SERIES}')
             ->addItems($items)
-            ->currencyCode(Setting::getCurrency())
+            ->currencyCode($company->getCurrency())
             ->currencySymbol('')
             ->payUntilDays($sale->pay_until)
-            ->logo(Setting::getCompanyLogo());
+            ->logo($company->getCompanyLogo());
 
         return $invoice->stream();
     }

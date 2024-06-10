@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('stock_movements', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->index();
             $table->foreignId('user_id')->index();
             $table->foreignId('inventory_id')->index();
             $table->foreignId('customer_id')->nullable();

@@ -2,13 +2,16 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Tenancy\EditCompanyProfile;
+use App\Filament\Pages\Tenancy\RegisterCompany;
 use App\Filament\Resources\CustomerResource;
 use App\Filament\Resources\ProductResource;
 use App\Filament\Resources\PurchaseOrderResource\Widgets\PurchaseOrdersChart;
 use App\Filament\Resources\SaleResource\Widgets\SalesChart;
 use App\Filament\Resources\SupplierResource;
 use App\Filament\Widgets\OverlookWidget;
-use App\Http\Middleware\OnboardingMiddleware;
+use App\Http\Middleware\CompaniesPermission;
+use App\Models\Company;
 use Awcodes\Overlook\OverlookPlugin;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
@@ -36,7 +39,10 @@ class AppPanelProvider extends PanelProvider
             ->default()
             ->id('app')
             ->path('/')
+            ->registration()
+            ->passwordReset()
             ->login()
+            ->emailVerification()
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -65,7 +71,6 @@ class AppPanelProvider extends PanelProvider
             ->databaseNotifications()
             ->authMiddleware([
                 Authenticate::class,
-                OnboardingMiddleware::class,
             ])
             ->viteTheme('resources/css/filament/app/theme.css')
             ->plugins([
@@ -91,6 +96,12 @@ class AppPanelProvider extends PanelProvider
                     ->setNavigationLabel('My Profile')
                     ->setIcon('heroicon-o-user')
                     ->shouldShowDeleteAccountForm(false),
-            ]);
+            ])
+            ->tenant(Company::class, slugAttribute: 'slug')
+            ->tenantRegistration(RegisterCompany::class)
+            ->tenantProfile(EditCompanyProfile::class)
+            ->tenantMiddleware([
+                CompaniesPermission::class,
+            ], isPersistent: true);
     }
 }

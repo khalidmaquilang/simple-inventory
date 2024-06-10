@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
+use App\Models\Traits\SerialGenerationTrait;
+use App\Models\Traits\TenantTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GoodsReceipt extends Model
 {
-    use HasFactory;
+    use HasFactory, SerialGenerationTrait, TenantTrait;
 
     /**
      * @var string[]
@@ -25,14 +26,7 @@ class GoodsReceipt extends Model
      */
     public static function generateCode(): string
     {
-        // get all records that are generated today
-        $code = (self::whereDate('created_at', Carbon::today())->max('id') ?? 0) + 1;
-        $code = str_pad($code, 5, '0', STR_PAD_LEFT);
-
-        $date = now()->format('Ymd');
-
-        // PO-2024010100001
-        return "GRN-{$date}{$code}";
+        return self::generateCodeByIdentifier('GRN');
     }
 
     /**
@@ -48,7 +42,7 @@ class GoodsReceipt extends Model
      */
     public function getFormattedTotalCostAttribute(): string
     {
-        return number_format($this->getTotalCostAttribute(), 2).' '.Setting::getCurrency();
+        return number_format($this->getTotalCostAttribute(), 2).' '.$this->company->getCurrency();
     }
 
     /**
@@ -56,7 +50,7 @@ class GoodsReceipt extends Model
      */
     public function getFormattedUnitCostAttribute(): string
     {
-        return number_format($this->unit_cost, 2).' '.Setting::getCurrency();
+        return number_format($this->unit_cost, 2).' '.$this->company->getCurrency();
     }
 
     /**

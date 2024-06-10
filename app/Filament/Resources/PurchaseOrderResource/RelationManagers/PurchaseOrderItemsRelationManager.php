@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\PurchaseOrderResource\RelationManagers;
 
-use App\Models\Setting;
+use Filament\Facades\Filament;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -13,7 +13,7 @@ class PurchaseOrderItemsRelationManager extends RelationManager
 
     public function table(Table $table): Table
     {
-        $currency = Setting::getCurrency();
+        $currency = Filament::getTenant()->getCurrency();
 
         return $table
             ->recordTitleAttribute('id')
@@ -27,7 +27,7 @@ class PurchaseOrderItemsRelationManager extends RelationManager
                     ->formatStateUsing(fn ($state) => number_format($state, 2).' '.$currency),
                 Tables\Columns\TextColumn::make('quantity_received'),
                 Tables\Columns\TextColumn::make('remaining_quantity')
-                    ->getStateUsing(function ($record): float {
+                    ->getStateUsing(function ($record): int {
                         return $record->quantity - $record->quantity_received;
                     }),
             ])

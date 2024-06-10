@@ -6,11 +6,12 @@ use App\Enums\DiscountTypeEnum;
 use App\Filament\Exports\SaleExporter;
 use App\Filament\Resources\SaleResource\Pages;
 use App\Models\Customer;
+use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\Sale;
-use App\Models\Setting;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -26,11 +27,11 @@ class SaleResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 8;
 
     public static function form(Form $form): Form
     {
-        $currency = Setting::getCurrency();
+        $currency = Filament::getTenant()->getCurrency();
 
         return $form
             ->schema([
@@ -96,6 +97,15 @@ class SaleResource extends Resource
                             ->required(),
                         Forms\Components\TextInput::make('quantity')
                             ->lazy()
+                            ->minValue(1)
+                            ->maxValue(function (Forms\Get $get): float {
+                                $inventory = Inventory::where('product_id', $get('product_id'))->first();
+                                if (empty($inventory)) {
+                                    return 0;
+                                }
+
+                                return $inventory->quantity_on_hand;
+                            })
                             ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
                                 $cost = $get('unit_cost');
                                 if (empty($cost)) {
@@ -195,7 +205,7 @@ class SaleResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $currency = Setting::getCurrency();
+        $currency = Filament::getTenant()->getCurrency();
 
         return $table
             ->columns([
@@ -262,23 +272,23 @@ class SaleResource extends Resource
                         ->color('info')
                         ->icon('heroicon-m-banknotes')
                         ->visible(fn ($record) => $record->remaining_amount > 0)
-                        ->action(function ($record) use ($table) {
-                            $data = $table->getLivewire()->getMountedTableAction()->getFormData();
-
+                        ->action(function ($record, array $data) {
                             $record->paid_amount += $data['paid_amount'];
                             $record->save();
                         }),
                     Tables\Actions\Action::make('Download Invoice')
                         ->icon('heroicon-o-document-arrow-down')
                         ->color('success')
-                        ->url(fn (Sale $record) => route('sales.generate-invoice', $record))
+                        ->url(fn (Sale $record) => route('sales.generate-invoice', [
+                            'company' => session('company_id'),
+                            'sale' => $record,
+                        ]))
                         ->openUrlInNewTab(),
                 ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     ExportBulkAction::make(),
-                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -310,7 +320,7 @@ class SaleResource extends Resource
 
         // Calculate subtotal based on the selected products and quantities
         $subtotal = $selectedProducts->reduce(function ($subtotal, $product) {
-            return $subtotal + ($product['unit_cost'] * $product['quantity']);
+            return $subtotal + ((float) $product['unit_cost'] * (float) $product['quantity']);
         }, 0);
 
         // Update the state with the new values

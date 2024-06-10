@@ -14,6 +14,7 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->index();
             $table->foreignIdFor(Category::class)->nullable();
             $table->string('name');
             $table->text('description')->nullable();
