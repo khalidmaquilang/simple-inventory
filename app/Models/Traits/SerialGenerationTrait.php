@@ -20,7 +20,7 @@ trait SerialGenerationTrait
 
         $date = now()->format('Ymd');
 
-        // Identifier-202401010000101
-        return "{$identifier}-{$date}{$code}{$company->id}";
+        // Identifier-12024010100001
+        return "{$identifier}-{$company->id}{$date}{$code}";
     }
 }
