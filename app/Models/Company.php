@@ -62,6 +62,7 @@ class Company extends Model implements HasCurrentTenantLabel
                 ->required(),
             FileUpload::make('logo')
                 ->image()
+                ->directory('companies/'.filament()->getTenant()->id)
                 ->maxSize(2048),
             Select::make('currency')
                 ->options(Currency::getCurrencyList())
