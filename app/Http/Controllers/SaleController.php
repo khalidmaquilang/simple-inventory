@@ -19,6 +19,10 @@ class SaleController extends Controller
      */
     public function generateInvoice(Company $company, Sale $sale): Response
     {
+        if ($company->id !== $sale->company_id) {
+            abort(404);
+        }
+
         return $this->saleService->generateInvoice($sale);
     }
 }
