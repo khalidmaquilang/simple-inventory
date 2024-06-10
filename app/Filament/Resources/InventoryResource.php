@@ -45,10 +45,11 @@ class InventoryResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $currency = Filament::getTenant()->getCurrency();
-
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('product.sku')
+                    ->label('SKU')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('product.name')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('quantity_on_hand')
