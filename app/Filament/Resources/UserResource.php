@@ -98,7 +98,7 @@ class UserResource extends Resource implements HasShieldPermissions
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('Kick User')
-                    ->authorize('kick')
+                    ->authorize('kick_user')
                     ->color('danger')
                     ->icon('heroicon-m-user-minus')
                     ->requiresConfirmation()
@@ -110,7 +110,8 @@ class UserResource extends Resource implements HasShieldPermissions
                             ->success()
                             ->title('The user has been removed from the company.')
                             ->send();
-                    }),
+                    })
+                    ->hidden(fn ($record) => $record->id === auth()->id()),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
