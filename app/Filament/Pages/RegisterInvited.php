@@ -5,16 +5,19 @@ namespace App\Filament\Pages;
 use App\Models\Invite;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Events\Auth\Registered;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\RegistrationResponse;
+use Filament\Notifications\Auth\VerifyEmail;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
 use Illuminate\Auth\EloquentUserProvider;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\SessionGuard;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Livewire\Attributes\Url;
@@ -145,9 +148,11 @@ class RegisterInvited extends SimplePage
         $data = $this->form->getState();
         $user = $this->getUserModel()::create($data);
 
-        $this->invite->delete();
-
         event(new Registered($user));
+
+        $this->sendEmailVerificationNotification($user);
+
+        $this->invite->delete();
 
         $company->members()->attach($user);
         Filament::auth()->login($user);
@@ -158,6 +163,32 @@ class RegisterInvited extends SimplePage
         session()->regenerate();
 
         return app(RegistrationResponse::class);
+    }
+
+    /**
+     * @param  Model  $user
+     * @return void
+     */
+    protected function sendEmailVerificationNotification(Model $user): void
+    {
+        if (! $user instanceof MustVerifyEmail) {
+            return;
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            return;
+        }
+
+        if (! method_exists($user, 'notify')) {
+            $userClass = $user::class;
+
+            throw new \Exception("Model [{$userClass}] does not have a [notify()] method.");
+        }
+
+        $notification = new VerifyEmail();
+        $notification->url = Filament::getVerifyEmailUrl($user);
+
+        $user->notify($notification);
     }
 
     /**
