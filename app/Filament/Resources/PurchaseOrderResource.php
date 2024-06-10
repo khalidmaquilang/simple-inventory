@@ -148,7 +148,7 @@ class PurchaseOrderResource extends Resource
                                 Forms\Components\Actions\Action::make('pay_full')
                                     ->label('Pay in full')
                                     ->color('success')
-                                    ->action(fn ($set, $get) => $set('paid_amount', $get('total_amount'))),
+                                    ->action(fn ($set, $get) => $set('paid_amount', str_replace(',', '', $get('total_amount')))),
                             ]),
                         ]),
                     ]),
