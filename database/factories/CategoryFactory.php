@@ -20,9 +20,9 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
+            'company_id' => 1,
             'name' => $this->faker->name(),
             'description' => $this->faker->text(),
-            'status' => $this->faker->randomElement(['active', 'inactive']),
         ];
     }
 }
