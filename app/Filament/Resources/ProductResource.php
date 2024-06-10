@@ -35,10 +35,10 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('purchase_price')
-                    ->numeric()
+                    ->money(fn ($record) => $record->company->getCurrency())
                     ->sortable(),
                 Tables\Columns\TextColumn::make('selling_price')
-                    ->numeric()
+                    ->money(fn ($record) => $record->company->getCurrency())
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
