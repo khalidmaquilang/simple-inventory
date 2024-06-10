@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Tenancy\EditCompanyProfile;
 use App\Filament\Pages\Tenancy\RegisterCompany;
+use App\Filament\Providers\BillingProvider;
 use App\Filament\Resources\CustomerResource;
 use App\Filament\Resources\ProductResource;
 use App\Filament\Resources\PurchaseOrderResource\Widgets\PurchaseOrdersChart;
@@ -12,6 +13,7 @@ use App\Filament\Resources\SupplierResource;
 use App\Filament\Widgets\OverlookWidget;
 use App\Http\Middleware\CompaniesPermission;
 use App\Models\Company;
+use App\Providers\CustomBillingProvider;
 use Awcodes\Overlook\OverlookPlugin;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
@@ -102,6 +104,8 @@ class AppPanelProvider extends PanelProvider
             ->tenantProfile(EditCompanyProfile::class)
             ->tenantMiddleware([
                 CompaniesPermission::class,
-            ], isPersistent: true);
+            ], isPersistent: true)
+            ->tenantBillingProvider(new CustomBillingProvider())
+            ->requiresTenantSubscription();
     }
 }
