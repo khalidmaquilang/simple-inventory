@@ -64,6 +64,7 @@ class SaleResource extends Resource
                         Forms\Components\TextInput::make('sku')
                             ->readOnly(),
                         Forms\Components\Hidden::make('name'),
+                        Forms\Components\Hidden::make('unit_cost'),
                         Forms\Components\Select::make('product_id')
                             ->relationship('product', 'name')
                             ->lazy()
@@ -72,6 +73,8 @@ class SaleResource extends Resource
                                     $set('sku', '');
                                     $set('name', '');
                                     $set('unit_cost', '');
+                                    $set('formatted_unit_cost', '');
+                                    $set('quantity', '');
 
                                     return;
                                 }
@@ -80,6 +83,7 @@ class SaleResource extends Resource
                                 $set('sku', $product->sku);
                                 $set('name', $product->name);
                                 $set('unit_cost', $product->selling_price);
+                                $set('formatted_unit_cost', number_format($product->selling_price, 2));
                             })
                             ->rules([
                                 function ($component) {
@@ -115,7 +119,7 @@ class SaleResource extends Resource
                             })
                             ->required()
                             ->numeric(),
-                        Forms\Components\TextInput::make('unit_cost')
+                        Forms\Components\TextInput::make('formatted_unit_cost')
                             ->lazy()
                             ->suffix($currency)
                             ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
@@ -125,8 +129,7 @@ class SaleResource extends Resource
                                 }
                                 $set('total_cost', number_format($quantity * $state, 2));
                             })
-                            ->disabled()
-                            ->dehydrated(),
+                            ->disabled(),
                         Forms\Components\TextInput::make('total_cost')
                             ->suffix($currency)
                             ->disabled(),
@@ -175,12 +178,11 @@ class SaleResource extends Resource
                                 ->grouped(),
                         ])
                             ->columns(2),
-                        Forms\Components\TextInput::make('total_amount')
+                        Forms\Components\Hidden::make('total_amount'),
+                        Forms\Components\TextInput::make('formatted_total_amount')
+                            ->label('Total amount')
                             ->suffix($currency)
-                            ->minValue(0)
-                            ->disabled()
-                            ->dehydrated()
-                            ->numeric(),
+                            ->disabled(),
                         Forms\Components\Select::make('payment_type_id')
                             ->relationship('paymentType', 'name')
                             ->required(),
@@ -195,7 +197,7 @@ class SaleResource extends Resource
                                 Forms\Components\Actions\Action::make('pay_full')
                                     ->label('Pay in full')
                                     ->color('success')
-                                    ->action(fn ($set, $get) => $set('paid_amount', $get('total_amount')))
+                                    ->action(fn ($set, $get) => $set('paid_amount', str_replace(',', '', $get('total_amount'))))
                                     ->visible(fn ($operation) => $operation === 'create'),
                             ]),
                         ]),
@@ -218,9 +220,9 @@ class SaleResource extends Resource
                     ->label('Due Date')
                     ->formatStateUsing(fn ($state) => now()->addDays($state)->format('M d, Y')),
                 Tables\Columns\TextColumn::make('total_amount')
-                    ->formatStateUsing(fn ($state): string => number_format($state, 2).' '.$currency),
-                Tables\Columns\TextColumn::make('formatted_remaining_amount')
-                    ->label('Remaining Amount')
+                    ->money(fn ($record) => $record->company->getCurrency()),
+                Tables\Columns\TextColumn::make('remaining_amount')
+                    ->money(fn ($record) => $record->company->getCurrency())
                     ->sortable(),
                 Tables\Columns\TextColumn::make('customer.name')
                     ->numeric()
@@ -335,9 +337,9 @@ class SaleResource extends Resource
      */
     public static function updateTotalAmount(Forms\Get $get, Forms\Set $set): void
     {
-        $subTotal = $get('sub_total');
+        $subTotal = (float) str_replace(',', '', $get('sub_total'));
         $vatField = $get('vat');
-        $discount = $get('discount');
+        $discount = (float) str_replace(',', '', $get('discount'));
         $discountType = $get('discount_type');
 
         if (empty($subTotal) || empty($vatField)) {
@@ -350,7 +352,8 @@ class SaleResource extends Resource
 
         $vat = $subTotal * ($vatField / 100);
 
-        $set('total_amount', number_format($subTotal + $vat, 2));
+        $set('formatted_total_amount', number_format($subTotal + $vat, 2));
+        $set('total_amount', $subTotal + $vat);
     }
 
     /**

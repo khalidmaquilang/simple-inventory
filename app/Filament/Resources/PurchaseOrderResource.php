@@ -50,6 +50,7 @@ class PurchaseOrderResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('sku')
                             ->readOnly(),
+                        Forms\Components\Hidden::make('unit_cost'),
                         Forms\Components\Hidden::make('name'),
                         Forms\Components\Select::make('product_id')
                             ->relationship('product', 'name')
@@ -58,6 +59,9 @@ class PurchaseOrderResource extends Resource
                                 if (empty($state)) {
                                     $set('sku', '');
                                     $set('name', '');
+                                    $set('quantity', '');
+                                    $set('unit_cost', '');
+                                    $set('formatted_unit_cost', '');
 
                                     return;
                                 }
@@ -66,6 +70,7 @@ class PurchaseOrderResource extends Resource
                                 $set('sku', $product->sku);
                                 $set('name', $product->name);
                                 $set('unit_cost', $product->purchase_price);
+                                $set('formatted_unit_cost', number_format($product->purchase_price, 2));
                             })
                             ->rules([
                                 function ($component) {
@@ -92,7 +97,7 @@ class PurchaseOrderResource extends Resource
                             })
                             ->required()
                             ->numeric(),
-                        Forms\Components\TextInput::make('unit_cost')
+                        Forms\Components\TextInput::make('formatted_unit_cost')
                             ->suffix($currency)
                             ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
                                 $quantity = $get('quantity');
@@ -143,7 +148,7 @@ class PurchaseOrderResource extends Resource
                                 Forms\Components\Actions\Action::make('pay_full')
                                     ->label('Pay in full')
                                     ->color('success')
-                                    ->action(fn ($set, $get) => $set('paid_amount', $get('total_amount'))),
+                                    ->action(fn ($set, $get) => $set('paid_amount', str_replace(',', '', $get('total_amount')))),
                             ]),
                         ]),
                     ]),
@@ -152,8 +157,6 @@ class PurchaseOrderResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $currency = Filament::getTenant()->getCurrency();
-
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('purchase_code')
@@ -165,9 +168,9 @@ class PurchaseOrderResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_amount')
-                    ->formatStateUsing(fn ($state): string => number_format($state, 2).' '.$currency),
+                    ->money(fn ($record) => $record->company->getCurrency()),
                 Tables\Columns\TextColumn::make('remaining_amount')
-                    ->formatStateUsing(fn ($state): string => number_format($state, 2).' '.$currency),
+                    ->money(fn ($record) => $record->company->getCurrency()),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->sortable(),

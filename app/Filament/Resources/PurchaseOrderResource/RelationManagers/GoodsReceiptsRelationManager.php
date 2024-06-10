@@ -61,10 +61,10 @@ class GoodsReceiptsRelationManager extends RelationManager
                     ->searchable(),
                 Tables\Columns\TextColumn::make('product.name'),
                 Tables\Columns\TextColumn::make('quantity'),
-                Tables\Columns\TextColumn::make('formatted_unit_cost')
-                    ->label('Unit cost'),
-                Tables\Columns\TextColumn::make('formatted_total_cost')
-                    ->label('Total cost'),
+                Tables\Columns\TextColumn::make('unit_cost')
+                    ->money(fn ($record) => $record->company->getCurrency()),
+                Tables\Columns\TextColumn::make('total_cost')
+                    ->money(fn ($record) => $record->company->getCurrency()),
                 Tables\Columns\TextColumn::make('received_date')
                     ->date(),
                 Tables\Columns\TextColumn::make('user.name')

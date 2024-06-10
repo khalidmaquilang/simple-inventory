@@ -20,8 +20,10 @@ class SalesRelationManager extends RelationManager
                     ->searchable(),
                 Tables\Columns\TextColumn::make('sale_date')
                     ->date(),
-                Tables\Columns\TextColumn::make('total_amount'),
-                Tables\Columns\TextColumn::make('paid_amount'),
+                Tables\Columns\TextColumn::make('total_amount')
+                    ->money($this->getOwnerRecord()->company->getCurrency()),
+                Tables\Columns\TextColumn::make('paid_amount')
+                    ->money($this->getOwnerRecord()->company->getCurrency()),
                 Tables\Columns\TextColumn::make('paymentType.name'),
             ])
             ->filters([
