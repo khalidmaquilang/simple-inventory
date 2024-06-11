@@ -31,25 +31,36 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * @param  string|array  $permissions
+     * @param  string  $panelName
      * @return User
      */
-    public function login(string|array $permissions): User
+    public function login(string|array $permissions, string $panelName = 'app'): User
     {
         $user = User::factory()->create();
         $this->actingAs($user);
 
         $this->setupCompany($user);
         $this->setupPermission($permissions);
+        $this->setupRole($user, $permissions);
 
+        Filament::setCurrentPanel(Filament::getPanel($panelName));
+
+        return $user;
+    }
+
+    /**
+     * @param  User  $user
+     * @param  $permissions
+     * @return void
+     */
+    protected function setupRole(User $user, $permissions): void
+    {
         $role = Role::create([
             'name' => Str::random(5),
             'company_id' => $this->company->id,
         ]);
         $role->syncPermissions($permissions);
-
         $user->assignRole($role);
-
-        return $user;
     }
 
     /**
