@@ -20,7 +20,7 @@ class EditCategoryTest extends TestCase
         $this->login(['update_category', 'view_any_category']);
 
         $this->get(CategoryResource::getUrl('edit', [
-            'record' => Category::factory()->create()
+            'record' => Category::factory()->create(),
         ]))
             ->assertSuccessful();
     }
@@ -32,7 +32,9 @@ class EditCategoryTest extends TestCase
     {
         $this->login(['edit_something']);
 
-        $this->get(CategoryResource::getUrl('edit'))
+        $this->get(CategoryResource::getUrl('edit', [
+            'record' => Category::factory()->create(),
+        ]))
             ->assertForbidden();
     }
 
@@ -43,13 +45,15 @@ class EditCategoryTest extends TestCase
     {
         $this->login(['update_category', 'view_any_category']);
 
-        Livewire::test(CategoryResource\Pages\CreateCategory::class)
+        Livewire::test(CategoryResource\Pages\EditCategory::class, [
+            'record' => Category::factory()->create()->getRouteKey(),
+        ])
             ->fillForm([
                 'category_id' => null,
                 'name' => 'name',
                 'description' => 'description',
             ])
-            ->call('edit')
+            ->call('save')
             ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas('categories', [
@@ -66,7 +70,9 @@ class EditCategoryTest extends TestCase
     {
         $this->login(['edit_something']);
 
-        Livewire::test(CategoryResource\Pages\CreateCategory::class)
+        Livewire::test(CategoryResource\Pages\EditCategory::class, [
+            'record' => Category::factory()->create()->getRouteKey(),
+        ])
             ->assertForbidden();
     }
 }
