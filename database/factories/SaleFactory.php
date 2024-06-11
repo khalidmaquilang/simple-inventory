@@ -23,6 +23,7 @@ class SaleFactory extends Factory
     public function definition(): array
     {
         return [
+            'company_id' => 1,
             'invoice_number' => $this->faker->word(),
             'sale_date' => $this->faker->date(),
             'vat' => $this->faker->randomFloat(0, 0, 9999999999.),
@@ -31,6 +32,9 @@ class SaleFactory extends Factory
             'customer_id' => Customer::factory(),
             'payment_type_id' => PaymentType::factory(),
             'user_id' => User::factory(),
+            'discount' => $this->faker->randomFloat(0, 0, 1000.),
+            'discount_type' => 'fixed',
+            'pay_until' => 1,
         ];
     }
 }

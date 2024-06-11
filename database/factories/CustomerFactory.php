@@ -25,7 +25,6 @@ class CustomerFactory extends Factory
             'email' => $this->faker->safeEmail(),
             'phone' => $this->faker->phoneNumber(),
             'address' => $this->faker->text(),
-            'status' => $this->faker->randomElement(['active', 'inactive']),
             'gender' => $this->faker->randomElement(['male', 'female']),
             'user_id' => User::factory(),
         ];
