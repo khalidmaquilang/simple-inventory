@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\Invite;
+use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Events\Auth\Registered;
@@ -38,11 +39,18 @@ class RegisterInvited extends SimplePage
     public ?array $data = [];
 
     /**
-     * @return void
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|void
      */
-    public function mount(): void
+    public function mount()
     {
         $this->invite = Invite::where('code', $this->token)->firstOrFail();
+
+        $user = User::where('email', $this->invite->email)->first();
+        if (! empty($user)) {
+            $this->connectUserToCompany($user);
+
+            return redirect('/');
+        }
 
         $this->form->fill([
             'email' => $this->invite->email,
@@ -142,9 +150,6 @@ class RegisterInvited extends SimplePage
 
     public function register(): ?RegistrationResponse
     {
-        $company = $this->invite->company;
-
-        $roles = $this->invite->roles;
         $data = $this->form->getState();
         $user = $this->getUserModel()::create($data);
 
@@ -152,17 +157,27 @@ class RegisterInvited extends SimplePage
 
         $this->sendEmailVerificationNotification($user);
 
+        $this->connectUserToCompany($user);
+
+        return app(RegistrationResponse::class);
+    }
+
+    /**
+     * @param  User  $user
+     * @return void
+     */
+    protected function connectUserToCompany(User $user): void
+    {
         $this->invite->delete();
 
+        $company = $this->invite->company;
         $company->members()->attach($user);
+
         Filament::auth()->login($user);
         setPermissionsTeamId($company->id);
 
+        $roles = $this->invite->roles;
         $user->syncRoles($roles);
-
-        session()->regenerate();
-
-        return app(RegistrationResponse::class);
     }
 
     /**
