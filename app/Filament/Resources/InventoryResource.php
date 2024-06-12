@@ -76,7 +76,9 @@ class InventoryResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\Action::make('Adjust Avg Cost')
+                Tables\Actions\Action::make('adjust_avg_cost')
+                    ->label('Adjust Avg Cost')
+                    ->authorize('update', Inventory::class)
                     ->fillForm(fn ($record): array => [
                         'average_cost' => $record->average_cost,
                     ])
