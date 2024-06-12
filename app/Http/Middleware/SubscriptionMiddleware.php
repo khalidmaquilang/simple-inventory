@@ -2,8 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use Filament\Facades\Filament;
-
 class SubscriptionMiddleware
 {
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SubscriptionStatusEnum;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -179,10 +180,91 @@ class Company extends Model implements HasCurrentTenantLabel
     }
 
     /**
+     * @return HasMany
+     */
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    /**
      * @return string
      */
     public function getCurrentTenantLabel(): string
     {
         return 'Active Company';
+    }
+
+    /**
+     * @return Model|null
+     */
+    public function getActiveSubscription(): ?Model
+    {
+        return $this
+            ->subscriptions()
+            ->where('status', SubscriptionStatusEnum::ACTIVE)
+            ->first();
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasReachedMaxUsers(): bool
+    {
+        $max = 1;
+        $subscription = $this->getActiveSubscription();
+        if (! empty($subscription)) {
+            $max = $subscription->plan->max_users;
+        }
+
+        return $this->members()->count() >= $max;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasReachedMaxRoles(): bool
+    {
+        $max = 0;
+        $subscription = $this->getActiveSubscription();
+        if (! empty($subscription)) {
+            $max = $subscription->plan->max_roles;
+        }
+
+        return $this->roles()->count() >= $max;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasReachedMaxPurchaseOrders(): bool
+    {
+        $max = 10;
+        $subscription = $this->getActiveSubscription();
+        if (! empty($subscription)) {
+            $max = $subscription->plan->max_monthly_purchase_order;
+        }
+
+        $count = $this->purchaseOrders()
+            ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->count();
+
+        return $count >= $max;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasReachedMaxSales(): bool
+    {
+        $max = 10;
+        $subscription = $this->getActiveSubscription();
+        if (! empty($subscription)) {
+            $max = $subscription->plan->max_monthly_sale_order;
+        }
+
+        $count = $this->sales()
+            ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->count();
+
+        return $count >= $max;
     }
 }

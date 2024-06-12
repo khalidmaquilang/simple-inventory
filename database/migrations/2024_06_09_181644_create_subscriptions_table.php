@@ -18,6 +18,7 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date')->nullable();
             $table->enum('status', ['active', 'trialing', 'canceled', 'past_due', 'unpaid'])->nullable();
+            $table->integer('extra_users')->default(0);
             $table->timestamps();
         });
     }

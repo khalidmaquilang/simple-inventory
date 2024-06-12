@@ -31,7 +31,7 @@ class PurchaseOrderPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_purchase::order');
+        return $user->can('create_purchase::order') && ! filament()->getTenant()->hasReachedMaxPurchaseOrders();
     }
 
     /**

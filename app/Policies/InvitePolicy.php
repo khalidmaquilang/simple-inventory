@@ -31,7 +31,7 @@ class InvitePolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_invite');
+        return $user->can('create_invite') && ! filament()->getTenant()->hasReachedMaxUsers();
     }
 
     /**

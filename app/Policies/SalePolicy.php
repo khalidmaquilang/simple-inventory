@@ -31,7 +31,7 @@ class SalePolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_sale');
+        return $user->can('create_sale') && ! filament()->getTenant()->hasReachedMaxSales();
     }
 
     /**
