@@ -22,4 +22,4 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
 Route::get('invite-user/register', RegisterInvited::class)
     ->name('register.user-invite')
-    ->middleware(['signed', 'guest']);
+    ->middleware(['signed']);
