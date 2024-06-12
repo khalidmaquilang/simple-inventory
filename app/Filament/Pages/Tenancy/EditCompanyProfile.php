@@ -38,7 +38,8 @@ class EditCompanyProfile extends EditTenantProfile
                             ->date()
                             ->getStateUsing(fn ($record) => $record->getActiveSubscription()->end_date),
                         Actions::make([
-                            Action::make('changeSubscriptionPlan'),
+                            Action::make('changeSubscriptionPlan')
+                                ->action(fn () => redirect()->route('filament.app.pages.subscriptions', filament()->getTenant())),
                         ]),
                     ]),
             ]);

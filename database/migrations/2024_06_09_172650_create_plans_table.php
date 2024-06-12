@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('max_roles')->default(1);
             $table->integer('max_monthly_purchase_order')->default(10);
             $table->integer('max_monthly_sale_order')->default(10);
+            $table->enum('type', ['standard', 'custom'])->default('standard');
             $table->timestamps();
         });
     }

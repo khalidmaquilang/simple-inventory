@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\BillingCycleEnum;
+use App\Enums\PlanTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,5 +19,6 @@ class Plan extends Model
     protected $casts = [
         'features' => 'array',
         'billing_cycle' => BillingCycleEnum::class,
+        'type' => PlanTypeEnum::class,
     ];
 }
