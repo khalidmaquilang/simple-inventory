@@ -5,7 +5,6 @@ namespace App\Filament\Resources\InviteResource\Pages;
 use App\Filament\Resources\InviteResource;
 use App\Mail\UserInvitationMail;
 use App\Models\Invite;
-use App\Models\User;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ManageRecords;
@@ -26,7 +25,7 @@ class ManageInvites extends ManageRecords
                     return $data;
                 })
                 ->before(function (Actions\CreateAction $action, array $data) {
-                    $user = User::where('email', $data['email'])->first();
+                    $user = filament()->getTenant()->members()->where('email', $data['email'])->first();
                     if ($user) {
                         Notification::make()
                             ->danger()
