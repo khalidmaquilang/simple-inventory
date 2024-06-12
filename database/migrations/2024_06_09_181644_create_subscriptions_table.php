@@ -17,8 +17,9 @@ return new class extends Migration
             $table->foreignId('plan_id')->index();
             $table->date('start_date');
             $table->date('end_date')->nullable();
-            $table->enum('status', ['active', 'trialing', 'canceled', 'past_due', 'unpaid'])->nullable();
+            $table->enum('status', ['active', 'trialing', 'canceled', 'past_due', 'unpaid']);
             $table->integer('extra_users')->default(0);
+            $table->decimal('total_amount');
             $table->timestamps();
         });
     }

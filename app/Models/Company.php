@@ -196,6 +196,14 @@ class Company extends Model implements HasCurrentTenantLabel
     }
 
     /**
+     * @return bool
+     */
+    public function isSuperCompany(): bool
+    {
+        return $this->id === 1;
+    }
+
+    /**
      * @return Model|null
      */
     public function getActiveSubscription(): ?Model
@@ -217,6 +225,10 @@ class Company extends Model implements HasCurrentTenantLabel
             $max = $subscription->plan->max_users;
         }
 
+        if ($max === 0) {
+            return false;
+        }
+
         return $this->members()->count() >= $max;
     }
 
@@ -231,6 +243,10 @@ class Company extends Model implements HasCurrentTenantLabel
             $max = $subscription->plan->max_roles;
         }
 
+        if ($max === 0) {
+            return false;
+        }
+
         return $this->roles()->count() >= $max;
     }
 
@@ -243,6 +259,10 @@ class Company extends Model implements HasCurrentTenantLabel
         $subscription = $this->getActiveSubscription();
         if (! empty($subscription)) {
             $max = $subscription->plan->max_monthly_purchase_order;
+        }
+
+        if ($max === 0) {
+            return false;
         }
 
         $count = $this->purchaseOrders()
@@ -260,6 +280,10 @@ class Company extends Model implements HasCurrentTenantLabel
         $subscription = $this->getActiveSubscription();
         if (! empty($subscription)) {
             $max = $subscription->plan->max_monthly_sale_order;
+        }
+
+        if ($max === 0) {
+            return false;
         }
 
         $count = $this->sales()

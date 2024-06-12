@@ -85,6 +85,7 @@ class RegisterCompany extends RegisterTenant
             'start_date' => now(),
             'end_date' => now()->addCentury(),
             'status' => SubscriptionStatusEnum::ACTIVE,
+            'total_amount' => $plan->price,
         ]);
     }
 

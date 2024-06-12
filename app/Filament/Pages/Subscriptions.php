@@ -23,7 +23,7 @@ class Subscriptions extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(Plan::query())
+            ->query(Plan::query()->standard())
             ->columns([
                 Stack::make([
                     TextColumn::make('name')

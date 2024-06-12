@@ -52,7 +52,14 @@ class AppPanelProvider extends PanelProvider
                     ->label('Admin')
                     ->url('/admin')
                     ->icon('heroicon-o-cog-6-tooth')
-                    ->visible(fn () => auth()->id() === 1),
+                    ->visible(function () {
+                        $company = filament()->getTenant();
+                        if (empty($company)) {
+                            return false;
+                        }
+
+                        return $company->isSuperCompany();
+                    }),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

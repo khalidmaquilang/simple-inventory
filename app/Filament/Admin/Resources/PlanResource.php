@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Enums\BillingCycleEnum;
+use App\Enums\PlanTypeEnum;
 use App\Filament\Admin\Resources\PlanResource\Pages;
 use App\Models\Plan;
 use Filament\Forms;
@@ -28,6 +29,9 @@ class PlanResource extends Resource
                     ->required()
                     ->numeric()
                     ->prefix('₱'),
+                Forms\Components\Select::make('type')
+                    ->options(PlanTypeEnum::class)
+                    ->required(),
                 Forms\Components\Select::make('billing_cycle')
                     ->options(BillingCycleEnum::class)
                     ->required(),
@@ -49,6 +53,8 @@ class PlanResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('price')
                     ->money('PHP')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('type')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('billing_cycle')
                     ->searchable(),

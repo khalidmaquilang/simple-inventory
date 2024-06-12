@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Enums\BillingCycleEnum;
+use App\Enums\PlanTypeEnum;
 use App\Models\Plan;
 use Database\Seeders\Traits\DisableForeignKeys;
 use Database\Seeders\Traits\TruncateTable;
@@ -106,6 +107,19 @@ class DatabaseSeeder extends Seeder
                 'max_roles' => 0,
                 'max_monthly_purchase_order' => 0,
                 'max_monthly_sale_order' => 0,
+            ],
+            [
+                'name' => 'Super Admin',
+                'price' => 0,
+                'billing_cycle' => BillingCycleEnum::YEARLY,
+                'features' => [
+                    'Unlimited All',
+                ],
+                'max_users' => 0,
+                'max_roles' => 0,
+                'max_monthly_purchase_order' => 0,
+                'max_monthly_sale_order' => 0,
+                'type' => PlanTypeEnum::CUSTOM,
             ],
         ];
 

@@ -40,6 +40,7 @@ class SubscriptionRepository extends BaseRepository
             'end_date' => $data['end_date'],
             'status' => $data['status'],
             'extra_users' => $data['extra_users'],
+            'total_amount' => $data['total_amount'],
         ]);
     }
 }

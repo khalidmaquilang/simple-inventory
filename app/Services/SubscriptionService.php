@@ -29,6 +29,7 @@ class SubscriptionService
                 'end_date' => $data['end_date'],
                 'status' => $data['status'],
                 'extra_users' => $data['extra_users'] ?? 0,
+                'total_amount' => $data['total_amount'],
             ]);
         } catch (\Exception $exception) {
             Log::error('There was something wrong while storing subscription.', [
