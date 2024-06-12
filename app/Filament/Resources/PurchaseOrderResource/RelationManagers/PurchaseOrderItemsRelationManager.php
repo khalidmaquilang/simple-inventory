@@ -24,12 +24,13 @@ class PurchaseOrderItemsRelationManager extends RelationManager
                     ->label('Product Name'),
                 Tables\Columns\TextColumn::make('quantity'),
                 Tables\Columns\TextColumn::make('unit_cost')
-                    ->formatStateUsing(fn ($state) => number_format($state, 2).' '.$currency),
+                    ->money(fn ($record) => $record->company->getCurrency()),
                 Tables\Columns\TextColumn::make('quantity_received'),
                 Tables\Columns\TextColumn::make('remaining_quantity')
                     ->getStateUsing(function ($record): int {
                         return $record->quantity - $record->quantity_received;
-                    }),
+                    })
+                    ->money(fn ($record) => $record->company->getCurrency()),
             ])
             ->filters([
                 //
