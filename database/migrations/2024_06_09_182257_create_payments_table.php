@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
+            $table->string('invoice_number');
             $table->foreignId('subscription_id')->index();
             $table->decimal('amount');
             $table->date('payment_date');

@@ -59,6 +59,14 @@ class Subscription extends Model
     /**
      * @return BelongsTo
      */
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    /**
+     * @return BelongsTo
+     */
     public function plan(): BelongsTo
     {
         return $this->belongsTo(Plan::class);

@@ -88,7 +88,6 @@ class SaleResource extends Resource
                             ->rules([
                                 function ($component) {
                                     return function (string $attribute, $value, \Closure $fail) use ($component) {
-
                                         $items = $component->getContainer()->getParentComponent()->getState();
                                         $selected = array_column($items, $component->getName());
 
@@ -197,7 +196,12 @@ class SaleResource extends Resource
                                 Forms\Components\Actions\Action::make('pay_full')
                                     ->label('Pay in full')
                                     ->color('success')
-                                    ->action(fn ($set, $get) => $set('paid_amount', str_replace(',', '', $get('total_amount'))))
+                                    ->action(
+                                        fn ($set, $get) => $set(
+                                            'paid_amount',
+                                            str_replace(',', '', $get('total_amount'))
+                                        )
+                                    )
                                     ->visible(fn ($operation) => $operation === 'create'),
                             ]),
                         ]),
@@ -281,7 +285,7 @@ class SaleResource extends Resource
                     Tables\Actions\Action::make('Download Invoice')
                         ->icon('heroicon-o-document-arrow-down')
                         ->color('success')
-                        ->url(fn (Sale $record) => route('sales.generate-invoice', [
+                        ->url(fn (Sale $record) => route('app.sales.generate-invoice', [
                             'company' => session('company_id'),
                             'sale' => $record,
                         ]))
@@ -318,7 +322,9 @@ class SaleResource extends Resource
     public static function updateSubTotal(Forms\Get $get, Forms\Set $set): void
     {
         // Retrieve all selected products and remove empty rows
-        $selectedProducts = collect($get('saleItems'))->filter(fn ($item) => ! empty($item['product_id']) && ! empty($item['quantity']));
+        $selectedProducts = collect($get('saleItems'))->filter(
+            fn ($item) => ! empty($item['product_id']) && ! empty($item['quantity'])
+        );
 
         // Calculate subtotal based on the selected products and quantities
         $subtotal = $selectedProducts->reduce(function ($subtotal, $product) {

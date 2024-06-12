@@ -60,10 +60,15 @@ class SubscriptionsRelationManager extends RelationManager
                     ->mutateFormDataUsing(function (array $data) {
                         return $this->beforeCreate($data);
                     })
+                    ->after(fn ($record) => $this->afterCreate($record))
                     ->createAnother(false),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\Action::make('view')
+                    ->icon('heroicon-m-eye')
+                    ->color('gray')
+                    ->label('View')
+                    ->action(fn ($record) => redirect(route('filament.admin.resources.subscriptions.view', [$record]))),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('renew')
                     ->icon('heroicon-m-banknotes')
@@ -74,7 +79,6 @@ class SubscriptionsRelationManager extends RelationManager
                     ->form($this->renewForm())
                     ->action(function (array $data, $record): void {
                         $record->updateEndDate();
-
                         $record->payments()->create($data);
                     })
                     ->successNotificationTitle('Payment Updated')
@@ -117,7 +121,9 @@ class SubscriptionsRelationManager extends RelationManager
         }
 
         $data['status'] = SubscriptionStatusEnum::ACTIVE;
-        $data['end_date'] = $plan->billing_cycle === BillingCycleEnum::MONTHLY ? (new Carbon($data['start_date']))->addMonth() : (new Carbon($data['start_date']))->addYear();
+        $data['end_date'] = $plan->billing_cycle === BillingCycleEnum::MONTHLY ? (new Carbon(
+            $data['start_date']
+        ))->addMonth() : (new Carbon($data['start_date']))->addYear();
         $data['total_amount'] = $plan->price + ($data['extra_users'] * 100); //100php per user
 
         $subscription = $this->ownerRecord->getActiveSubscription();
@@ -126,6 +132,20 @@ class SubscriptionsRelationManager extends RelationManager
         }
 
         return $data;
+    }
+
+    /**
+     * @param  $record
+     * @return void
+     */
+    protected function afterCreate($record): void
+    {
+        $record->payments()->create([
+            'payment_date' => now(),
+            'amount' => $record->total_amount,
+            'payment_method' => 'system',
+            'status' => PaymentStatusEnum::SUCCESS,
+        ]);
     }
 
     /**
