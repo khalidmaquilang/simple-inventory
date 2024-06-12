@@ -2,17 +2,19 @@
 
 namespace Database\Factories;
 
-use App\Models\PaymentType;
+use App\Models\Inventory;
+use App\Models\Product;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class PaymentTypeFactory extends Factory
+class InventoryFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = PaymentType::class;
+    protected $model = Inventory::class;
 
     /**
      * Define the model's default state.
@@ -21,8 +23,10 @@ class PaymentTypeFactory extends Factory
     {
         return [
             'company_id' => 1,
-            'name' => $this->faker->name(),
-            'description' => $this->faker->text(),
+            'user_id' => User::factory()->create()->id,
+            'product_id' => Product::factory()->create()->id,
+            'quantity_on_hand' => 1,
+            'average_cost' => 1,
         ];
     }
 }
