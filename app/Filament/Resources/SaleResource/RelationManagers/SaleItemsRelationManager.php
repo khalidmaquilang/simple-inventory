@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\PurchaseOrderResource\RelationManagers;
+namespace App\Filament\Resources\SaleResource\RelationManagers;
 
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class PurchaseOrderItemsRelationManager extends RelationManager
+class SaleItemsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'purchaseOrderItems';
+    protected static string $relationship = 'saleItems';
 
     public function table(Table $table): Table
     {
@@ -22,14 +22,11 @@ class PurchaseOrderItemsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('quantity'),
                 Tables\Columns\TextColumn::make('unit_cost')
                     ->money(fn ($record) => $record->company->getCurrency()),
-                Tables\Columns\TextColumn::make('quantity_received'),
-                Tables\Columns\TextColumn::make('remaining_quantity')
-                    ->getStateUsing(function ($record): int {
-                        return $record->quantity - $record->quantity_received;
-                    }),
-            ])
-            ->filters([
-                //
+                Tables\Columns\TextColumn::make('total_amount')
+                    ->getStateUsing(function ($record): float {
+                        return $record->quantity * $record->unit_cost;
+                    })
+                    ->money(filament()->getTenant()->getCurrency()),
             ]);
     }
 }

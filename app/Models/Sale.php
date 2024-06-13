@@ -36,6 +36,7 @@ class Sale extends Model
     protected $appends = [
         'remaining_amount',
         'formatted_remaining_amount',
+        'formatted_discount',
     ];
 
     /**
@@ -52,6 +53,18 @@ class Sale extends Model
     public function getFormattedRemainingAmountAttribute(): string
     {
         return number_format($this->getRemainingAmountAttribute(), 2).' '.$this->company->getCurrency();
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormattedDiscountAttribute(): string
+    {
+        if ($this->discount_type === DiscountTypeEnum::FIXED) {
+            return number_format($this->discount, 2).' '.$this->company->getCurrency();
+        }
+
+        return $this->discount.'%';
     }
 
     /**

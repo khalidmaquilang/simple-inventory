@@ -211,8 +211,6 @@ class SaleResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $currency = Filament::getTenant()->getCurrency();
-
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('invoice_number')
@@ -311,6 +309,7 @@ class SaleResource extends Resource
         return [
             'index' => Pages\ListSales::route('/'),
             'create' => Pages\CreateSale::route('/create'),
+            'view' => Pages\ViewSales::route('/{record}'),
         ];
     }
 
