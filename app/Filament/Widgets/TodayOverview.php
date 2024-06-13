@@ -68,13 +68,12 @@ class TodayOverview extends BaseWidget
      */
     protected function getTotalDue($tableName): string
     {
-        $today = now()->toDateString();
         $column = $tableName === 'sales' ? 'sale_date' : 'order_date';
 
-        return cache()->remember('widget-today-total-due-'.$tableName.'-'.Filament::getTenant()->id, 60 * 3, function () use ($tableName, $column, $today) {
+        return cache()->remember('widget-today-total-due-'.$tableName.'-'.Filament::getTenant()->id, 60 * 3, function () use ($tableName, $column) {
             return DB::table($tableName)
                 ->selectRaw('SUM(total_amount - paid_amount) as total_due')
-                ->whereDate($column, $today)
+                ->whereBetween($column, [now()->startOfDay(), now()->endOfDay()])
                 ->where('company_id', Filament::getTenant()->id)
                 ->value('total_due') ?? 0;
         });
@@ -86,13 +85,12 @@ class TodayOverview extends BaseWidget
      */
     protected function getTotalAmount($tableName): string
     {
-        $today = now()->toDateString();
         $column = $tableName === 'sales' ? 'sale_date' : 'order_date';
 
-        return cache()->remember('widget-today-total-amount-'.$tableName.'-'.Filament::getTenant()->id, 60 * 3, function () use ($tableName, $today, $column) {
+        return cache()->remember('widget-today-total-amount-'.$tableName.'-'.Filament::getTenant()->id, 60 * 3, function () use ($tableName, $column) {
             return DB::table($tableName)
                 ->selectRaw('SUM(total_amount) as total_amount')
-                ->whereDate($column, $today)
+                ->whereBetween($column, [now()->startOfDay(), now()->endOfDay()])
                 ->where('company_id', Filament::getTenant()->id)
                 ->value('total_amount') ?? 0;
         });
