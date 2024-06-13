@@ -117,6 +117,10 @@ class AppPanelProvider extends PanelProvider
             ->tenantProfile(EditCompanyProfile::class)
             ->tenantMiddleware([
                 CompaniesPermission::class,
-            ], isPersistent: true);
+            ], isPersistent: true)
+            ->renderHook(
+                'panels::head.start',
+                fn () => view('analyticsTag'),
+            );
     }
 }
