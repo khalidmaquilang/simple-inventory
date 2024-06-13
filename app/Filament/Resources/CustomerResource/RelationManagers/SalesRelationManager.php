@@ -33,7 +33,7 @@ class SalesRelationManager extends RelationManager
                 Tables\Actions\Action::make('Download Invoice')
                     ->icon('heroicon-o-document-arrow-down')
                     ->color('success')
-                    ->url(fn (Sale $record) => route('sales.generate-invoice', [
+                    ->url(fn (Sale $record) => route('app.sales.generate-invoice', [
                         'company' => session('company_id'),
                         'sale' => $record,
                     ]))

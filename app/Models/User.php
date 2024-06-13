@@ -85,10 +85,23 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
             return true;
         }
 
-        if ($panel->getId() === 'admin' && $this->id === 1) {
-            return true;
+        if ($panel->getId() === 'admin') {
+            return $this->belongsToSuperCompany();
         }
 
         return false;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function belongsToSuperCompany(): bool
+    {
+        $company = $this->companies()->where('company_id', 1)->first();
+        if (empty($company)) {
+            return false;
+        }
+
+        return true;
     }
 }
