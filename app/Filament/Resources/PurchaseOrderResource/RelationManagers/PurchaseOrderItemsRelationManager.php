@@ -29,8 +29,7 @@ class PurchaseOrderItemsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('remaining_quantity')
                     ->getStateUsing(function ($record): int {
                         return $record->quantity - $record->quantity_received;
-                    })
-                    ->money(fn ($record) => $record->company->getCurrency()),
+                    }),
             ])
             ->filters([
                 //
