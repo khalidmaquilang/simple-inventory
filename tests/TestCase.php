@@ -34,7 +34,7 @@ abstract class TestCase extends BaseTestCase
      * @param  string  $panelName
      * @return User
      */
-    public function login(string|array $permissions, string $panelName = 'app'): User
+    public function login(string|array $permissions = [], string $panelName = 'app'): User
     {
         $user = User::factory()->create();
         $this->actingAs($user);

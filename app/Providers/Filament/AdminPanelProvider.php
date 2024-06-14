@@ -62,6 +62,9 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 'panels::head.start',
                 fn () => view('analyticsTag'),
-            );
+            )
+            ->plugins([
+                \Mvenghaus\FilamentScheduleMonitor\FilamentPlugin::make(),
+            ]);
     }
 }
