@@ -69,3 +69,11 @@ docker run --rm \
 - Run ``./vendor/bin/sail artisan shield:generate --all --option=permissions``
 - Run ``./vendor/bin/sail npm run dev``
 - Open ``localhost`` on your browser
+
+## Deploying Prod
+
+- `composer install --prefer-dist --no-dev -o`
+- `php artisan migrate`
+- `php artisan optimize`
+- `php artisan icon:cache`
+- `php artisan filament:clear-cached-components`
