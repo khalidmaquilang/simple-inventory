@@ -26,7 +26,7 @@ class SubscriptionService
                 'company_id' => $data['company_id'],
                 'plan_id' => $data['plan_id'],
                 'start_date' => $data['start_date'],
-                'end_date' => $data['end_date'],
+                'end_date' => $data['end_date'] ?? null,
                 'status' => $data['status'],
                 'extra_users' => $data['extra_users'] ?? 0,
                 'total_amount' => $data['total_amount'],
@@ -48,5 +48,13 @@ class SubscriptionService
     public function getFreemiumSubscription()
     {
         return $this->subscriptionRepository->getFreemiumSubscription();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getExpiredSubscriptions()
+    {
+        return $this->subscriptionRepository->getExpiredSubscriptions();
     }
 }
