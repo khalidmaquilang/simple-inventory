@@ -52,6 +52,7 @@ class Company extends Model implements HasCurrentTenantLabel
                 ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
                 ->required(),
             TextInput::make('slug')
+                ->prefix(config('app.url').'/')
                 ->required()
                 ->alphaDash()
                 ->prohibitedIf('slug', 'admin')
