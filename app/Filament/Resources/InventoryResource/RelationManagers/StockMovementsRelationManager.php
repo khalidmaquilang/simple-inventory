@@ -89,7 +89,8 @@ class StockMovementsRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-            ]);
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 
     public function getTabs(): array
@@ -114,7 +115,9 @@ class StockMovementsRelationManager extends RelationManager
     {
         $company = filament()->getTenant();
 
-        return $company->hasReachedMaxPurchaseOrders() && $company->hasReachedMaxSales();
+        return $company->hasReachedMaxPurchaseOrders()
+            && $company->hasReachedMaxSales()
+            && $company->hasReachedMaxGoodsIssues();
     }
 
     /**

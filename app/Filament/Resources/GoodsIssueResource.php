@@ -62,7 +62,9 @@ class GoodsIssueResource extends Resource
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('sale.invoice_number')
-                    ->sortable(),
+                    ->label('Invoice Number')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('gin_code')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('user.name')
@@ -89,6 +91,9 @@ class GoodsIssueResource extends Resource
             ])
             ->filters([
                 //
+            ])
+            ->actions([
+                Tables\Actions\ViewAction::make(),
             ]);
     }
 

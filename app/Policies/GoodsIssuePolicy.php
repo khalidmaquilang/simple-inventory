@@ -31,7 +31,7 @@ class GoodsIssuePolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_goods::issue');
+        return $user->can('create_goods::issue') && ! filament()->getTenant()->hasReachedMaxGoodsIssues();
     }
 
     /**

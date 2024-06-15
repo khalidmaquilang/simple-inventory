@@ -31,7 +31,7 @@ class RolePolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_shield::role');
+        return $user->can('create_shield::role') && ! filament()->getTenant()->hasReachedMaxRoles();
     }
 
     /**
