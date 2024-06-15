@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\GoodsIssueTypeEnum;
 use App\Filament\Resources\GoodsIssueResource\Pages;
+use App\Models\Customer;
 use App\Models\GoodsIssue;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -37,6 +38,19 @@ class GoodsIssueResource extends Resource
                     ->minValue(0),
                 Forms\Components\Textarea::make('notes')
                     ->columnSpanFull(),
+                Forms\Components\Fieldset::make('From/To')
+                    ->schema([
+                        Forms\Components\Select::make('customer_id')
+                            ->createOptionForm(Customer::getForm())
+                            ->searchable()
+                            ->hint('Optional')
+                            ->relationship('customer', 'name')
+                            ->nullable(),
+                        Forms\Components\Select::make('supplier_id')
+                            ->hint('Optional')
+                            ->relationship('supplier', 'company_name')
+                            ->nullable(),
+                    ]),
             ]);
     }
 

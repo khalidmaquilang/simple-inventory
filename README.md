@@ -25,7 +25,7 @@ DB_PASSWORD=password
 - Run ``composer install``
 - Run ``npm install``
 - Run ``php artisan key:generate``
-- Run ``php artisan migrate``
+- Run ``php artisan migrate --seed``
 - Run ``php artisan shield:generate --all --option=permissions``
 - Run ``php artisan serve``
 - Run ``npm run dev`` (another window)

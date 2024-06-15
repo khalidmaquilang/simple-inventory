@@ -119,6 +119,14 @@ class Company extends Model implements HasCurrentTenantLabel
     /**
      * @return HasMany
      */
+    public function goodsIssues(): HasMany
+    {
+        return $this->hasMany(GoodsIssue::class);
+    }
+
+    /**
+     * @return HasMany
+     */
     public function inventories(): HasMany
     {
         return $this->hasMany(Inventory::class);
@@ -245,6 +253,14 @@ class Company extends Model implements HasCurrentTenantLabel
     public function hasReachedMaxSales(): bool
     {
         return $this->hasReachedMaxMonthly('sales', 'max_monthly_sale_order', 10);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasReachedMaxGoodsIssues(): bool
+    {
+        return $this->hasReachedMaxMonthly('goodsIssues', 'max_monthly_goods_issue', 10);
     }
 
     /**

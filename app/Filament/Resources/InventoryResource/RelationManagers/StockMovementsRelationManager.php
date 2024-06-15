@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\InventoryResource\RelationManagers;
 
 use App\Enums\StockMovementEnum;
+use App\Models\Customer;
 use App\Models\StockMovement;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -36,6 +37,8 @@ class StockMovementsRelationManager extends RelationManager
                 Forms\Components\Fieldset::make('From/To')
                     ->schema([
                         Forms\Components\Select::make('customer_id')
+                            ->createOptionForm(Customer::getForm())
+                            ->searchable()
                             ->hint('Optional')
                             ->relationship('customer', 'name')
                             ->nullable(),
