@@ -27,13 +27,20 @@ class SaleItemObserver
     {
         $sale = $saleItem->sale;
 
-        event(new \App\Events\SaleCreated(
-            productId: $saleItem->product_id,
-            quantity: $saleItem->quantity,
-            unitCost: $saleItem->unit_cost,
-            userId: $sale->user_id,
-            customerId: $sale->customer_id,
-            referenceNumber: $sale->invoice_number,
-        ));
+        event(
+            new \App\Events\SaleCreated(
+                companyId: $sale->company_id,
+                saleId: $sale->id,
+                saleDate: $sale->sale_date,
+                productId: $saleItem->product_id,
+                sku: $saleItem->sku,
+                name: $saleItem->name,
+                quantity: $saleItem->quantity,
+                unitCost: $saleItem->unit_cost,
+                userId: $sale->user_id,
+                customerId: $sale->customer_id,
+                referenceNumber: $sale->invoice_number,
+            )
+        );
     }
 }

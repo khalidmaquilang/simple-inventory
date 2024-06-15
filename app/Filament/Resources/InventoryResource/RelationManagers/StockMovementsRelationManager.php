@@ -77,7 +77,12 @@ class StockMovementsRelationManager extends RelationManager
 
                         return $data;
                     })
-                    ->after(fn (StockMovement $stockMovement, $livewire) => $this->updateInventoryOnHand($stockMovement, $livewire)),
+                    ->after(
+                        fn (StockMovement $stockMovement, $livewire) => $this->updateInventoryOnHand(
+                            $stockMovement,
+                            $livewire
+                        )
+                    ),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -104,7 +109,9 @@ class StockMovementsRelationManager extends RelationManager
      */
     public function isReadOnly(): bool
     {
-        return false;
+        $company = filament()->getTenant();
+
+        return $company->hasReachedMaxPurchaseOrders() && $company->hasReachedMaxSales();
     }
 
     /**

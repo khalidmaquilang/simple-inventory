@@ -51,6 +51,8 @@ class DatabaseSeeder extends Seeder
             'invites',
             'plans',
             'subscriptions',
+            'payments',
+            'goods_issues',
         ]);
 
         $plans = [
