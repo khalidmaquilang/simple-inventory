@@ -43,17 +43,6 @@ class CreateGoodsIssueTest extends TestCase
     /**
      * @return void
      */
-    //    public function test_cant_access_create_goods_issue_with_wrong_permission(): void
-    //    {
-    //        $this->login(['create_something']);
-    //
-    //        $this->get(GoodsIssueResource::getUrl('create'))
-    //            ->assertForbidden();
-    //    }
-
-    /**
-     * @return void
-     */
     public function test_can_create_goods_issue(): void
     {
         $user = $this->login(['create_goods::issue', 'view_any_goods::issue']);
