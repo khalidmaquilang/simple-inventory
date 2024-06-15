@@ -46,4 +46,13 @@ class CreateScheduleMonitorTables extends Migration
             $table->timestamps();
         });
     }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('monitored_scheduled_tasks');
+        Schema::dropIfExists('monitored_scheduled_task_log_items');
+    }
 }

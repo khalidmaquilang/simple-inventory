@@ -6,6 +6,6 @@ echo "Running database migrations..."
 ./vendor/bin/sail artisan migrate:refresh
 
 echo "Generating Shield permissions..."
-./vendor/bin/sail artisan shield:generate --all --option=permissions
+./vendor/bin/sail artisan shield:generate --all --option=permissions --page=Subscriptions,"My Profile"
 
 echo "Database migrations and Shield permissions generation complete!"

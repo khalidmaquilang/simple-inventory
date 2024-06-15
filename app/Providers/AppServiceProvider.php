@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Listeners\StockMovementSubscriber;
 use App\Models\Customer;
+use App\Models\GoodsIssue;
 use App\Models\GoodsReceipt;
 use App\Models\Inventory;
 use App\Models\Payment;
@@ -14,6 +15,7 @@ use App\Models\SaleItem;
 use App\Models\StockMovement;
 use App\Models\Supplier;
 use App\Observers\CustomerObserver;
+use App\Observers\GoodsIssueObserver;
 use App\Observers\GoodsReceiptObserver;
 use App\Observers\InventoryObserver;
 use App\Observers\PaymentObserver;
@@ -56,6 +58,7 @@ class AppServiceProvider extends ServiceProvider
         StockMovement::observe(StockMovementObserver::class);
         GoodsReceipt::observe(GoodsReceiptObserver::class);
         Payment::observe(PaymentObserver::class);
+        GoodsIssue::observe(GoodsIssueObserver::class);
 
         Event::subscribe(StockMovementSubscriber::class);
     }

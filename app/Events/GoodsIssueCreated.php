@@ -2,13 +2,13 @@
 
 namespace App\Events;
 
-use App\Enums\StockMovementEnum;
+use App\Enums\GoodsIssueTypeEnum;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class GoodsReceiptCreated
+class GoodsIssueCreated
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -18,11 +18,11 @@ class GoodsReceiptCreated
     public function __construct(
         public int $productId,
         public int $quantity,
-        public float $unitCost,
         public int $userId,
+        public GoodsIssueTypeEnum $type,
+        public ?string $customerId = null,
         public ?string $supplierId = null,
         public string $referenceNumber = '',
-        public StockMovementEnum $type = StockMovementEnum::PURCHASE,
     ) {
         //
     }

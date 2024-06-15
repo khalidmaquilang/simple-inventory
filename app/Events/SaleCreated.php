@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Enums\StockMovementEnum;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -15,12 +16,18 @@ class SaleCreated
      * Create a new event instance.
      */
     public function __construct(
+        public int $companyId,
+        public int $saleId,
+        public $saleDate,
         public int $productId,
+        public string $sku,
+        public string $name,
         public int $quantity,
         public float $unitCost,
         public int $userId,
         public ?string $customerId = null,
         public string $referenceNumber = '',
+        public StockMovementEnum $type = StockMovementEnum::SALE,
     ) {
         //
     }

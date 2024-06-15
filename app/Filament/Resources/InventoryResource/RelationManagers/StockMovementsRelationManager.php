@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\InventoryResource\RelationManagers;
 
 use App\Enums\StockMovementEnum;
+use App\Models\Customer;
 use App\Models\StockMovement;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -36,6 +37,8 @@ class StockMovementsRelationManager extends RelationManager
                 Forms\Components\Fieldset::make('From/To')
                     ->schema([
                         Forms\Components\Select::make('customer_id')
+                            ->createOptionForm(Customer::getForm())
+                            ->searchable()
                             ->hint('Optional')
                             ->relationship('customer', 'name')
                             ->nullable(),
@@ -77,11 +80,17 @@ class StockMovementsRelationManager extends RelationManager
 
                         return $data;
                     })
-                    ->after(fn (StockMovement $stockMovement, $livewire) => $this->updateInventoryOnHand($stockMovement, $livewire)),
+                    ->after(
+                        fn (StockMovement $stockMovement, $livewire) => $this->updateInventoryOnHand(
+                            $stockMovement,
+                            $livewire
+                        )
+                    ),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-            ]);
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 
     public function getTabs(): array
@@ -104,7 +113,11 @@ class StockMovementsRelationManager extends RelationManager
      */
     public function isReadOnly(): bool
     {
-        return false;
+        $company = filament()->getTenant();
+
+        return $company->hasReachedMaxPurchaseOrders()
+            && $company->hasReachedMaxSales()
+            && $company->hasReachedMaxGoodsIssues();
     }
 
     /**
