@@ -28,7 +28,7 @@ class GoodsIssueObserver extends BaseObserver
         event(
             new GoodsIssueCreated(
                 productId: $goodsIssue->product_id,
-                quantity: $goodsIssue->quantity,
+                quantity: $goodsIssue->quantity * -1, // convert to negative
                 userId: $goodsIssue->user_id,
                 type: $goodsIssue->type,
                 customerId: $goodsIssue->customer_id,
