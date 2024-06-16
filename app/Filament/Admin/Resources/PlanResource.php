@@ -53,9 +53,10 @@ class PlanResource extends Resource
                 Forms\Components\Textarea::make('description')
                     ->columnSpanFull(),
                 Forms\Components\Repeater::make('features')
-                    ->schema([
-                        Forms\Components\TextInput::make('description'),
-                    ])
+                    ->simple(
+                        Forms\Components\TextInput::make('description')
+                            ->required()
+                    )
                     ->columnSpanFull(),
             ]);
     }
