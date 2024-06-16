@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Exports\PurchaseOrderExporter;
 use App\Filament\Resources\PurchaseOrderResource\Pages;
+use App\Filament\Resources\PurchaseOrderResource\Widgets\PurchaseOrderLimit;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
 use Awcodes\TableRepeater\Components\TableRepeater;
@@ -240,6 +241,13 @@ class PurchaseOrderResource extends Resource
                 ]),
             ])
             ->defaultSort('created_at', 'desc');
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            PurchaseOrderLimit::class,
+        ];
     }
 
     public static function getRelations(): array

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\GoodsIssueTypeEnum;
 use App\Filament\Resources\GoodsIssueResource\Pages;
+use App\Filament\Resources\GoodsIssueResource\Widgets\GoodsIssueLimit;
 use App\Models\Customer;
 use App\Models\GoodsIssue;
 use Filament\Forms;
@@ -97,10 +98,10 @@ class GoodsIssueResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
+    public static function getWidgets(): array
     {
         return [
-            //
+            GoodsIssueLimit::class,
         ];
     }
 

@@ -45,7 +45,6 @@ return [
             'delete_any',
         ],
 
-        'page' => 'page',
         'widget' => 'widget',
     ],
 
@@ -67,10 +66,13 @@ return [
 
         'pages' => [
             'Dashboard',
+            'Subscriptions',
+            'EditProfilePage',
         ],
 
         'widgets' => [
-            'AccountWidget', 'FilamentInfoWidget',
+            'AccountWidget',
+            'FilamentInfoWidget',
         ],
 
         'resources' => [],

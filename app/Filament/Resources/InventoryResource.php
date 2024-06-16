@@ -13,6 +13,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Validation\Rules\Unique;
 
 class InventoryResource extends Resource
 {
@@ -30,7 +31,9 @@ class InventoryResource extends Resource
                     ->relationship('product', 'name')
                     ->searchable()
                     ->createOptionForm(Product::getForm())
-                    ->unique(ignoreRecord: true)
+                    ->unique(ignoreRecord: true, modifyRuleUsing: function (Unique $rule) {
+                        return $rule->where('company_id', Filament::getTenant()->id);
+                    })
                     ->required(),
                 Forms\Components\TextInput::make('quantity_on_hand')
                     ->required()
