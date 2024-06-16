@@ -47,6 +47,9 @@ class PlanResource extends Resource
                 Forms\Components\TextInput::make('max_monthly_sale_order')
                     ->required()
                     ->numeric(),
+                Forms\Components\TextInput::make('max_monthly_goods_issue')
+                    ->required()
+                    ->numeric(),
                 Forms\Components\Textarea::make('description')
                     ->columnSpanFull(),
                 Forms\Components\Repeater::make('features')
