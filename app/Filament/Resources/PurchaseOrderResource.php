@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Exports\PurchaseOrderExporter;
 use App\Filament\Resources\PurchaseOrderResource\Pages;
+use App\Filament\Resources\PurchaseOrderResource\Widgets\PurchaseOrderLimit;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
 use Awcodes\TableRepeater\Components\TableRepeater;
@@ -23,7 +24,7 @@ class PurchaseOrderResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 6;
 
     public static function form(Form $form): Form
     {
@@ -75,7 +76,6 @@ class PurchaseOrderResource extends Resource
                             ->rules([
                                 function ($component) {
                                     return function (string $attribute, $value, \Closure $fail) use ($component) {
-
                                         $items = $component->getContainer()->getParentComponent()->getState();
                                         $selected = array_column($items, $component->getName());
 
@@ -147,7 +147,12 @@ class PurchaseOrderResource extends Resource
                                 Forms\Components\Actions\Action::make('pay_full')
                                     ->label('Pay in full')
                                     ->color('success')
-                                    ->action(fn ($set, $get) => $set('paid_amount', str_replace(',', '', $get('total_amount')))),
+                                    ->action(
+                                        fn ($set, $get) => $set(
+                                            'paid_amount',
+                                            str_replace(',', '', $get('total_amount'))
+                                        )
+                                    ),
                             ]),
                         ]),
                     ]),
@@ -238,6 +243,13 @@ class PurchaseOrderResource extends Resource
             ->defaultSort('created_at', 'desc');
     }
 
+    public static function getWidgets(): array
+    {
+        return [
+            PurchaseOrderLimit::class,
+        ];
+    }
+
     public static function getRelations(): array
     {
         return [
@@ -257,7 +269,9 @@ class PurchaseOrderResource extends Resource
     public static function updateTotals(Forms\Get $get, Forms\Set $set): void
     {
         // Retrieve all selected products and remove empty rows
-        $selectedProducts = collect($get('purchaseOrderItems'))->filter(fn ($item) => ! empty($item['product_id']) && ! empty($item['quantity']));
+        $selectedProducts = collect($get('purchaseOrderItems'))->filter(
+            fn ($item) => ! empty($item['product_id']) && ! empty($item['quantity'])
+        );
 
         // Calculate subtotal based on the selected products and quantities
         $subtotal = $selectedProducts->reduce(function ($subtotal, $product) {

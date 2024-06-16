@@ -42,4 +42,11 @@ class ManageInvites extends ManageRecords
                 ->successNotificationTitle('Invitation sent successfully!'),
         ];
     }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            InviteResource\Widgets\UserLimit::class,
+        ];
+    }
 }

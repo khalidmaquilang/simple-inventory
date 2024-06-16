@@ -14,12 +14,16 @@
         "bezhansalleh/filament-shield": "^3.2",
         "filament/filament": "^3.2",
         "joaopaulolndev/filament-edit-profile": "^1.0",
+        "koalafacade/filament-alertbox": "^1.0",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
         "laraveldaily/laravel-invoices": "^4.0",
         "leandrocfe/filament-apex-charts": "^3.1",
         "malzariey/filament-daterangepicker-filter": "^2.7",
-        "pxlrbt/filament-excel": "^2.3"
+        "mvenghaus/filament-plugin-schedule-monitor": "^3.0",
+        "pxlrbt/filament-excel": "^2.3",
+        "sentry/sentry-laravel": "^4.6",
+        "spatie/laravel-schedule-monitor": "^3.7"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.13",

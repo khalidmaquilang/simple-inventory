@@ -39,7 +39,7 @@ class RolePolicy
      */
     public function update(User $user, Role $role): bool
     {
-        return $user->can('update_shield::role') && $role->name !== config('filament-shield.super_admin.name');
+        return $user->can('update_shield::role');
     }
 
     /**
@@ -47,7 +47,7 @@ class RolePolicy
      */
     public function delete(User $user, Role $role): bool
     {
-        return $user->can('delete_shield::role') && $role->name !== config('filament-shield.super_admin.name');
+        return $user->can('delete_shield::role');
     }
 
     /**
@@ -63,7 +63,7 @@ class RolePolicy
      */
     public function forceDelete(User $user, Role $role): bool
     {
-        return $user->can('{{ ForceDelete }}') && $role->name !== config('filament-shield.super_admin.name');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**

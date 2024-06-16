@@ -47,6 +47,7 @@ class AppPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->font('Poppins')
             ->userMenuItems([
                 MenuItem::make()
                     ->label('Admin')

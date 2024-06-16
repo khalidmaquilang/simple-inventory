@@ -25,7 +25,7 @@ class InventoryFactory extends Factory
             'company_id' => 1,
             'user_id' => User::factory()->create()->id,
             'product_id' => Product::factory()->create()->id,
-            'quantity_on_hand' => 1,
+            'quantity_on_hand' => 10,
             'average_cost' => 1,
         ];
     }

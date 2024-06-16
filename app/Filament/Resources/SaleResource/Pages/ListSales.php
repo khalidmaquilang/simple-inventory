@@ -16,4 +16,14 @@ class ListSales extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
+    /**
+     * @return \class-string[]
+     */
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            SaleResource\Widgets\SaleLimit::class,
+        ];
+    }
 }

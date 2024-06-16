@@ -19,34 +19,14 @@ class CompanyResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\Select::make('user_id')
-                    ->relationship('owner', 'name')
-                    ->searchable()
-                    ->required(),
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('logo')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('phone')
-                    ->tel()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('address')
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('currency')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+            ->schema(
+                array_merge([
+                    Forms\Components\Select::make('user_id')
+                        ->relationship('owner', 'name')
+                        ->searchable()
+                        ->required(),
+                ], Company::getForm())
+            );
     }
 
     public static function table(Table $table): Table

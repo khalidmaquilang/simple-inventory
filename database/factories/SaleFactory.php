@@ -24,7 +24,6 @@ class SaleFactory extends Factory
     {
         return [
             'company_id' => 1,
-            'invoice_number' => $this->faker->word(),
             'sale_date' => $this->faker->date(),
             'vat' => $this->faker->randomFloat(0, 0, 9999999999.),
             'total_amount' => $this->faker->randomFloat(0, 0, 9999999999.),

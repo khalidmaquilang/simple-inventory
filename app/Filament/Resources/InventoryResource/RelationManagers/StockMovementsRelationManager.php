@@ -2,10 +2,14 @@
 
 namespace App\Filament\Resources\InventoryResource\RelationManagers;
 
+use App\Enums\GoodsIssueTypeEnum;
+use App\Enums\PurchaseOrderEnum;
 use App\Enums\StockMovementEnum;
+use App\Models\Customer;
 use App\Models\StockMovement;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -36,6 +40,8 @@ class StockMovementsRelationManager extends RelationManager
                 Forms\Components\Fieldset::make('From/To')
                     ->schema([
                         Forms\Components\Select::make('customer_id')
+                            ->createOptionForm(Customer::getForm())
+                            ->searchable()
                             ->hint('Optional')
                             ->relationship('customer', 'name')
                             ->nullable(),
@@ -77,11 +83,18 @@ class StockMovementsRelationManager extends RelationManager
 
                         return $data;
                     })
-                    ->after(fn (StockMovement $stockMovement, $livewire) => $this->updateInventoryOnHand($stockMovement, $livewire)),
+                    ->before(fn (Tables\Actions\CreateAction $action, array $data) => $this->before($action, $data))
+                    ->after(
+                        fn (StockMovement $stockMovement, $livewire) => $this->updateInventoryOnHand(
+                            $stockMovement,
+                            $livewire
+                        )
+                    ),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-            ]);
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 
     public function getTabs(): array
@@ -99,9 +112,6 @@ class StockMovementsRelationManager extends RelationManager
         ];
     }
 
-    /**
-     * @return bool
-     */
     public function isReadOnly(): bool
     {
         return false;
@@ -120,5 +130,58 @@ class StockMovementsRelationManager extends RelationManager
         ]);
 
         $livewire->dispatch('refresh');
+    }
+
+    /**
+     * @param  Tables\Actions\CreateAction  $action
+     * @param  $data
+     * @return void
+     *
+     * @throws \Filament\Support\Exceptions\Halt
+     */
+    protected function before(Tables\Actions\CreateAction $action, $data)
+    {
+        $company = filament()->getTenant();
+
+        if (PurchaseOrderEnum::tryFrom(
+            $data['type']
+        ) === StockMovementEnum::PURCHASE->value && $company->hasReachedMaxPurchaseOrders()) {
+            $this->reachedLimitNotification($action);
+        }
+
+        if (PurchaseOrderEnum::tryFrom(
+            $data['type']
+        ) === StockMovementEnum::SALE->value && $company->hasReachedMaxSales()) {
+            $this->reachedLimitNotification($action);
+        }
+
+        if (GoodsIssueTypeEnum::tryFrom($data['type']) && $company->hasReachedMaxGoodsIssues()) {
+            $this->reachedLimitNotification($action);
+        }
+    }
+
+    /**
+     * @param  Tables\Actions\CreateAction  $action
+     * @return void
+     *
+     * @throws \Filament\Support\Exceptions\Halt
+     */
+    protected function reachedLimitNotification(Tables\Actions\CreateAction $action): void
+    {
+        Notification::make()
+            ->warning()
+            ->title('Reached Limit!')
+            ->body(
+                "You've reached your Limit. Please contact us to discuss upgrading your plan for higher limits."
+            )
+            ->persistent()
+            ->actions([
+                Tables\Actions\Action::make('Upgrade')
+                    ->button()
+                    ->url(redirect('https://www.facebook.com/stockmanageronline'), shouldOpenInNewTab: true),
+            ])
+            ->send();
+
+        $action->halt();
     }
 }

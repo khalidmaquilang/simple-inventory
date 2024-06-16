@@ -2,9 +2,8 @@
 
 namespace App\Listeners;
 
-use App\Enums\StockMovementEnum;
+use App\Events\GoodsIssueCreated;
 use App\Events\GoodsReceiptCreated;
-use App\Events\SaleCreated;
 use App\Models\Inventory;
 use App\Models\StockMovement;
 use Illuminate\Events\Dispatcher;
@@ -17,13 +16,12 @@ class StockMovementSubscriber
      */
     public function handleStockMovement($event): void
     {
-        \Log::debug('wew');
         $inventory = Inventory::where('product_id', $event->productId)->first();
         if (empty($inventory)) {
             $inventory = $this->createInventory($event->productId, $event->userId);
         }
 
-        $quantity = ($event instanceof SaleCreated) ? -$event->quantity : $event->quantity;
+        $quantity = ($event instanceof GoodsReceiptCreated) ? $event->quantity : -$event->quantity;
 
         StockMovement::create([
             'inventory_id' => $inventory->id,
@@ -33,7 +31,7 @@ class StockMovementSubscriber
             'reference_number' => $event->referenceNumber,
             'quantity_before_adjustment' => $inventory->quantity_on_hand,
             'quantity' => $quantity,
-            'type' => $event instanceof SaleCreated ? StockMovementEnum::SALE : StockMovementEnum::PURCHASE,
+            'type' => $event->type->value,
         ]);
 
         if ($event instanceof GoodsReceiptCreated) {
@@ -52,7 +50,7 @@ class StockMovementSubscriber
     public function subscribe(Dispatcher $events): void
     {
         $events->listen(GoodsReceiptCreated::class, [StockMovementSubscriber::class, 'handleStockMovement']);
-        $events->listen(SaleCreated::class, [StockMovementSubscriber::class, 'handleStockMovement']);
+        $events->listen(GoodsIssueCreated::class, [StockMovementSubscriber::class, 'handleStockMovement']);
     }
 
     /**

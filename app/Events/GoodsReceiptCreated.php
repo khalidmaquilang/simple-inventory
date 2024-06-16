@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Enums\StockMovementEnum;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -21,6 +22,7 @@ class GoodsReceiptCreated
         public int $userId,
         public ?string $supplierId = null,
         public string $referenceNumber = '',
+        public StockMovementEnum $type = StockMovementEnum::PURCHASE,
     ) {
         //
     }

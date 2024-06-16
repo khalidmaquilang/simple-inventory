@@ -30,6 +30,7 @@ class SubscriptionsRelationManager extends RelationManager
                     ->required(),
                 Forms\Components\DatePicker::make('start_date')
                     ->required(),
+                Forms\Components\DatePicker::make('end_date'),
                 Forms\Components\TextInput::make('extra_users')
                     ->default(0),
             ]);
@@ -38,7 +39,7 @@ class SubscriptionsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('id')
+            ->recordTitleAttribute('plan.name')
             ->columns([
                 Tables\Columns\TextColumn::make('plan.name'),
                 Tables\Columns\TextColumn::make('start_date')

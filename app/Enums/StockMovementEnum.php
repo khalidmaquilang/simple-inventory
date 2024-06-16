@@ -11,6 +11,9 @@ enum StockMovementEnum: string implements HasColor, HasLabel
     case SALE = 'sale';
     case ADJUSTMENT = 'adjustment';
     case RETURN = 'return';
+    case TRANSFER = 'transfer';
+    case WRITE_OFF = 'write_off';
+    case RTO = 'return_to_supplier';
 
     /**
      * @return string
@@ -22,6 +25,9 @@ enum StockMovementEnum: string implements HasColor, HasLabel
             self::SALE => 'Sale',
             self::ADJUSTMENT => 'Adjustment',
             self::RETURN => 'Return',
+            self::TRANSFER => 'Transfer',
+            self::WRITE_OFF => 'Write Off',
+            self::RTO => 'Return To Supplier',
         };
     }
 
@@ -35,6 +41,9 @@ enum StockMovementEnum: string implements HasColor, HasLabel
             self::SALE => 'success',
             self::ADJUSTMENT => 'warning',
             self::RETURN => 'danger',
+            self::TRANSFER => 'info',
+            self::WRITE_OFF => 'gray',
+            self::RTO => 'danger',
         };
     }
 }

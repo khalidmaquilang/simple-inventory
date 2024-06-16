@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\InviteResource\Pages;
+use App\Filament\Resources\InviteResource\Widgets\UserLimit;
 use App\Mail\UserInvitationMail;
 use App\Models\Invite;
 use App\Models\Role;
@@ -81,6 +82,13 @@ class InviteResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            UserLimit::class,
+        ];
     }
 
     public static function getPages(): array

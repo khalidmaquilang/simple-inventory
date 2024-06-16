@@ -2,11 +2,9 @@
 
 namespace App\Filament\Pages\Tenancy;
 
-use App\Enums\SubscriptionStatusEnum;
+use App\Events\PrepareFreemium;
 use App\Models\Company;
 use App\Models\Role;
-use App\Services\PlanService;
-use App\Services\SubscriptionService;
 use Filament\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\RegisterTenant;
@@ -44,7 +42,7 @@ class RegisterCompany extends RegisterTenant
         $company->members()->attach($user);
 
         $this->createRoles($company, $user);
-        $this->setupSubscription($company);
+        event(new PrepareFreemium($company));
 
         return $company;
     }
@@ -67,26 +65,6 @@ class RegisterCompany extends RegisterTenant
         $role->syncPermissions($permissions);
 
         $user->assignRole($role);
-    }
-
-    /**
-     * @param  Company  $company
-     * @return void
-     */
-    public function setupSubscription(Company $company)
-    {
-        $planService = app(PlanService::class);
-        $subscriptionService = app(SubscriptionService::class);
-
-        $plan = $planService->getFreemiumPlan();
-        $subscriptionService->store([
-            'company_id' => $company->id,
-            'plan_id' => $plan->id,
-            'start_date' => now(),
-            'end_date' => now()->addCentury(),
-            'status' => SubscriptionStatusEnum::ACTIVE,
-            'total_amount' => $plan->price,
-        ]);
     }
 
     /**

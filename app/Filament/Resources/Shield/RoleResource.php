@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Shield;
 
 use App\Filament\Resources\Shield\RoleResource\Pages;
+use App\Filament\Resources\Shield\RoleResource\Widgets\RoleLimit;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
@@ -62,7 +63,11 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     ->onIcon('heroicon-s-shield-check')
                                     ->offIcon('heroicon-s-shield-exclamation')
                                     ->label(__('filament-shield::filament-shield.field.select_all.name'))
-                                    ->helperText(fn (): HtmlString => new HtmlString(__('filament-shield::filament-shield.field.select_all.message')))
+                                    ->helperText(
+                                        fn (): HtmlString => new HtmlString(
+                                            __('filament-shield::filament-shield.field.select_all.message')
+                                        )
+                                    )
                                     ->dehydrated(fn ($state): bool => $state),
 
                             ])
@@ -118,6 +123,13 @@ class RoleResource extends Resource implements HasShieldPermissions
     {
         return [
             //
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            RoleLimit::class,
         ];
     }
 
@@ -197,7 +209,9 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     public static function canGloballySearch(): bool
     {
-        return Utils::isResourceGloballySearchable() && count(static::getGloballySearchableAttributes()) && static::canViewAny();
+        return Utils::isResourceGloballySearchable() && count(
+            static::getGloballySearchableAttributes()
+        ) && static::canViewAny();
     }
 
     public static function getResourceEntitiesSchema(): ?array
@@ -207,12 +221,16 @@ class RoleResource extends Resource implements HasShieldPermissions
             ->map(function ($entity) {
                 $sectionLabel = strval(
                     static::shield()->hasLocalizedPermissionLabels()
-                    ? FilamentShield::getLocalizedResourceLabel($entity['fqcn'])
-                    : $entity['model']
+                        ? FilamentShield::getLocalizedResourceLabel($entity['fqcn'])
+                        : $entity['model']
                 );
 
                 return Forms\Components\Section::make($sectionLabel)
-                    ->description(fn () => new HtmlString('<span style="word-break: break-word;">'.Utils::showModelPath($entity['fqcn']).'</span>'))
+                    ->description(
+                        fn () => new HtmlString(
+                            '<span style="word-break: break-word;">'.Utils::showModelPath($entity['fqcn']).'</span>'
+                        )
+                    )
                     ->compact()
                     ->schema([
                         static::getCheckBoxListComponentForResource($entity),
@@ -246,11 +264,13 @@ class RoleResource extends Resource implements HasShieldPermissions
             ->toArray();
     }
 
-    public static function setPermissionStateForRecordPermissions(Component $component, string $operation, array $permissions, ?Model $record): void
-    {
-
+    public static function setPermissionStateForRecordPermissions(
+        Component $component,
+        string $operation,
+        array $permissions,
+        ?Model $record
+    ): void {
         if (in_array($operation, ['edit', 'view'])) {
-
             if (blank($record)) {
                 return;
             }
@@ -292,7 +312,9 @@ class RoleResource extends Resource implements HasShieldPermissions
     {
         return FilamentShield::getCustomPermissions()
             ->mapWithKeys(fn ($customPermission) => [
-                $customPermission => static::shield()->hasLocalizedPermissionLabels() ? str($customPermission)->headline()->toString() : $customPermission,
+                $customPermission => static::shield()->hasLocalizedPermissionLabels() ? str(
+                    $customPermission
+                )->headline()->toString() : $customPermission,
             ])
             ->toArray();
     }
@@ -375,14 +397,21 @@ class RoleResource extends Resource implements HasShieldPermissions
             ]);
     }
 
-    public static function getCheckboxListFormComponent(string $name, array $options, bool $searchable = true): Component
-    {
+    public static function getCheckboxListFormComponent(
+        string $name,
+        array $options,
+        bool $searchable = true
+    ): Component {
         return Forms\Components\CheckboxList::make($name)
             ->label('')
             ->options(fn (): array => $options)
             ->searchable($searchable)
             ->afterStateHydrated(
-                fn (Component $component, string $operation, ?Model $record) => static::setPermissionStateForRecordPermissions(
+                fn (
+                    Component $component,
+                    string $operation,
+                    ?Model $record
+                ) => static::setPermissionStateForRecordPermissions(
                     component: $component,
                     operation: $operation,
                     permissions: $options,

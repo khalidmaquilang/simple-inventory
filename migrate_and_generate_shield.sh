@@ -3,7 +3,7 @@
 # Laravel Database Migration and Shield Generation
 
 echo "Running database migrations..."
-./vendor/bin/sail artisan migrate:refresh
+./vendor/bin/sail artisan migrate:refresh --seed
 
 echo "Generating Shield permissions..."
 ./vendor/bin/sail artisan shield:generate --all --option=permissions

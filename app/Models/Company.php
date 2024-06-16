@@ -52,6 +52,7 @@ class Company extends Model implements HasCurrentTenantLabel
                 ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
                 ->required(),
             TextInput::make('slug')
+                ->prefix(config('app.url').'/')
                 ->required()
                 ->alphaDash()
                 ->prohibitedIf('slug', 'admin')
@@ -113,6 +114,14 @@ class Company extends Model implements HasCurrentTenantLabel
     public function customers(): HasMany
     {
         return $this->hasMany(Customer::class);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function goodsIssues(): HasMany
+    {
+        return $this->hasMany(GoodsIssue::class);
     }
 
     /**
@@ -219,17 +228,7 @@ class Company extends Model implements HasCurrentTenantLabel
      */
     public function hasReachedMaxUsers(): bool
     {
-        $max = 1;
-        $subscription = $this->getActiveSubscription();
-        if (! empty($subscription)) {
-            $max = $subscription->plan->max_users;
-        }
-
-        if ($max === 0) {
-            return false;
-        }
-
-        return $this->members()->count() >= $max;
+        return $this->hasReachedMax('members', 'max_users', 1);
     }
 
     /**
@@ -237,17 +236,7 @@ class Company extends Model implements HasCurrentTenantLabel
      */
     public function hasReachedMaxRoles(): bool
     {
-        $max = 0;
-        $subscription = $this->getActiveSubscription();
-        if (! empty($subscription)) {
-            $max = $subscription->plan->max_roles;
-        }
-
-        if ($max === 0) {
-            return false;
-        }
-
-        return $this->roles()->count() >= $max;
+        return $this->hasReachedMax('roles', 'max_roles', 0);
     }
 
     /**
@@ -255,20 +244,7 @@ class Company extends Model implements HasCurrentTenantLabel
      */
     public function hasReachedMaxPurchaseOrders(): bool
     {
-        $max = 10;
-        $subscription = $this->getActiveSubscription();
-        if (! empty($subscription)) {
-            $max = $subscription->plan->max_monthly_purchase_order;
-        }
-
-        if ($max === 0) {
-            return false;
-        }
-
-        $count = $this->purchaseOrders()
-            ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->count();
-
-        return $count >= $max;
+        return $this->hasReachedMaxMonthly('purchaseOrders', 'max_monthly_purchase_order', 10);
     }
 
     /**
@@ -276,17 +252,61 @@ class Company extends Model implements HasCurrentTenantLabel
      */
     public function hasReachedMaxSales(): bool
     {
-        $max = 10;
+        return $this->hasReachedMaxMonthly('sales', 'max_monthly_sale_order', 10);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasReachedMaxGoodsIssues(): bool
+    {
+        return $this->hasReachedMaxMonthly('goodsIssues', 'max_monthly_goods_issue', 10);
+    }
+
+    /**
+     * Generic method to check if a limit has been reached.
+     *
+     * @param  string  $relation
+     * @param  string  $planProperty
+     * @param  int  $defaultMax
+     * @return bool
+     */
+    protected function hasReachedMax(string $relation, string $planProperty, int $defaultMax): bool
+    {
+        $max = $defaultMax;
         $subscription = $this->getActiveSubscription();
         if (! empty($subscription)) {
-            $max = $subscription->plan->max_monthly_sale_order;
+            $max = $subscription->plan->$planProperty;
         }
 
         if ($max === 0) {
             return false;
         }
 
-        $count = $this->sales()
+        return $this->$relation()->count() >= $max;
+    }
+
+    /**
+     * Generic method to check if a monthly limit has been reached.
+     *
+     * @param  string  $relation
+     * @param  string  $planProperty
+     * @param  int  $defaultMax
+     * @return bool
+     */
+    protected function hasReachedMaxMonthly(string $relation, string $planProperty, int $defaultMax): bool
+    {
+        $max = $defaultMax;
+        $subscription = $this->getActiveSubscription();
+        if (! empty($subscription)) {
+            $max = $subscription->plan->$planProperty;
+        }
+
+        if ($max === 0) {
+            return false;
+        }
+
+        $count = $this->$relation()
             ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->count();
 
         return $count >= $max;

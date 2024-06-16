@@ -35,6 +35,18 @@ class PlanResource extends Resource
                 Forms\Components\Select::make('billing_cycle')
                     ->options(BillingCycleEnum::class)
                     ->required(),
+                Forms\Components\TextInput::make('max_users')
+                    ->required()
+                    ->numeric(),
+                Forms\Components\TextInput::make('max_roles')
+                    ->required()
+                    ->numeric(),
+                Forms\Components\TextInput::make('max_monthly_purchase_order')
+                    ->required()
+                    ->numeric(),
+                Forms\Components\TextInput::make('max_monthly_sale_order')
+                    ->required()
+                    ->numeric(),
                 Forms\Components\Textarea::make('description')
                     ->columnSpanFull(),
                 Forms\Components\Repeater::make('features')

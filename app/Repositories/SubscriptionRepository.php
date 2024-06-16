@@ -28,6 +28,17 @@ class SubscriptionRepository extends BaseRepository
     }
 
     /**
+     * @return mixed
+     */
+    public function getExpiredSubscriptions()
+    {
+        return $this->model
+            ->where('status', SubscriptionStatusEnum::ACTIVE)
+            ->where('end_date', '<', now())
+            ->get();
+    }
+
+    /**
      * @param  array  $data
      * @return Subscription
      */
