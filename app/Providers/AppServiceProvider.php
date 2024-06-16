@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\GoodsReceipt;
 use App\Models\Inventory;
 use App\Models\Payment;
+use App\Models\Product;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderItem;
 use App\Models\Sale;
@@ -17,6 +18,7 @@ use App\Observers\CustomerObserver;
 use App\Observers\GoodsReceiptObserver;
 use App\Observers\InventoryObserver;
 use App\Observers\PaymentObserver;
+use App\Observers\ProductObserver;
 use App\Observers\PurchaseOrderItemObserver;
 use App\Observers\PurchaseOrderObserver;
 use App\Observers\SaleItemObserver;
@@ -56,6 +58,8 @@ class AppServiceProvider extends ServiceProvider
         StockMovement::observe(StockMovementObserver::class);
         GoodsReceipt::observe(GoodsReceiptObserver::class);
         Payment::observe(PaymentObserver::class);
+        Product::observe(ProductObserver::class);
+        Inventory::observe(InventoryObserver::class);
 
         Event::subscribe(StockMovementSubscriber::class);
     }
