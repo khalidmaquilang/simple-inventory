@@ -74,6 +74,6 @@ docker run --rm \
 
 - `composer install --prefer-dist --no-dev -o`
 - `php artisan migrate`
-- `php artisan optimize`
 - `php artisan icon:cache`
-- `php artisan filament:clear-cached-components`
+- `php artisan filament:cache-components`
+- `php artisan optimize`
