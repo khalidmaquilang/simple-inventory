@@ -21,7 +21,7 @@ class GoodsIssueLimit extends AlertBoxWidget
      */
     public function getHelperText(): string|HtmlString|null
     {
-        return "You've reached your maximum goods issues for this month. Please <a href='https://www.facebook.com/stockmanageronline' class='underline'>contact us</a> to discuss upgrading your plan for higher limits.";
+        return "You have reached your maximum goods issues for this month. Please <a href='https://www.facebook.com/stockmanageronline' class='underline'>contact us</a> to discuss upgrading your plan for higher limits.";
     }
 
     /**
