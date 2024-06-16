@@ -24,7 +24,7 @@ enum StockMovementEnum: string implements HasColor, HasLabel
             self::PURCHASE => 'Purchase',
             self::SALE => 'Sale',
             self::ADJUSTMENT => 'Adjustment',
-            self::RETURN => 'Return',
+            self::RETURN => 'Customer Return',
             self::TRANSFER => 'Transfer',
             self::WRITE_OFF => 'Write Off',
             self::RTO => 'Return To Supplier',
