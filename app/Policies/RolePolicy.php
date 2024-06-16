@@ -31,7 +31,7 @@ class RolePolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_shield::role') && !filament()->getTenant()->hasReachedMaxRoles();
+        return $user->can('create_shield::role') && ! filament()->getTenant()->hasReachedMaxRoles();
     }
 
     /**
@@ -39,13 +39,13 @@ class RolePolicy
      */
     public function update(User $user, Role $role): bool
     {
-        if (!$user->can('update_shield::role')) {
+        if (! $user->can('update_shield::role')) {
             return false;
         }
 
         // if the role is super admin and the user is the owner, we can edit the super admin role
         if ($role->name === config('filament-shield.super_admin.name') && filament()->getTenant(
-            )->user_id === $user->id) {
+        )->user_id === $user->id) {
             return true;
         }
 
