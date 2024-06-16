@@ -24,8 +24,5 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('stock_movements', function (Blueprint $table) {
-            $table->enum('type', ['purchase', 'sale', 'adjustment', 'return'])->change();
-        });
     }
 };

@@ -16,4 +16,11 @@ class ListGoodsIssues extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            GoodsIssueResource\Widgets\GoodsIssueLimit::class,
+        ];
+    }
 }

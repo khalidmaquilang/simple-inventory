@@ -16,4 +16,11 @@ class ListPurchaseOrders extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            PurchaseOrderResource\Widgets\PurchaseOrderLimit::class,
+        ];
+    }
 }

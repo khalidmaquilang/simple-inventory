@@ -14,6 +14,7 @@
         "bezhansalleh/filament-shield": "^3.2",
         "filament/filament": "^3.2",
         "joaopaulolndev/filament-edit-profile": "^1.0",
+        "koalafacade/filament-alertbox": "^1.0",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
         "laraveldaily/laravel-invoices": "^4.0",

@@ -16,4 +16,11 @@ class ListRoles extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            RoleResource\Widgets\RoleLimit::class,
+        ];
+    }
 }
