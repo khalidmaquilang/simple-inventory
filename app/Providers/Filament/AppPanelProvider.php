@@ -9,6 +9,7 @@ use App\Filament\Resources\ProductResource;
 use App\Filament\Resources\PurchaseOrderResource\Widgets\PurchaseOrdersChart;
 use App\Filament\Resources\SaleResource\Widgets\SalesChart;
 use App\Filament\Resources\SupplierResource;
+use App\Filament\Widgets\LowStockProduct;
 use App\Filament\Widgets\OverlookWidget;
 use App\Http\Middleware\CompaniesPermission;
 use App\Models\Company;
@@ -72,6 +73,7 @@ class AppPanelProvider extends PanelProvider
                 OverlookWidget::class,
                 PurchaseOrdersChart::class,
                 SalesChart::class,
+                LowStockProduct::class,
             ])
             ->middleware([
                 EncryptCookies::class,

@@ -10,6 +10,7 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Validation\Rules\Unique;
 
@@ -24,6 +25,7 @@ class Product extends Model
      */
     protected $casts = [
         'id' => 'integer',
+        'last_notified_at' => 'datetime',
     ];
 
     /**
@@ -54,6 +56,9 @@ class Product extends Model
             TextInput::make('selling_price')
                 ->required()
                 ->numeric(),
+            TextInput::make('reorder_point')
+                ->hint('Restock Level')
+                ->numeric(),
             Textarea::make('description')
                 ->columnSpanFull(),
         ];
@@ -65,5 +70,13 @@ class Product extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function inventory(): HasOne
+    {
+        return $this->hasOne(Inventory::class);
     }
 }
