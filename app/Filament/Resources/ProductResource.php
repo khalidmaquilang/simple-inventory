@@ -28,9 +28,11 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('category.name'),
+                Tables\Columns\TextColumn::make('category.name')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('sku')
                     ->label('SKU')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
@@ -39,6 +41,8 @@ class ProductResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('selling_price')
                     ->money(fn ($record) => $record->company->getCurrency())
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('reorder_point')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -66,7 +70,8 @@ class ProductResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 
     public static function getRelations(): array
