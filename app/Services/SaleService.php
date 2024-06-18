@@ -48,6 +48,7 @@ class SaleService
             ->date($sale->sale_date)
             ->buyer($buyer)
             ->seller($seller)
+            ->shipping($sale->shipping_fee * (1 + ($sale->vat/ 100)))
             ->taxRate($sale->vat)
             ->totalDiscount($sale->discount, $sale->discount_type === DiscountTypeEnum::PERCENTAGE)
             ->series($sale->invoice_number)

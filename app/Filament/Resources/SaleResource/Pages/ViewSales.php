@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\SaleResource\Pages;
 
 use App\Filament\Resources\SaleResource;
+use App\Models\Sale;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Section;
@@ -14,6 +16,20 @@ use Filament\Support\Enums\FontWeight;
 class ViewSales extends ViewRecord
 {
     protected static string $resource = SaleResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('Download Invoice')
+                ->icon('heroicon-o-document-arrow-down')
+                ->color('success')
+                ->url(fn(Sale $record) => route('app.sales.generate-invoice', [
+                    'company' => filament()->getTenant()->id,
+                    'sale' => $record,
+                ]))
+                ->openUrlInNewTab()
+        ];
+    }
 
     public function infolist(Infolist $infolist): Infolist
     {
@@ -35,6 +51,8 @@ class ViewSales extends ViewRecord
                         TextEntry::make('customer.name'),
                         Fieldset::make('Payment Information')
                             ->schema([
+                                TextEntry::make('shipping_fee')
+                                    ->formatStateUsing(fn($state) => number_format($state, 2).' '.$currency),
                                 TextEntry::make('vat'),
                                 TextEntry::make('formatted_discount')
                                     ->label('Discount'),
@@ -44,7 +62,8 @@ class ViewSales extends ViewRecord
                                     ->formatStateUsing(fn($state) => number_format($state, 2).' '.$currency),
                                 TextEntry::make('paymentType.name'),
                                 TextEntry::make('reference_number'),
-                            ]),
+                            ])
+                            ->columns(3),
                         TextEntry::make('notes'),
                     ]),
 

@@ -53,6 +53,7 @@ class SaleResource extends Resource
                     ->columnSpanFull(),
                 TableRepeater::make('saleItems')
                     ->relationship()
+                    ->addActionLabel('Click to add more products')
                     ->headers([
                         Header::make('sku')
                             ->label('SKU'),
@@ -151,11 +152,20 @@ class SaleResource extends Resource
                             ->lazy()
                             ->suffix($currency)
                             ->disabled(),
+                        Forms\Components\TextInput::make('shipping_fee')
+                            ->lazy()
+                            ->default(0)
+                            ->minValue(0)
+                            ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get) {
+                                self::updateTotalAmount($get, $set);
+                            })
+                            ->numeric(),
                         Forms\Components\TextInput::make('vat')
                             ->label('VAT (Value-Added Tax)')
                             ->suffix('%')
                             ->lazy()
                             ->default(0)
+                            ->minValue(0)
                             ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get) {
                                 self::updateTotalAmount($get, $set);
                             })
@@ -230,6 +240,9 @@ class SaleResource extends Resource
                     ->label('Due Date')
                     ->formatStateUsing(fn($state) => now()->addDays($state)->format('M d, Y'))
                     ->sortable(),
+                Tables\Columns\TextColumn::make('shipping_fee')
+                    ->money(fn($record) => $record->company->getCurrency())
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('total_amount')
                     ->money(fn($record) => $record->company->getCurrency())
                     ->sortable(),
@@ -300,7 +313,7 @@ class SaleResource extends Resource
                         ->icon('heroicon-o-document-arrow-down')
                         ->color('success')
                         ->url(fn(Sale $record) => route('app.sales.generate-invoice', [
-                            'company' => session('company_id'),
+                            'company' => filament()->getTenant()->id,
                             'sale' => $record,
                         ]))
                         ->openUrlInNewTab(),
@@ -370,7 +383,8 @@ class SaleResource extends Resource
     public static function updateTotalAmount(Forms\Get $get, Forms\Set $set): void
     {
         $subTotal = (float)str_replace(',', '', $get('sub_total'));
-        $vatField = $get('vat');
+        $vatField = (float)$get('vat');
+        $shippingFee = (float)$get('shipping_fee');
         $discount = (float)str_replace(',', '', $get('discount'));
         $discountType = $get('discount_type');
 
@@ -381,6 +395,8 @@ class SaleResource extends Resource
         if (!empty($discount)) {
             $subTotal = self::calculateAfterDiscount($subTotal, $discount, $discountType);
         }
+
+        $subTotal += $shippingFee;
 
         $vat = 0;
         if (!empty($vatField)) {

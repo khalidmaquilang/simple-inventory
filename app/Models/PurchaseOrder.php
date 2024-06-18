@@ -15,6 +15,21 @@ class PurchaseOrder extends Model
 {
     use HasFactory, SerialGenerationTrait, SoftDeletes, TenantTrait;
 
+    protected $fillable = [
+        'company_id',
+        'purchase_code',
+        'order_date',
+        'expected_delivery_date',
+        'status',
+        'shipping_fee',
+        'reference_number',
+        'total_amount',
+        'paid_amount',
+        'supplier_id',
+        'payment_type_id',
+        'user_id',
+    ];
+
     /**
      * The attributes that should be cast to native types.
      *

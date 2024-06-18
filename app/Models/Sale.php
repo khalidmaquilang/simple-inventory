@@ -16,6 +16,28 @@ class Sale extends Model
     use HasFactory, SerialGenerationTrait, SoftDeletes, TenantTrait;
 
     /**
+     * @var array
+     */
+    protected $fillable = [
+        'company_id',
+        'invoice_number',
+        'sale_date',
+        'vat',
+        'shipping_fee',
+        'discount',
+        'discount_type',
+        'total_amount',
+        'paid_amount',
+        'pay_until',
+        'notes',
+        'customer_id',
+        'payment_type_id',
+        'reference_number',
+        'user_id'
+    ];
+
+
+    /**
      * The attributes that should be cast to native types.
      *
      * @var array

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\PurchaseOrderResource\Pages;
 use App\Filament\Resources\PurchaseOrderResource;
 use Filament\Facades\Filament;
 use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
@@ -38,12 +39,16 @@ class ViewPurchaseOrder extends ViewRecord
                         TextEntry::make('supplier.company_name'),
                         Fieldset::make('Payment Information')
                             ->schema([
+                                TextEntry::make('shipping_fee')
+                                    ->formatStateUsing(fn ($state) => number_format($state, 2).' '.$currency),
                                 TextEntry::make('total_amount')
                                     ->formatStateUsing(fn ($state) => number_format($state, 2).' '.$currency),
                                 TextEntry::make('paid_amount')
                                     ->formatStateUsing(fn ($state) => number_format($state, 2).' '.$currency),
                                 TextEntry::make('paymentType.name'),
-                            ]),
+                                TextEntry::make('reference_number'),
+                            ])
+                            ->columns(3),
                     ]),
 
             ]);
