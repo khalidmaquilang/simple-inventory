@@ -155,6 +155,7 @@ class SaleResource extends Resource
                             ->label('VAT (Value-Added Tax)')
                             ->suffix('%')
                             ->lazy()
+                            ->default(0)
                             ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get) {
                                 self::updateTotalAmount($get, $set);
                             })
@@ -183,27 +184,32 @@ class SaleResource extends Resource
                             ->label('Total amount')
                             ->suffix($currency)
                             ->disabled(),
-                        Forms\Components\Select::make('payment_type_id')
-                            ->relationship('paymentType', 'name')
-                            ->required(),
+                        Forms\Components\Group::make([
+                            Forms\Components\Select::make('payment_type_id')
+                                ->relationship('paymentType', 'name')
+                                ->required(),
+                            Forms\Components\TextInput::make('reference_number'),
+                        ])
+                            ->columns(2),
                         Forms\Components\Group::make([
                             Forms\Components\TextInput::make('paid_amount')
                                 ->suffix($currency)
+                                ->default(0)
                                 ->required()
                                 ->minValue(0)
-                                ->maxValue(fn ($get) => floatval(str_replace(',', '', $get('total_amount'))) ?? 0)
+                                ->maxValue(fn($get) => floatval(str_replace(',', '', $get('total_amount'))) ?? 0)
                                 ->numeric(),
                             Forms\Components\Actions::make([
                                 Forms\Components\Actions\Action::make('pay_full')
                                     ->label('Pay in full')
                                     ->color('success')
                                     ->action(
-                                        fn ($set, $get) => $set(
+                                        fn($set, $get) => $set(
                                             'paid_amount',
                                             str_replace(',', '', $get('total_amount'))
                                         )
                                     )
-                                    ->visible(fn ($operation) => $operation === 'create'),
+                                    ->visible(fn($operation) => $operation === 'create'),
                             ]),
                         ]),
                     ]),
@@ -215,17 +221,20 @@ class SaleResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('invoice_number')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('sale_date')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('pay_until')
                     ->label('Due Date')
-                    ->formatStateUsing(fn ($state) => now()->addDays($state)->format('M d, Y')),
+                    ->formatStateUsing(fn($state) => now()->addDays($state)->format('M d, Y'))
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('total_amount')
-                    ->money(fn ($record) => $record->company->getCurrency()),
+                    ->money(fn($record) => $record->company->getCurrency())
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('remaining_amount')
-                    ->money(fn ($record) => $record->company->getCurrency())
+                    ->money(fn($record) => $record->company->getCurrency())
                     ->sortable(),
                 Tables\Columns\TextColumn::make('customer.name')
                     ->numeric()
@@ -234,7 +243,8 @@ class SaleResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('Created By'),
+                    ->label('Created By')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -256,35 +266,40 @@ class SaleResource extends Resource
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('Pay Amount')
                         ->form([
-                            TextInput::make('paid_amount')
-                                ->hint(function ($record) {
-                                    return 'You need to pay '.$record->formatted_remaining_amount;
-                                })
-                                ->minValue(1)
-                                ->maxValue(function ($record): float {
-                                    return $record->remaining_amount;
-                                })
-                                ->numeric()
-                                ->required()
-                                ->hintAction(
-                                    Forms\Components\Actions\Action::make('pay_in_full')
-                                        ->icon('heroicon-m-arrow-down-tray')
-                                        ->action(function (Forms\Set $set, $state, $record) {
-                                            $set('paid_amount', $record->remaining_amount);
-                                        })
-                                ),
+                            Forms\Components\Group::make([
+                                TextInput::make('paid_amount')
+                                    ->hint(function ($record) {
+                                        return 'You need to pay '.$record->formatted_remaining_amount;
+                                    })
+                                    ->minValue(1)
+                                    ->maxValue(function ($record): float {
+                                        return $record->remaining_amount;
+                                    })
+                                    ->numeric()
+                                    ->required()
+                                    ->hintAction(
+                                        Forms\Components\Actions\Action::make('pay_in_full')
+                                            ->icon('heroicon-m-arrow-down-tray')
+                                            ->action(function (Forms\Set $set, $state, $record) {
+                                                $set('paid_amount', $record->remaining_amount);
+                                            })
+                                    ),
+                                TextInput::make('reference_number'),
+                            ])
+                                ->columns(2),
                         ])
                         ->color('info')
                         ->icon('heroicon-m-banknotes')
-                        ->visible(fn ($record) => $record->remaining_amount > 0)
+                        ->visible(fn($record) => $record->remaining_amount > 0)
                         ->action(function ($record, array $data) {
                             $record->paid_amount += $data['paid_amount'];
+                            $record->reference_number = $data['reference_number'];
                             $record->save();
                         }),
                     Tables\Actions\Action::make('Download Invoice')
                         ->icon('heroicon-o-document-arrow-down')
                         ->color('success')
-                        ->url(fn (Sale $record) => route('app.sales.generate-invoice', [
+                        ->url(fn(Sale $record) => route('app.sales.generate-invoice', [
                             'company' => session('company_id'),
                             'sale' => $record,
                         ]))
@@ -295,7 +310,8 @@ class SaleResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     ExportBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('sale_date', 'desc');
     }
 
     public static function getRelations(): array
@@ -333,12 +349,12 @@ class SaleResource extends Resource
     {
         // Retrieve all selected products and remove empty rows
         $selectedProducts = collect($get('saleItems'))->filter(
-            fn ($item) => ! empty($item['product_id']) && ! empty($item['quantity'])
+            fn($item) => !empty($item['product_id']) && !empty($item['quantity'])
         );
 
         // Calculate subtotal based on the selected products and quantities
         $subtotal = $selectedProducts->reduce(function ($subtotal, $product) {
-            return $subtotal + ((float) $product['unit_cost'] * (float) $product['quantity']);
+            return $subtotal + ((float)$product['unit_cost'] * (float)$product['quantity']);
         }, 0);
 
         // Update the state with the new values
@@ -353,20 +369,23 @@ class SaleResource extends Resource
      */
     public static function updateTotalAmount(Forms\Get $get, Forms\Set $set): void
     {
-        $subTotal = (float) str_replace(',', '', $get('sub_total'));
+        $subTotal = (float)str_replace(',', '', $get('sub_total'));
         $vatField = $get('vat');
-        $discount = (float) str_replace(',', '', $get('discount'));
+        $discount = (float)str_replace(',', '', $get('discount'));
         $discountType = $get('discount_type');
 
-        if (empty($subTotal) || empty($vatField)) {
+        if (empty($subTotal)) {
             $subTotal = 0;
         }
 
-        if (! empty($discount)) {
+        if (!empty($discount)) {
             $subTotal = self::calculateAfterDiscount($subTotal, $discount, $discountType);
         }
 
-        $vat = $subTotal * ($vatField / 100);
+        $vat = 0;
+        if (!empty($vatField)) {
+            $vat = $subTotal * ($vatField / 100);
+        }
 
         $set('formatted_total_amount', number_format($subTotal + $vat, 2));
         $set('total_amount', $subTotal + $vat);
