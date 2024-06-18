@@ -358,7 +358,7 @@ class SaleResource extends Resource
         $discount = (float) str_replace(',', '', $get('discount'));
         $discountType = $get('discount_type');
 
-        if (empty($subTotal) || empty($vatField)) {
+        if (empty($subTotal)) {
             $subTotal = 0;
         }
 
@@ -366,7 +366,10 @@ class SaleResource extends Resource
             $subTotal = self::calculateAfterDiscount($subTotal, $discount, $discountType);
         }
 
-        $vat = $subTotal * ($vatField / 100);
+        $vat = 0;
+        if (! empty($vatField)) {
+            $vat = $subTotal * ($vatField / 100);
+        }
 
         $set('formatted_total_amount', number_format($subTotal + $vat, 2));
         $set('total_amount', $subTotal + $vat);
