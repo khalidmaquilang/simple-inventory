@@ -31,7 +31,7 @@ class ViewSales extends ViewRecord
                             ->date(),
                         TextEntry::make('pay_until')
                             ->label('Due Date')
-                            ->formatStateUsing(fn ($state) => now()->addDays($state)->format('M d, Y')),
+                            ->formatStateUsing(fn($state) => now()->addDays($state)->format('M d, Y')),
                         TextEntry::make('customer.name'),
                         Fieldset::make('Payment Information')
                             ->schema([
@@ -39,10 +39,11 @@ class ViewSales extends ViewRecord
                                 TextEntry::make('formatted_discount')
                                     ->label('Discount'),
                                 TextEntry::make('total_amount')
-                                    ->formatStateUsing(fn ($state) => number_format($state, 2).' '.$currency),
+                                    ->formatStateUsing(fn($state) => number_format($state, 2).' '.$currency),
                                 TextEntry::make('paid_amount')
-                                    ->formatStateUsing(fn ($state) => number_format($state, 2).' '.$currency),
+                                    ->formatStateUsing(fn($state) => number_format($state, 2).' '.$currency),
                                 TextEntry::make('paymentType.name'),
+                                TextEntry::make('reference_number'),
                             ]),
                         TextEntry::make('notes'),
                     ]),
