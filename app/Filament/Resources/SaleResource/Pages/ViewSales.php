@@ -23,11 +23,11 @@ class ViewSales extends ViewRecord
             Action::make('Download Invoice')
                 ->icon('heroicon-o-document-arrow-down')
                 ->color('success')
-                ->url(fn(Sale $record) => route('app.sales.generate-invoice', [
+                ->url(fn (Sale $record) => route('app.sales.generate-invoice', [
                     'company' => filament()->getTenant()->id,
                     'sale' => $record,
                 ]))
-                ->openUrlInNewTab()
+                ->openUrlInNewTab(),
         ];
     }
 
@@ -47,19 +47,19 @@ class ViewSales extends ViewRecord
                             ->date(),
                         TextEntry::make('pay_until')
                             ->label('Due Date')
-                            ->formatStateUsing(fn($state) => now()->addDays($state)->format('M d, Y')),
+                            ->formatStateUsing(fn ($state) => now()->addDays($state)->format('M d, Y')),
                         TextEntry::make('customer.name'),
                         Fieldset::make('Payment Information')
                             ->schema([
                                 TextEntry::make('shipping_fee')
-                                    ->formatStateUsing(fn($state) => number_format($state, 2).' '.$currency),
+                                    ->formatStateUsing(fn ($state) => number_format($state, 2).' '.$currency),
                                 TextEntry::make('vat'),
                                 TextEntry::make('formatted_discount')
                                     ->label('Discount'),
                                 TextEntry::make('total_amount')
-                                    ->formatStateUsing(fn($state) => number_format($state, 2).' '.$currency),
+                                    ->formatStateUsing(fn ($state) => number_format($state, 2).' '.$currency),
                                 TextEntry::make('paid_amount')
-                                    ->formatStateUsing(fn($state) => number_format($state, 2).' '.$currency),
+                                    ->formatStateUsing(fn ($state) => number_format($state, 2).' '.$currency),
                                 TextEntry::make('paymentType.name'),
                                 TextEntry::make('reference_number'),
                             ])

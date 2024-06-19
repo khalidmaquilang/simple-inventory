@@ -33,9 +33,8 @@ class Sale extends Model
         'customer_id',
         'payment_type_id',
         'reference_number',
-        'user_id'
+        'user_id',
     ];
-
 
     /**
      * The attributes that should be cast to native types.
@@ -50,6 +49,13 @@ class Sale extends Model
         'payment_type_id' => 'integer',
         'user_id' => 'integer',
         'discount_type' => DiscountTypeEnum::class,
+    ];
+
+    /**
+     * @var string[]
+     */
+    protected $with = [
+        'saleItems',
     ];
 
     /**

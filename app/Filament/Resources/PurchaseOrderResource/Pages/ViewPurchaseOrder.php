@@ -5,7 +5,6 @@ namespace App\Filament\Resources\PurchaseOrderResource\Pages;
 use App\Filament\Resources\PurchaseOrderResource;
 use Filament\Facades\Filament;
 use Filament\Infolists\Components\Fieldset;
-use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;

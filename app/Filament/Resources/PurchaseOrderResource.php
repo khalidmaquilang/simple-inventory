@@ -9,7 +9,6 @@ use App\Models\Product;
 use App\Models\PurchaseOrder;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
-use Dompdf\Renderer\Text;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
@@ -153,7 +152,7 @@ class PurchaseOrderResource extends Resource
                                 ->required(),
                             Forms\Components\TextInput::make('reference_number'),
                         ])
-                        ->columns(2),
+                            ->columns(2),
                         Forms\Components\Group::make([
                             Forms\Components\TextInput::make('paid_amount')
                                 ->suffix($currency)
@@ -301,7 +300,7 @@ class PurchaseOrderResource extends Resource
         }, 0);
         $set('sub_total', number_format($subtotal, 2));
 
-        $shippingFee = (float)$get('shipping_fee');
+        $shippingFee = (float) $get('shipping_fee');
 
         // Update the state with the new values
         $set('total_amount', number_format($subtotal + $shippingFee, 2));

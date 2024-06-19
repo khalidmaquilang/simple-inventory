@@ -11,6 +11,27 @@ class SaleItem extends Model
     use HasFactory;
 
     /**
+     * @var array
+     */
+    protected $fillable = [
+        'company_id',
+        'sku',
+        'name',
+        'quantity',
+        'unit_cost',
+        'sale_id',
+        'product_id',
+    ];
+
+    /**
+     * @var string[]
+     */
+    protected $appends = [
+        'formatted_unit_cost',
+        'formatted_total_cost',
+    ];
+
+    /**
      * The attributes that should be cast to native types.
      *
      * @var array
@@ -20,6 +41,22 @@ class SaleItem extends Model
         'sale_id' => 'integer',
         'product_id' => 'integer',
     ];
+
+    /**
+     * @return string
+     */
+    public function getFormattedUnitCostAttribute(): string
+    {
+        return number_format($this->unit_cost, 2).' '.$this->company->getCurrency();
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormattedTotalCostAttribute(): string
+    {
+        return number_format($this->unit_cost * $this->quantity, 2).' '.$this->company->getCurrency();
+    }
 
     /**
      * @return BelongsTo
