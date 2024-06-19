@@ -23,6 +23,7 @@ class ViewSupplier extends ViewRecord
                         TextEntry::make('contact_person'),
                         TextEntry::make('email'),
                         TextEntry::make('phone'),
+                        TextEntry::make('notes'),
                     ]),
             ]);
     }

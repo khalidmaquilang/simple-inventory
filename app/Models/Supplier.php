@@ -14,6 +14,17 @@ class Supplier extends Model
 {
     use HasFactory, SoftDeletes, TenantTrait;
 
+    protected $fillable = [
+        'company_id',
+        'company_name',
+        'contact_person',
+        'email',
+        'phone',
+        'status',
+        'notes',
+        'user_id',
+    ];
+
     /**
      * The attributes that should be cast to native types.
      *
