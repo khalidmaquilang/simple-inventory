@@ -52,23 +52,6 @@ class SaleService
         return response()
             ->download($sale->invoice_number.'.pdf')
             ->deleteFileAfterSend();
-
-        $invoice = Invoice::make()
-            ->date($sale->sale_date)
-            ->buyer($buyer)
-            ->seller($seller)
-            ->shipping($sale->shipping_fee * (1 + ($sale->vat / 100)))
-            ->taxRate($sale->vat)
-            ->totalDiscount($sale->discount, $sale->discount_type === DiscountTypeEnum::PERCENTAGE)
-            ->series($sale->invoice_number)
-            ->serialNumberFormat('{SERIES}')
-            ->addItems($items)
-            ->currencyCode($company->getCurrency())
-            ->currencySymbol('')
-            ->payUntilDays($sale->pay_until)
-            ->logo($company->getCompanyLogo());
-
-        return $invoice->stream();
     }
 
     /**
