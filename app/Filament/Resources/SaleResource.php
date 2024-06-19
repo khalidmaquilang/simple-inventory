@@ -53,6 +53,7 @@ class SaleResource extends Resource
                     ->columnSpanFull(),
                 TableRepeater::make('saleItems')
                     ->relationship()
+                    ->addActionLabel('Click to add more products')
                     ->headers([
                         Header::make('sku')
                             ->label('SKU'),
@@ -151,11 +152,20 @@ class SaleResource extends Resource
                             ->lazy()
                             ->suffix($currency)
                             ->disabled(),
+                        Forms\Components\TextInput::make('shipping_fee')
+                            ->lazy()
+                            ->default(0)
+                            ->minValue(0)
+                            ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get) {
+                                self::updateTotalAmount($get, $set);
+                            })
+                            ->numeric(),
                         Forms\Components\TextInput::make('vat')
                             ->label('VAT (Value-Added Tax)')
                             ->suffix('%')
                             ->lazy()
                             ->default(0)
+                            ->minValue(0)
                             ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get) {
                                 self::updateTotalAmount($get, $set);
                             })
@@ -197,19 +207,19 @@ class SaleResource extends Resource
                                 ->default(0)
                                 ->required()
                                 ->minValue(0)
-                                ->maxValue(fn($get) => floatval(str_replace(',', '', $get('total_amount'))) ?? 0)
+                                ->maxValue(fn ($get) => floatval(str_replace(',', '', $get('total_amount'))) ?? 0)
                                 ->numeric(),
                             Forms\Components\Actions::make([
                                 Forms\Components\Actions\Action::make('pay_full')
                                     ->label('Pay in full')
                                     ->color('success')
                                     ->action(
-                                        fn($set, $get) => $set(
+                                        fn ($set, $get) => $set(
                                             'paid_amount',
                                             str_replace(',', '', $get('total_amount'))
                                         )
                                     )
-                                    ->visible(fn($operation) => $operation === 'create'),
+                                    ->visible(fn ($operation) => $operation === 'create'),
                             ]),
                         ]),
                     ]),
@@ -228,13 +238,16 @@ class SaleResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('pay_until')
                     ->label('Due Date')
-                    ->formatStateUsing(fn($state) => now()->addDays($state)->format('M d, Y'))
+                    ->formatStateUsing(fn ($state) => now()->addDays($state)->format('M d, Y'))
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('shipping_fee')
+                    ->money(fn ($record) => $record->company->getCurrency())
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_amount')
-                    ->money(fn($record) => $record->company->getCurrency())
+                    ->money(fn ($record) => $record->company->getCurrency())
                     ->sortable(),
                 Tables\Columns\TextColumn::make('remaining_amount')
-                    ->money(fn($record) => $record->company->getCurrency())
+                    ->money(fn ($record) => $record->company->getCurrency())
                     ->sortable(),
                 Tables\Columns\TextColumn::make('customer.name')
                     ->numeric()
@@ -290,7 +303,7 @@ class SaleResource extends Resource
                         ])
                         ->color('info')
                         ->icon('heroicon-m-banknotes')
-                        ->visible(fn($record) => $record->remaining_amount > 0)
+                        ->visible(fn ($record) => $record->remaining_amount > 0)
                         ->action(function ($record, array $data) {
                             $record->paid_amount += $data['paid_amount'];
                             $record->reference_number = $data['reference_number'];
@@ -299,8 +312,8 @@ class SaleResource extends Resource
                     Tables\Actions\Action::make('Download Invoice')
                         ->icon('heroicon-o-document-arrow-down')
                         ->color('success')
-                        ->url(fn(Sale $record) => route('app.sales.generate-invoice', [
-                            'company' => session('company_id'),
+                        ->url(fn (Sale $record) => route('app.sales.generate-invoice', [
+                            'company' => filament()->getTenant()->id,
                             'sale' => $record,
                         ]))
                         ->openUrlInNewTab(),
@@ -349,12 +362,12 @@ class SaleResource extends Resource
     {
         // Retrieve all selected products and remove empty rows
         $selectedProducts = collect($get('saleItems'))->filter(
-            fn($item) => !empty($item['product_id']) && !empty($item['quantity'])
+            fn ($item) => ! empty($item['product_id']) && ! empty($item['quantity'])
         );
 
         // Calculate subtotal based on the selected products and quantities
         $subtotal = $selectedProducts->reduce(function ($subtotal, $product) {
-            return $subtotal + ((float)$product['unit_cost'] * (float)$product['quantity']);
+            return $subtotal + ((float) $product['unit_cost'] * (float) $product['quantity']);
         }, 0);
 
         // Update the state with the new values
@@ -369,21 +382,24 @@ class SaleResource extends Resource
      */
     public static function updateTotalAmount(Forms\Get $get, Forms\Set $set): void
     {
-        $subTotal = (float)str_replace(',', '', $get('sub_total'));
-        $vatField = $get('vat');
-        $discount = (float)str_replace(',', '', $get('discount'));
+        $subTotal = (float) str_replace(',', '', $get('sub_total'));
+        $vatField = (float) $get('vat');
+        $shippingFee = (float) $get('shipping_fee');
+        $discount = (float) str_replace(',', '', $get('discount'));
         $discountType = $get('discount_type');
 
         if (empty($subTotal)) {
             $subTotal = 0;
         }
 
-        if (!empty($discount)) {
+        if (! empty($discount)) {
             $subTotal = self::calculateAfterDiscount($subTotal, $discount, $discountType);
         }
 
+        $subTotal += $shippingFee;
+
         $vat = 0;
-        if (!empty($vatField)) {
+        if (! empty($vatField)) {
             $vat = $subTotal * ($vatField / 100);
         }
 

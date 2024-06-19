@@ -23,6 +23,7 @@
         "mvenghaus/filament-plugin-schedule-monitor": "^3.0",
         "pxlrbt/filament-excel": "^2.3",
         "sentry/sentry-laravel": "^4.6",
+        "spatie/browsershot": "^4.1",
         "spatie/laravel-schedule-monitor": "^3.7"
     },
     "require-dev": {

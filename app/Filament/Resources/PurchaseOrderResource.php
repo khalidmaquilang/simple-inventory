@@ -40,6 +40,7 @@ class PurchaseOrderResource extends Resource
                     ->required(),
                 TableRepeater::make('purchaseOrderItems')
                     ->relationship()
+                    ->addActionLabel('Click to add more products')
                     ->headers([
                         Header::make('sku')
                             ->label('SKU'),
@@ -124,6 +125,18 @@ class PurchaseOrderResource extends Resource
                 Forms\Components\Section::make('Payment')
                     ->columns(2)
                     ->schema([
+                        Forms\Components\TextInput::make('sub_total')
+                            ->suffix($currency)
+                            ->lazy()
+                            ->disabled(),
+                        TextInput::make('shipping_fee')
+                            ->numeric()
+                            ->lazy()
+                            ->default(0)
+                            ->minValue(0)
+                            ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
+                                self::updateTotals($get, $set);
+                            }),
                         Forms\Components\TextInput::make('total_amount')
                             ->minValue(0)
                             ->suffix($currency)
@@ -133,9 +146,13 @@ class PurchaseOrderResource extends Resource
                             ->mutateDehydratedStateUsing(function ($state) {
                                 return floatval(str_replace(',', '', $state));
                             }),
-                        Forms\Components\Select::make('payment_type_id')
-                            ->relationship('paymentType', 'name')
-                            ->required(),
+                        Forms\Components\Group::make([
+                            Forms\Components\Select::make('payment_type_id')
+                                ->relationship('paymentType', 'name')
+                                ->required(),
+                            Forms\Components\TextInput::make('reference_number'),
+                        ])
+                            ->columns(2),
                         Forms\Components\Group::make([
                             Forms\Components\TextInput::make('paid_amount')
                                 ->suffix($currency)
@@ -169,11 +186,15 @@ class PurchaseOrderResource extends Resource
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('supplier.company_name')
-                    ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('shipping_fee')
+                    ->sortable()
+                    ->money(fn ($record) => $record->company->getCurrency()),
                 Tables\Columns\TextColumn::make('total_amount')
+                    ->sortable()
                     ->money(fn ($record) => $record->company->getCurrency()),
                 Tables\Columns\TextColumn::make('remaining_amount')
+                    ->sortable()
                     ->money(fn ($record) => $record->company->getCurrency()),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
@@ -240,7 +261,7 @@ class PurchaseOrderResource extends Resource
                         ->visible(fn ($record) => $record->isAvailable()),
                 ]),
             ])
-            ->defaultSort('created_at', 'desc');
+            ->defaultSort('order_date', 'desc');
     }
 
     public static function getWidgets(): array
@@ -277,8 +298,11 @@ class PurchaseOrderResource extends Resource
         $subtotal = $selectedProducts->reduce(function ($subtotal, $product) {
             return $subtotal + ((float) $product['unit_cost'] * $product['quantity']);
         }, 0);
+        $set('sub_total', number_format($subtotal, 2));
+
+        $shippingFee = (float) $get('shipping_fee');
 
         // Update the state with the new values
-        $set('total_amount', number_format($subtotal, 2));
+        $set('total_amount', number_format($subtotal + $shippingFee, 2));
     }
 }
