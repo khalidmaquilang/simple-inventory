@@ -40,6 +40,7 @@ class SupplierResource extends Resource
                 Forms\Components\Select::make('status')
                     ->options(StatusEnum::class)
                     ->required(),
+                Forms\Components\Textarea::make('notes'),
             ]);
     }
 
