@@ -58,6 +58,7 @@ class SaleResource extends Resource
                         Header::make('sku')
                             ->label('SKU'),
                         Header::make('Product Name'),
+                        Header::make('Current Stock'),
                         Header::make('Quantity'),
                         Header::make('Unit Cost'),
                         Header::make('Total Cost'),
@@ -77,6 +78,7 @@ class SaleResource extends Resource
                                     $set('unit_cost', '');
                                     $set('formatted_unit_cost', '');
                                     $set('quantity', '');
+                                    $set('current_stock', '');
 
                                     return;
                                 }
@@ -86,6 +88,7 @@ class SaleResource extends Resource
                                 $set('name', $product->name);
                                 $set('unit_cost', $product->selling_price);
                                 $set('formatted_unit_cost', number_format($product->selling_price, 2));
+                                $set('current_stock', $product->current_stock);
                             })
                             ->rules([
                                 function ($component) {
@@ -100,6 +103,8 @@ class SaleResource extends Resource
                                 },
                             ])
                             ->required(),
+                        Forms\Components\TextInput::make('current_stock')
+                            ->disabled(),
                         Forms\Components\TextInput::make('quantity')
                             ->lazy()
                             ->minValue(1)
