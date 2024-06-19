@@ -19,6 +19,13 @@ class Product extends Model
     use HasFactory, SoftDeletes, TenantTrait;
 
     /**
+     * @var string[]
+     */
+    protected $appends = [
+        'current_stock',
+    ];
+
+    /**
      * The attributes that should be cast to native types.
      *
      * @var array
@@ -78,5 +85,13 @@ class Product extends Model
     public function inventory(): HasOne
     {
         return $this->hasOne(Inventory::class);
+    }
+
+    /**
+     * @return int
+     */
+    public function getCurrentStockAttribute(): int
+    {
+        return optional($this->inventory)->quantity_on_hand ?? 0;
     }
 }
