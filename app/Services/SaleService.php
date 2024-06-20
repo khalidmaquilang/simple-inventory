@@ -44,6 +44,7 @@ class SaleService
         ])->render();
 
         Browsershot::html($html)
+            ->setChromePath(config('pdf.chrome_path'))
             ->noSandbox()
             ->waitUntilNetworkIdle()
             ->format('A4')
