@@ -5,10 +5,16 @@ namespace App\Services;
 use App\Models\Company;
 use App\Models\Sale;
 use Spatie\Browsershot\Browsershot;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class SaleService
 {
-    public function generateInvoice(Sale $sale)
+    /**
+     * @param  Sale  $sale
+     * @return BinaryFileResponse
+     * @throws \Spatie\Browsershot\Exceptions\CouldNotTakeBrowsershot
+     */
+    public function generateInvoice(Sale $sale): BinaryFileResponse
     {
         $customer = $sale->customer;
         $company = $sale->company;
