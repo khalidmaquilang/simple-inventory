@@ -12,6 +12,7 @@ class SaleService
     /**
      * @param  Sale  $sale
      * @return BinaryFileResponse
+     *
      * @throws \Spatie\Browsershot\Exceptions\CouldNotTakeBrowsershot
      */
     public function generateInvoice(Sale $sale): BinaryFileResponse
