@@ -5,11 +5,10 @@ namespace App\Services;
 use App\Models\Company;
 use App\Models\Sale;
 use Spatie\Browsershot\Browsershot;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class SaleService
 {
-    public function generateInvoice(Sale $sale): BinaryFileResponse
+    public function generateInvoice(Sale $sale)
     {
         $customer = $sale->customer;
         $company = $sale->company;
@@ -40,14 +39,17 @@ class SaleService
             'total' => $this->format($sale->total_amount, $currency),
             'paidAmount' => $this->format($sale->paid_amount, $currency),
             'remainingAmount' => $this->format($sale->remaining_amount, $currency),
+            'paymentMethod' => $sale->paymentType->name,
+            'referenceNumber' => $sale->reference_number,
             'superCompany' => Company::first(),
         ])->render();
 
         Browsershot::html($html)
             ->setChromePath(config('pdf.chrome_path'))
             ->noSandbox()
-            ->waitUntilNetworkIdle()
+            ->emulateMedia('screen')
             ->format('A4')
+            ->waitUntilNetworkIdle()
             ->save($sale->invoice_number.'.pdf');
 
         return response()

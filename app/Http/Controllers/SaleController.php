@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Company;
 use App\Models\Sale;
 use App\Services\SaleService;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class SaleController extends Controller
 {
@@ -18,7 +17,7 @@ class SaleController extends Controller
      * @param  Sale  $sale
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    public function generateInvoice(Company $company, Sale $sale): BinaryFileResponse
+    public function generateInvoice(Company $company, Sale $sale)
     {
         if ($company->id !== $sale->company_id) {
             abort(404);

@@ -1,182 +1,186 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="zxx">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{ config('app.name') }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
 
-    <title>Invoice</title>
+    <!-- External CSS libraries -->
+    <link type="text/css" rel="stylesheet" href="{{ public_path('app-invoice/assets/css/bootstrap.min.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ public_path('app-invoice/assets/fonts/font-awesome/css/font-awesome.min.css') }}">
 
-    <!-- Fonts -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Favicon icon -->
+    <link rel="shortcut icon" href="{{ public_path('app-invoice/assets/img/favicon.ico') }}" type="image/x-icon" >
+
+    <!-- Google fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Custom Stylesheet -->
+    <link type="text/css" rel="stylesheet" href="{{ public_path('app-invoice/assets/css/style.css') }}">
 </head>
-<body class="font-sans antialiased dark:bg-black dark:text-white/50">
+<body>
 
-<!-- Invoice -->
-<div class="max-w-[85rem] px-4 sm:px-6 lg:px-8 mx-auto my-4 sm:my-10">
-    <div class="sm:w-11/12 lg:w-3/4 mx-auto">
-        <!-- Card -->
-        <div class="flex flex-col p-4 sm:p-5 bg-white dark:bg-neutral-800">
-            <!-- Grid -->
-            <div class="flex justify-between">
-                <div>
-                    <img src="{{ $logo }}" alt="{{ $companyName }}" class="h-26 w-26"/>
-                    <h1 class="mt-2 text-lg md:text-xl font-semibold text-blue-600 dark:text-white">{{ $companyName }}</h1>
-                </div>
-                <!-- Col -->
+<!-- Invoice 5 start -->
+<div class="invoice-6 invoice-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="invoice-inner clearfix">
+                    <div class="invoice-info clearfix" id="invoice_wrapper">
+                        <div class="invoice-headar">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="invoice-logo">
+                                        <!-- logo started -->
+                                        @if ($logo)
+                                            <div class="logo">
+                                                <img src="{{ $logo }}" alt="{{ $companyName }}" class="h-24 w-24"/>
+                                            </div>
+                                        @endif
+                                        <!-- logo ended -->
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="invoice-contact-us">
+                                        <h1>Contact Us</h1>
+                                        <ul class="link">
+                                            <li>
+                                                <i class="fa fa-map-marker"></i> {{ $superCompany->address }}
+                                            </li>
+                                            <li>
+                                                <i class="fa fa-envelope"></i> <a href="mailto:{{ $superCompany->email }}">{{ $superCompany->email }}</a>
+                                            </li>
+                                            <li>
+                                                <i class="fa fa-phone"></i> <a href="tel:{{ $superCompany->phone }}">{{ $superCompany->phone }}</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="invoice-contant">
+                            <div class="invoice-top">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h1 class="invoice-name">Invoice</h1>
+                                    </div>
+                                    <div class="col-sm-6 mb-30">
+                                        <div class="invoice-number-inner">
+                                            <h2 class="name">Invoice No:</h2>
+                                            <p class="mb-0">#{{ $invoiceNumber }}</p>
+                                            <p class="mb-0">Invoice Date: <span>{{ $invoiceDate }}</span></p>
+                                            <p class="mb-0">Due Date: <span>{{ $dueDate }}</span></p>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 mb-30">
+                                        <div class="invoice-number">
+                                            <h4 class="inv-title-1">Invoice To</h4>
+                                            <h2 class="name mb-10">{{ $buyerName }}</h2>
+                                            <p class="invo-addr-1 mb-0">
+                                                @if ($buyerEmail) {{ $buyerEmail }}<br /> @endif
+                                                @if ($buyerPhoneNumber){{ $buyerPhoneNumber }}<br /> @endif
+                                                @if ($buyerAddress){{ $buyerAddress }}<br /> @endif
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 mb-30">
+                                        <div class="invoice-number">
+                                            <div class="invoice-number-inner">
+                                                <h4 class="inv-title-1">Invoice From</h4>
+                                                <h2 class="name mb-10">{{ $companyName }}</h2>
+                                                <p class="invo-addr-1 mb-0">
+                                                    @if ($email) {{ $email }}<br /> @endif
+                                                    @if ($phoneNumber) {{ $phoneNumber }}<br /> @endif
+                                                    @if ($address) {{ $address }}<br /> @endif
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="invoice-center">
+                                <div class="order-summary">
+                                    <div class="table-outer">
+                                        <table class="default-table invoice-table">
+                                            <thead>
+                                            <tr>
+                                                <th>Item</th>
+                                                <th>Quantity</th>
+                                                <th>Price</th>
+                                                <th>Total</th>
+                                            </tr>
+                                            </thead>
 
-                <div class="text-end">
-                    <h2 class="text-2xl md:text-3xl font-semibold text-gray-800 dark:text-neutral-200">Invoice #</h2>
-                    <span class="mt-1 block text-gray-500 dark:text-neutral-500">{{ $invoiceNumber }}</span>
-
-                    <address class="mt-4 not-italic text-gray-800 dark:text-neutral-200">
-                        {{ $email }}<br>
-                        {{ $phoneNumber }}<br>
-                        {{ $address }}<br>
-                    </address>
-                </div>
-                <!-- Col -->
-            </div>
-            <!-- End Grid -->
-
-            <!-- Grid -->
-            <div class="mt-8 grid sm:grid-cols-2 gap-3">
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-neutral-200">Bill to:</h3>
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-neutral-200">{{ $buyerName }}</h3>
-                    <address class="mt-2 not-italic text-gray-500 dark:text-neutral-500">
-                        {{ $buyerEmail }}<br>
-                        {{ $buyerPhoneNumber }}<br>
-                        {{ $buyerAddress }}<br>
-                    </address>
-                </div>
-                <!-- Col -->
-
-                <div class="sm:text-end space-y-2">
-                    <!-- Grid -->
-                    <div class="grid grid-cols-2 sm:grid-cols-1 gap-3 sm:gap-2">
-                        <dl class="grid sm:grid-cols-5 gap-x-3">
-                            <dt class="col-span-3 font-semibold text-gray-800 dark:text-neutral-200">Invoice date:</dt>
-                            <dd class="col-span-2 text-gray-500 dark:text-neutral-500">{{ $invoiceDate }}</dd>
-                        </dl>
-                        <dl class="grid sm:grid-cols-5 gap-x-3">
-                            <dt class="col-span-3 font-semibold text-gray-800 dark:text-neutral-200">Due date:</dt>
-                            <dd class="col-span-2 text-gray-500 dark:text-neutral-500">{{ $dueDate }}</dd>
-                        </dl>
+                                            <tbody>
+                                            @foreach($items as $item)
+                                                <tr>
+                                                    <td>{{ $item->name }}</td>
+                                                    <td class="right-align">{{ $item->quantity }}</td>
+                                                    <td class="right-align">{{ $item->formatted_unit_cost }}</td>
+                                                    <td class="right-align">{{ $item->formatted_total_cost }}</td>
+                                                </tr>
+                                            @endforeach
+                                            <tr>
+                                                <td colspan="3">Sub Total</td>
+                                                <td class="right-align">{{ $subTotal }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">Discount</td>
+                                                <td class="right-align">{{ $discount }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">Shipping Fee</td>
+                                                <td class="right-align">{{ $shippingFee }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">VAT</td>
+                                                <td class="right-align">{{ $vat }}%</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">Total</td>
+                                                <td class="right-align"><strong>{{ $total }}</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">Amount Paid</td>
+                                                <td class="right-align">{{ $paidAmount }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">Due Balance</td>
+                                                <td class="right-align"><strong>{{ $remainingAmount }}</strong></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="invoice-bottom">
+                                <div class="row">
+                                    <div class="col-lg-7 col-md-7 col-sm-7">
+                                        <div class="terms-conditions mb-30">
+                                            <h3 class="inv-title-1 mb-10">Terms & Conditions</h3>
+                                            All sales are final. For any queries, please contact {{ $companyName }}.
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-5 col-md-5 col-sm-5">
+                                        <div class="payment-method mb-30">
+                                            <h3 class="inv-title-1 mb-10">Payment Method</h3>
+                                            <ul class="payment-method-list-1 text-14">
+                                                <li><strong>{{ $paymentMethod }}</strong></li>
+                                                @if ($referenceNumber)<li><strong>Reference Number:</strong> {{ $referenceNumber }}</li> @endif
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <!-- End Grid -->
-                </div>
-                <!-- Col -->
-            </div>
-            <!-- End Grid -->
-
-            <!-- Table -->
-            <div class="mt-6">
-                <div class="border border-gray-200 p-4 rounded-lg space-y-4 dark:border-neutral-700">
-                    <div class="hidden sm:grid sm:grid-cols-5">
-                        <div class="sm:col-span-2 text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">
-                            Item
-                        </div>
-                        <div class="text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Qty
-                        </div>
-                        <div class="text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Price
-                        </div>
-                        <div class="text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Amount
-                        </div>
-                    </div>
-
-                    <div class="hidden sm:block border-b border-gray-200 dark:border-neutral-700"></div>
-
-                    @foreach($items as $item)
-                        <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
-                            <div class="col-span-full sm:col-span-2">
-                                <h5 class="sm:hidden text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">
-                                    Item</h5>
-                                <p class="font-medium text-gray-800 dark:text-neutral-200">{{ $item->name }}</p>
-                            </div>
-                            <div>
-                                <h5 class="sm:hidden text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">
-                                    Qty</h5>
-                                <p class="text-gray-800 dark:text-neutral-200">{{ $item->quantity }}</p>
-                            </div>
-                            <div>
-                                <h5 class="sm:hidden text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">
-                                    Price</h5>
-                                <p class="text-gray-800 dark:text-neutral-200">{{ $item->formatted_unit_cost }}</p>
-                            </div>
-                            <div>
-                                <h5 class="sm:hidden text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">
-                                    Amount</h5>
-                                <p class="sm:text-end text-gray-800 dark:text-neutral-200">{{ $item->formatted_total_cost }}</p>
-                            </div>
-                        </div>
-                    @endforeach
                 </div>
             </div>
-            <!-- End Table -->
-
-            <!-- Flex -->
-            <div class="mt-8 flex sm:justify-end">
-                <div class="w-full max-w-2xl sm:text-end space-y-2">
-                    <!-- Grid -->
-                    <div class="grid grid-cols-2 sm:grid-cols-1 gap-3 sm:gap-2">
-                        <dl class="grid sm:grid-cols-5 gap-x-3">
-                            <dt class="col-span-3 font-semibold text-gray-800 dark:text-neutral-200">Subtotal:</dt>
-                            <dd class="col-span-2 text-gray-500 dark:text-neutral-500">{{ $subTotal }}</dd>
-                        </dl>
-
-                        <dl class="grid sm:grid-cols-5 gap-x-3">
-                            <dt class="col-span-3 font-semibold text-gray-800 dark:text-neutral-200">Discount:</dt>
-                            <dd class="col-span-2 text-gray-500 dark:text-neutral-500">{{ $discount }}</dd>
-                        </dl>
-
-                        <dl class="grid sm:grid-cols-5 gap-x-3">
-                            <dt class="col-span-3 font-semibold text-gray-800 dark:text-neutral-200">Shipping Fee:</dt>
-                            <dd class="col-span-2 text-gray-500 dark:text-neutral-500">{{ $shippingFee }}</dd>
-                        </dl>
-
-
-                        <dl class="grid sm:grid-cols-5 gap-x-3">
-                            <dt class="col-span-3 font-semibold text-gray-800 dark:text-neutral-200">VAT:</dt>
-                            <dd class="col-span-2 text-gray-500 dark:text-neutral-500">{{ $vat }}%</dd>
-                        </dl>
-
-                        <dl class="grid sm:grid-cols-5 gap-x-3">
-                            <dt class="col-span-3 font-semibold text-gray-800 dark:text-neutral-200">Total:</dt>
-                            <dd class="col-span-2 text-gray-500 dark:text-neutral-500">{{ $total }}</dd>
-                        </dl>
-
-                        <dl class="grid sm:grid-cols-5 gap-x-3">
-                            <dt class="col-span-3 font-semibold text-gray-800 dark:text-neutral-200">Amount paid:</dt>
-                            <dd class="col-span-2 text-gray-500 dark:text-neutral-500">{{ $paidAmount }}</dd>
-                        </dl>
-
-                        <dl class="grid sm:grid-cols-5 gap-x-3">
-                            <dt class="col-span-3 font-semibold text-gray-800 dark:text-neutral-200">Due balance:</dt>
-                            <dd class="col-span-2 text-gray-500 dark:text-neutral-500">{{ $remainingAmount }}</dd>
-                        </dl>
-                    </div>
-                    <!-- End Grid -->
-                </div>
-            </div>
-            <!-- End Flex -->
-
-            <div class="mt-8 sm:mt-12">
-                <h4 class="text-lg font-semibold text-gray-800 dark:text-neutral-200">Thank you!</h4>
-                <p class="text-gray-500 dark:text-neutral-500">If you have any questions concerning this invoice, use
-                    the following contact information:</p>
-                <div class="mt-2">
-                    <p class="block text-sm font-medium text-gray-800 dark:text-neutral-200">{{ config('app.url') }}</p>
-                    <p class="block text-sm font-medium text-gray-800 dark:text-neutral-200">{{ $superCompany->phone }}</p>
-                </div>
-            </div>
-
-            <p class="mt-5 text-sm text-gray-500 dark:text-neutral-500">© 2024 {{ config('app.name') }}.</p>
         </div>
-        <!-- End Card -->
     </div>
 </div>
-<!-- End Invoice -->
+<!-- Invoice 5 end -->
+
 </body>
 </html>

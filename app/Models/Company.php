@@ -38,7 +38,7 @@ class Company extends Model implements HasCurrentTenantLabel
             return '';
         }
 
-        return storage_path('app/public/'.$logo);
+        return public_path('/storage/'.$logo);
     }
 
     /**

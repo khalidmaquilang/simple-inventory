@@ -53,6 +53,10 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+# Browsershot
+RUN npm install --location=global --unsafe-perm puppeteer@^17
+RUN chmod -R o+rx /usr/lib/node_modules/puppeteer/.local-chromium
+
 RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.3
 
 RUN groupadd --force -g $WWWGROUP sail
