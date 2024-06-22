@@ -72,8 +72,12 @@ class SaleService
      * @param  string  $currency
      * @return string
      */
-    protected function format(int|float $amount, string $currency): string
+    protected function format(int|float|null $amount, string $currency): string
     {
+        if (empty($amount)) {
+            return number_format(0, 2).' '.$currency;
+        }
+
         return number_format($amount, 2).' '.$currency;
     }
 
