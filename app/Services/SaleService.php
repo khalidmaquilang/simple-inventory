@@ -89,7 +89,7 @@ class SaleService
     protected function getTaxableAmount(float $totalAmount, int $vat): float
     {
         if ($vat <= 0) {
-            return 0;
+            return $totalAmount;
         }
 
         return $totalAmount / (1 + ($vat / 100));
