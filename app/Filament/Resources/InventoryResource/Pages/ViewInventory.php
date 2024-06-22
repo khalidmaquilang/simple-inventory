@@ -19,12 +19,14 @@ class ViewInventory extends ViewRecord
         return $infolist
             ->schema([
                 Section::make('Inventory Details')
-                    ->columns(3)
+                    ->columns(4)
                     ->schema([
                         TextEntry::make('product.name'),
                         TextEntry::make('quantity_on_hand'),
                         TextEntry::make('formatted_average_cost')
                             ->label('Average Cost'),
+                        TextEntry::make('product.reorder_point')
+                            ->label('Reorder Point'),
                     ]),
             ]);
     }

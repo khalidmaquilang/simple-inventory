@@ -27,6 +27,8 @@ class ProductFactory extends Factory
             'name' => $this->faker->name(),
             'purchase_price' => $this->faker->randomFloat(0, 0, 1000.),
             'selling_price' => $this->faker->randomFloat(0, 0, 1000.),
+            'reorder_point' => 0,
+            'last_notified_at' => now(),
             'description' => $this->faker->text(),
         ];
     }

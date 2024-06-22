@@ -38,12 +38,16 @@ class ViewPurchaseOrder extends ViewRecord
                         TextEntry::make('supplier.company_name'),
                         Fieldset::make('Payment Information')
                             ->schema([
+                                TextEntry::make('shipping_fee')
+                                    ->formatStateUsing(fn ($state) => number_format($state, 2).' '.$currency),
                                 TextEntry::make('total_amount')
                                     ->formatStateUsing(fn ($state) => number_format($state, 2).' '.$currency),
                                 TextEntry::make('paid_amount')
                                     ->formatStateUsing(fn ($state) => number_format($state, 2).' '.$currency),
                                 TextEntry::make('paymentType.name'),
-                            ]),
+                                TextEntry::make('reference_number'),
+                            ])
+                            ->columns(3),
                     ]),
 
             ]);
