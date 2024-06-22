@@ -131,8 +131,8 @@
                                                 <td class="right-align">{{ $shippingFee }}</td>
                                             </tr>
                                             <tr>
-                                                <td colspan="3">VAT</td>
-                                                <td class="right-align">{{ $vat }}%</td>
+                                                <td colspan="3">VAT ({{ $vatPercent }}%)</td>
+                                                <td class="right-align">{{ $vat }}</td>
                                             </tr>
                                             <tr>
                                                 <td colspan="3">Total</td>

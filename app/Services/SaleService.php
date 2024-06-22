@@ -25,6 +25,8 @@ class SaleService
         });
         $currency = $company->getCurrency();
 
+        $taxableAmount = $this->getTaxableAmount($sale->total_amount, $sale->vat);
+
         $html = view('filament.invoice.invoice', [
             'companyName' => $company->name,
             'logo' => $company->getCompanyLogo(),
@@ -42,7 +44,8 @@ class SaleService
             'subTotal' => $this->format($subTotal, $currency),
             'shippingFee' => $this->format($sale->shipping_fee, $currency),
             'discount' => $sale->formatted_discount,
-            'vat' => $sale->vat,
+            'vat' => $this->format($sale->total_amount - $taxableAmount, $currency),
+            'vatPercent' => $sale->vat,
             'total' => $this->format($sale->total_amount, $currency),
             'paidAmount' => $this->format($sale->paid_amount, $currency),
             'remainingAmount' => $this->format($sale->remaining_amount, $currency),
@@ -72,5 +75,19 @@ class SaleService
     protected function format(int|float $amount, string $currency): string
     {
         return number_format($amount, 2).' '.$currency;
+    }
+
+    /**
+     * @param  float  $totalAmount
+     * @param  int  $vat
+     * @return float
+     */
+    protected function getTaxableAmount(float $totalAmount, int $vat): float
+    {
+        if ($vat <= 0) {
+            return 0;
+        }
+
+        return $totalAmount / (1 + ($vat / 100));
     }
 }
