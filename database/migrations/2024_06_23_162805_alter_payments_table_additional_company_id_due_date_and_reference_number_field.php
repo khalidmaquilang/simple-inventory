@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::table('payments', function (Blueprint $table) {
             $table->foreignId('company_id')->nullable()->index()->after('id');
+            $table->date('due_date')->nullable()->after('payment_date');
+            $table->string('reference_number')->nullable()->after('payment_method');
         });
     }
 
@@ -22,7 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('payments', function (Blueprint $table) {
-            $table->dropColumn('company_id');
+            $table->dropColumn(['company_id', 'reference_number', 'due_date']);
         });
     }
 };

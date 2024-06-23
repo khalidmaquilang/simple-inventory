@@ -12,8 +12,6 @@ class PaymentObserver extends BaseObserver
      */
     public function creating(Model $model): void
     {
-        if (auth()->check()) {
-            $model->invoice_number = Payment::generateCode();
-        }
+        $model->invoice_number = Payment::generateCode();
     }
 }

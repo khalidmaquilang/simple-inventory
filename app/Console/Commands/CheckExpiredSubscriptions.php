@@ -21,7 +21,7 @@ class CheckExpiredSubscriptions extends Command
      *
      * @var string
      */
-    protected $description = "This command checks for active subscriptions that have expired based on their `end_date`. Expired subscriptions are then marked as 'expired', and you can add additional logic here to handle notifications, access restrictions, or other relevant actions.";
+    protected $description = "This command checks for active subscriptions that have expired based on their `end_date`. Expired subscriptions are then marked as 'expired'.";
 
     /**
      * Execute the console command.

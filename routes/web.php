@@ -13,7 +13,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
             'app.sales.generate-invoice'
         );
 
-        Route::get('{company}/payments/{payment}/invoice', [\App\Http\Controllers\PaymentController::class, 'generateInvoice'])->name(
+        Route::get('{company}/payments/{payment}/generate-invoice', [\App\Http\Controllers\PaymentController::class, 'generateInvoice'])->name(
             'app.payments.generate-invoice'
         );
     });
