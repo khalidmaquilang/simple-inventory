@@ -2,68 +2,84 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\Plan;
+use App\Models\Payment;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use Filament\Infolists\Components\Actions;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Concerns\InteractsWithInfolists;
+use Filament\Infolists\Contracts\HasInfolists;
+use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
-use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Actions\Action;
-use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 
-class Subscriptions extends Page implements HasTable
+class Subscriptions extends Page implements HasInfolists, HasTable
 {
-    use InteractsWithTable;
+    use HasPageShield, InteractsWithInfolists, InteractsWithTable;
 
-    protected static bool $shouldRegisterNavigation = false;
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-path';
+
+    protected static ?int $navigationSort = 10;
 
     protected static string $view = 'filament.pages.subscriptions';
 
-    public function table(Table $table): Table
+    public function subscriptionList(Infolist $infolist): Infolist
     {
-        return $table
-            ->query(Plan::query()->standard())
-            ->columns([
-                Stack::make([
-                    TextColumn::make('name')
-                        ->size(TextColumn\TextColumnSize::Large)
-                        ->weight(fn ($record) => $this->bold($record->price)),
-                    TextColumn::make('price')
-                        ->weight(fn ($record) => $this->bold($record->price))
-                        ->money(fn () => filament()->getTenant()->getCurrency()),
-                    TextColumn::make('billing_cycle')
-                        ->weight(fn ($record) => $this->bold($record->price)),
-                    TextColumn::make('features')
-                        ->weight(fn ($record) => $this->bold($record->price))
-                        ->listWithLineBreaks()
-                        ->bulleted(),
-                ]),
-            ])
-            ->contentGrid([
-                'md' => 2,
-                'xl' => 3,
-            ])
-            ->actions([
-                Action::make('Current Plan')
-                    ->visible(fn ($record) => $record->id === filament()->getTenant()->getActiveSubscription()->plan_id),
-                Action::make('Contact Us')
-                    ->button()
-                    ->action(fn () => redirect('https://www.facebook.com/stockmanageronline'))
-                    ->visible(fn ($record) => $record->id !== filament()->getTenant()->getActiveSubscription()->plan_id),
+        return $infolist
+            ->record(filament()->getTenant())
+            ->schema([
+                \Filament\Infolists\Components\Section::make()
+                    ->columns(2)
+                    ->schema([
+                        TextEntry::make('plan')
+                            ->label('Current Subscribed Plan')
+                            ->getStateUsing(fn ($record) => $record->getActiveSubscription()->plan->name),
+                        TextEntry::make('status')
+                            ->badge()
+                            ->getStateUsing(fn ($record) => $record->getActiveSubscription()->status),
+                        TextEntry::make('next_billing_cycle')
+                            ->date()
+                            ->getStateUsing(fn ($record) => $record->getActiveSubscription()->end_date),
+                        Actions::make([
+                            \Filament\Infolists\Components\Actions\Action::make('changeSubscriptionPlan')
+                                ->action(fn () => redirect()->route('filament.app.pages.plans', filament()->getTenant())),
+                        ]),
+                    ]),
             ]);
     }
 
-    /**
-     * @param  $price
-     * @return FontWeight
-     */
-    protected function bold($price)
+    public static function table(Table $table): Table
     {
-        if ($price == 999) {
-            return FontWeight::ExtraBold;
-        }
-
-        return FontWeight::Medium;
+        return $table
+            ->heading('Invoices')
+            ->query(Payment::query())
+            ->columns([
+                TextColumn::make('invoice_number')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('payment_date')
+                    ->date()
+                    ->sortable(),
+                TextColumn::make('amount')
+                    ->money('PHP')
+                    ->sortable(),
+                TextColumn::make('payment_method'),
+                TextColumn::make('status')
+                    ->badge(),
+            ])
+            ->actions([
+                Action::make('Download Invoice')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('success')
+                    ->url(fn ($record) => route('app.payments.generate-invoice', [
+                        'company' => filament()->getTenant()->id,
+                        'payment' => $record,
+                    ]))
+                    ->openUrlInNewTab(),
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 }
