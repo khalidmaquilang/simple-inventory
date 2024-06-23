@@ -66,7 +66,7 @@ return [
 
         'pages' => [
             'Dashboard',
-            'Subscriptions',
+            'Plans',
             'EditProfilePage',
         ],
 

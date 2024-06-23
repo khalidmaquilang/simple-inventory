@@ -4,13 +4,14 @@ namespace App\Models;
 
 use App\Enums\PaymentStatusEnum;
 use App\Models\Traits\SerialGenerationTrait;
+use App\Models\Traits\TenantTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Payment extends Model
 {
-    use HasFactory, SerialGenerationTrait;
+    use HasFactory, SerialGenerationTrait, TenantTrait;
 
     /**
      * @var \class-string[]

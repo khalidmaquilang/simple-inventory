@@ -1,6 +1,4 @@
 <x-filament-panels::page>
-    {{ $this->subscriptionList }}
-
     <x-filament-panels::form wire:submit="save">
         {{ $this->form }}
 
