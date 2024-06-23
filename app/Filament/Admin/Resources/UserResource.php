@@ -1,36 +1,21 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Admin\Resources;
 
-use App\Filament\Resources\UserResource\Pages;
+use App\Filament\Admin\Resources\UserResource\Pages;
 use App\Models\User;
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
-use Filament\Facades\Filament;
 use Filament\Forms\Form;
-use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class UserResource extends Resource implements HasShieldPermissions
+class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationGroup = 'Admin Menu';
-
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?int $navigationSort = 3;
-
-    public static function getPermissionPrefixes(): array
-    {
-        return [
-            'view',
-            'view_any',
-            'update',
-            'kick',
-        ];
-    }
+    protected static bool $shouldSkipAuthorization = true;
 
     public static function form(Form $form): Form
     {
@@ -49,13 +34,6 @@ class UserResource extends Resource implements HasShieldPermissions
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('roles')
-                    ->formatStateUsing(function ($state) {
-                        $state = '['.$state.']';
-                        $state = collect(json_decode($state));
-
-                        return implode(',', $state->pluck('name')->toArray());
-                    }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -70,21 +48,6 @@ class UserResource extends Resource implements HasShieldPermissions
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('Kick User')
-                    ->authorize('kick_user')
-                    ->color('danger')
-                    ->icon('heroicon-m-user-minus')
-                    ->requiresConfirmation()
-                    ->action(function ($record) {
-                        $company = Filament::getTenant();
-                        $company->members()->detach($record);
-
-                        Notification::make()
-                            ->success()
-                            ->title('The user has been removed from the company.')
-                            ->send();
-                    })
-                    ->hidden(fn ($record) => $record->id === auth()->id()),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
