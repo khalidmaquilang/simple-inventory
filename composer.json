@@ -16,6 +16,7 @@
         "joaopaulolndev/filament-edit-profile": "^1.0",
         "koalafacade/filament-alertbox": "^1.0",
         "laravel/framework": "^11.9",
+        "laravel/horizon": "^5.24",
         "laravel/tinker": "^2.9",
         "laraveldaily/laravel-invoices": "^4.0",
         "leandrocfe/filament-apex-charts": "^3.1",
