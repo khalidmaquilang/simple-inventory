@@ -55,7 +55,8 @@ class Company extends Model implements HasCurrentTenantLabel
                 ->prefix(config('app.url').'/')
                 ->required()
                 ->alphaDash()
-                ->prohibitedIf('slug', 'admin')
+                ->prohibitedIf('slug', ['admin',
+                    'horizon'])
                 ->unique(ignoreRecord: true)
                 ->mutateStateForValidationUsing(fn (string $state) => strtolower($state)),
             TextInput::make('phone')
