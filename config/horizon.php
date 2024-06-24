@@ -223,11 +223,13 @@ return [
         ],
 
         'local' => [
-            'connection' => 'redis',
-            'maxProcesses' => 10,
-            'queue' => explode(',', env('QUEUE_CONNECTIONS', 'default')),
-            'balance' => 'simple',
-            'tries' => 3,
+            'supervisor-1' => [
+                'connection' => 'redis',
+                'maxProcesses' => 10,
+                'queue' => explode(',', env('QUEUE_CONNECTIONS', 'default')),
+                'balance' => 'simple',
+                'tries' => 3,
+            ],
         ],
     ],
 ];
