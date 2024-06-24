@@ -36,7 +36,8 @@ class SendInvoiceNearExpiredSubscriptions extends Command
         foreach ($expiringSubscriptions as $subscription) {
             $payment = $subscription->createPayment(PaymentStatusEnum::PENDING);
 
-            SendInvoiceJob::dispatch($payment);
+            SendInvoiceJob::dispatch($payment)
+                ->onQueue('short-running-queue');
         }
     }
 }
