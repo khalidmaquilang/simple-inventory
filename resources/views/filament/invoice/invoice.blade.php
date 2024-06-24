@@ -32,26 +32,10 @@
                                         <!-- logo started -->
                                         @if ($logo)
                                             <div class="logo">
-                                                <img src="{{ $logo }}" alt="{{ $companyName }}" class="h-24 w-24"/>
+                                                <img src="{{ $logo }}" alt="{{ $companyName }}"/>
                                             </div>
                                         @endif
                                         <!-- logo ended -->
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="invoice-contact-us">
-                                        <h1>Contact Us</h1>
-                                        <ul class="link">
-                                            <li>
-                                                <i class="fa fa-map-marker"></i> {{ $superCompany->address }}
-                                            </li>
-                                            <li>
-                                                <i class="fa fa-envelope"></i> <a href="mailto:{{ $superCompany->email }}">{{ $superCompany->email }}</a>
-                                            </li>
-                                            <li>
-                                                <i class="fa fa-phone"></i> <a href="tel:{{ $superCompany->phone }}">{{ $superCompany->phone }}</a>
-                                            </li>
-                                        </ul>
                                     </div>
                                 </div>
                             </div>
