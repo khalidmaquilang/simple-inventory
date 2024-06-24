@@ -14,7 +14,6 @@ use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use Filament\Facades\Filament;
 use Filament\Forms;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -283,29 +282,7 @@ class SaleResource extends Resource
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('Pay Amount')
-                        ->form([
-                            Forms\Components\Group::make([
-                                TextInput::make('paid_amount')
-                                    ->hint(function ($record) {
-                                        return 'You need to pay '.$record->formatted_remaining_amount;
-                                    })
-                                    ->minValue(1)
-                                    ->maxValue(function ($record): float {
-                                        return $record->remaining_amount;
-                                    })
-                                    ->numeric()
-                                    ->required()
-                                    ->hintAction(
-                                        Forms\Components\Actions\Action::make('pay_in_full')
-                                            ->icon('heroicon-m-arrow-down-tray')
-                                            ->action(function (Forms\Set $set, $state, $record) {
-                                                $set('paid_amount', $record->remaining_amount);
-                                            })
-                                    ),
-                                TextInput::make('reference_number'),
-                            ])
-                                ->columns(2),
-                        ])
+                        ->form(Sale::getPayDueAmountForm())
                         ->color('info')
                         ->icon('heroicon-m-banknotes')
                         ->visible(fn ($record) => $record->remaining_amount > 0)
