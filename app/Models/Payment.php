@@ -13,6 +13,17 @@ class Payment extends Model
 {
     use HasFactory, SerialGenerationTrait, TenantTrait;
 
+    protected $fillable = [
+        'company_id',
+        'invoice_number',
+        'subscription_id',
+        'amount',
+        'payment_date',
+        'status',
+        'payment_method',
+        'reference_number',
+    ];
+
     /**
      * @var \class-string[]
      */
