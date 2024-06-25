@@ -18,6 +18,18 @@ class Product extends Model
 {
     use HasFactory, SoftDeletes, TenantTrait;
 
+    protected $fillable = [
+        'company_id',
+        'category_id',
+        'sku',
+        'name',
+        'purchase_price',
+        'selling_price',
+        'reorder_point',
+        'last_notified_at',
+        'description',
+    ];
+
     /**
      * @var string[]
      */

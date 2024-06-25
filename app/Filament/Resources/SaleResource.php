@@ -54,8 +54,6 @@ class SaleResource extends Resource
                     ->relationship()
                     ->addActionLabel('Click to add more products')
                     ->headers([
-                        Header::make('sku')
-                            ->label('SKU'),
                         Header::make('Product Name'),
                         Header::make('Current Stock'),
                         Header::make('Quantity'),
@@ -63,12 +61,11 @@ class SaleResource extends Resource
                         Header::make('Total Cost'),
                     ])
                     ->schema([
-                        Forms\Components\TextInput::make('sku')
-                            ->readOnly(),
+                        Forms\Components\Hidden::make('sku'),
                         Forms\Components\Hidden::make('name'),
                         Forms\Components\Hidden::make('unit_cost'),
                         Forms\Components\Select::make('product_id')
-                            ->relationship('product', 'name')
+                            ->relationship('product', 'sku_name_format')
                             ->lazy()
                             ->afterStateUpdated(function ($state, Forms\Set $set) {
                                 if (empty($state)) {
@@ -85,6 +82,7 @@ class SaleResource extends Resource
                                 $product = Product::find($state);
                                 $set('sku', $product->sku);
                                 $set('name', $product->name);
+                                $set('quantity', '');
                                 $set('unit_cost', $product->selling_price);
                                 $set('formatted_unit_cost', number_format($product->selling_price, 2));
                                 $set('current_stock', $product->current_stock);
