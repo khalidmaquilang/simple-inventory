@@ -42,20 +42,17 @@ class PurchaseOrderResource extends Resource
                     ->relationship()
                     ->addActionLabel('Click to add more products')
                     ->headers([
-                        Header::make('sku')
-                            ->label('SKU'),
                         Header::make('Product Name'),
                         Header::make('Quantity'),
                         Header::make('Unit Cost'),
                         Header::make('Total Cost'),
                     ])
                     ->schema([
-                        Forms\Components\TextInput::make('sku')
-                            ->readOnly(),
+                        Forms\Components\Hidden::make('sku'),
                         Forms\Components\Hidden::make('unit_cost'),
                         Forms\Components\Hidden::make('name'),
                         Forms\Components\Select::make('product_id')
-                            ->relationship('product', 'name')
+                            ->relationship('product', 'sku_name_format')
                             ->live()
                             ->afterStateUpdated(function ($state, Forms\Set $set) {
                                 if (empty($state)) {
@@ -71,6 +68,7 @@ class PurchaseOrderResource extends Resource
                                 $product = Product::find($state);
                                 $set('sku', $product->sku);
                                 $set('name', $product->name);
+                                $set('quantity', '');
                                 $set('unit_cost', $product->purchase_price);
                                 $set('formatted_unit_cost', number_format($product->purchase_price, 2));
                             })
@@ -157,6 +155,7 @@ class PurchaseOrderResource extends Resource
                             Forms\Components\TextInput::make('paid_amount')
                                 ->suffix($currency)
                                 ->required()
+                                ->default(0)
                                 ->minValue(0)
                                 ->maxValue(fn ($get) => floatval(str_replace(',', '', $get('total_amount'))) ?? 0)
                                 ->numeric(),
