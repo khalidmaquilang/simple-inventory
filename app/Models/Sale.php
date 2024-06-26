@@ -62,25 +62,16 @@ class Sale extends Model
      * @var string[]
      */
     protected $appends = [
-        'remaining_amount',
         'formatted_remaining_amount',
         'formatted_discount',
     ];
-
-    /**
-     * @return float
-     */
-    public function getRemainingAmountAttribute(): float
-    {
-        return $this->total_amount - $this->paid_amount;
-    }
 
     /**
      * @return string
      */
     public function getFormattedRemainingAmountAttribute(): string
     {
-        return number_format($this->getRemainingAmountAttribute(), 2).' '.$this->company->getCurrency();
+        return number_format($this->remaining_amount, 2).' '.$this->company->getCurrency();
     }
 
     /**
