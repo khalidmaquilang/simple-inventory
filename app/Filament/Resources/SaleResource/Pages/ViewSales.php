@@ -28,6 +28,16 @@ class ViewSales extends ViewRecord
                     'sale' => $record,
                 ]))
                 ->openUrlInNewTab(),
+            Action::make('Pay Due Amount')
+                ->form(Sale::getPayDueAmountForm())
+                ->color('info')
+                ->icon('heroicon-m-banknotes')
+                ->visible(fn ($record) => $record->remaining_amount > 0)
+                ->action(function ($record, array $data) {
+                    $record->paid_amount += $data['paid_amount'];
+                    $record->reference_number = $data['reference_number'];
+                    $record->save();
+                }),
         ];
     }
 

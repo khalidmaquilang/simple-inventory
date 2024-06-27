@@ -14,7 +14,6 @@ use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use Filament\Facades\Filament;
 use Filament\Forms;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -55,8 +54,6 @@ class SaleResource extends Resource
                     ->relationship()
                     ->addActionLabel('Click to add more products')
                     ->headers([
-                        Header::make('sku')
-                            ->label('SKU'),
                         Header::make('Product Name'),
                         Header::make('Current Stock'),
                         Header::make('Quantity'),
@@ -64,12 +61,11 @@ class SaleResource extends Resource
                         Header::make('Total Cost'),
                     ])
                     ->schema([
-                        Forms\Components\TextInput::make('sku')
-                            ->readOnly(),
+                        Forms\Components\Hidden::make('sku'),
                         Forms\Components\Hidden::make('name'),
                         Forms\Components\Hidden::make('unit_cost'),
                         Forms\Components\Select::make('product_id')
-                            ->relationship('product', 'name')
+                            ->relationship('product', 'sku_name_format')
                             ->lazy()
                             ->afterStateUpdated(function ($state, Forms\Set $set) {
                                 if (empty($state)) {
@@ -86,6 +82,7 @@ class SaleResource extends Resource
                                 $product = Product::find($state);
                                 $set('sku', $product->sku);
                                 $set('name', $product->name);
+                                $set('quantity', '');
                                 $set('unit_cost', $product->selling_price);
                                 $set('formatted_unit_cost', number_format($product->selling_price, 2));
                                 $set('current_stock', $product->current_stock);
@@ -283,29 +280,7 @@ class SaleResource extends Resource
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('Pay Amount')
-                        ->form([
-                            Forms\Components\Group::make([
-                                TextInput::make('paid_amount')
-                                    ->hint(function ($record) {
-                                        return 'You need to pay '.$record->formatted_remaining_amount;
-                                    })
-                                    ->minValue(1)
-                                    ->maxValue(function ($record): float {
-                                        return $record->remaining_amount;
-                                    })
-                                    ->numeric()
-                                    ->required()
-                                    ->hintAction(
-                                        Forms\Components\Actions\Action::make('pay_in_full')
-                                            ->icon('heroicon-m-arrow-down-tray')
-                                            ->action(function (Forms\Set $set, $state, $record) {
-                                                $set('paid_amount', $record->remaining_amount);
-                                            })
-                                    ),
-                                TextInput::make('reference_number'),
-                            ])
-                                ->columns(2),
-                        ])
+                        ->form(Sale::getPayDueAmountForm())
                         ->color('info')
                         ->icon('heroicon-m-banknotes')
                         ->visible(fn ($record) => $record->remaining_amount > 0)

@@ -53,9 +53,6 @@ class SubscriptionsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('total_amount')
                     ->money('PHP'),
             ])
-            ->filters([
-                //
-            ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                     ->mutateFormDataUsing(function (array $data) {
@@ -141,12 +138,7 @@ class SubscriptionsRelationManager extends RelationManager
      */
     protected function afterCreate($record): void
     {
-        $record->payments()->create([
-            'payment_date' => now(),
-            'amount' => $record->total_amount,
-            'payment_method' => 'system',
-            'status' => PaymentStatusEnum::SUCCESS,
-        ]);
+        $record->createPayment(PaymentStatusEnum::SUCCESS, now());
     }
 
     /**

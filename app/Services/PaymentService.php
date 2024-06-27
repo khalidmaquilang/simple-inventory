@@ -15,6 +15,7 @@ class PaymentService
     public function generateInvoice(Payment $payment): Response
     {
         $customerCompany = $payment->subscription->company;
+        $subscripiton = $payment->subscription;
 
         $buyer = new Buyer([
             'name' => $customerCompany->name,
@@ -36,20 +37,22 @@ class PaymentService
         ]);
 
         $vat = 12; // philippines 12%
-        $plan = $payment->subscription->plan;
+        $plan = $subscripiton->plan;
 
         $items = [];
         $items[] = InvoiceItem::make($plan->name)
             ->quantity(1)
             ->pricePerUnit($this->priceBeforeVat($plan->price, $vat));
 
-        $extra_users = $payment->subscription->extra_users;
+        $extra_users = $subscripiton->extra_users;
         if ($extra_users) {
             //100php per user
             $items[] = InvoiceItem::make('Additional User')
-                ->quantity($payment->subscription->extra_users)
+                ->quantity($subscripiton->extra_users)
                 ->pricePerUnit($this->priceBeforeVat(100, $vat));
         }
+
+        $dueDate = empty($payment->due_date) ? 0 : $payment->payment_date->diffInDays($payment->due_date);
 
         $invoice = Invoice::make()
             ->date($payment->payment_date)
@@ -62,7 +65,7 @@ class PaymentService
             ->currencyCode('PHP')
             ->currencySymbol('₱')
             ->currencyFormat('{SYMBOL}{VALUE}')
-            ->payUntilDays(0)
+            ->payUntilDays($dueDate)
             ->logo($company->getCompanyLogo());
 
         return $invoice->stream();

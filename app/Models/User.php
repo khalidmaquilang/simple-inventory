@@ -5,6 +5,9 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
@@ -52,6 +55,45 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public static function getForm(): array
+    {
+        return [
+            TextInput::make('name')
+                ->required()
+                ->maxLength(255),
+            TextInput::make('email')
+                ->email()
+                ->required()
+                ->maxLength(255),
+            DateTimePicker::make('email_verified_at'),
+            TextInput::make('password')
+                ->password()
+                ->dehydrated(fn ($state) => filled($state))
+                ->required(fn (string $context): bool => $context === 'create')
+                ->maxLength(255),
+            Select::make('roles')
+                ->relationship('roles', 'name')
+                ->options(function () {
+                    $role = Role::query();
+
+                    if (empty(Filament::getTenant())) {
+                        return $role->pluck('name', 'id')->toArray();
+                    }
+
+                    return $role->where('company_id', Filament::getTenant()->id)->pluck('name', 'id')->toArray();
+                })
+                ->saveRelationshipsUsing(function ($record, $state) {
+                    $record->roles()->syncWithPivotValues($state, [config('permission.column_names.team_foreign_key') => getPermissionsTeamId()]);
+                })
+                ->multiple()
+                ->preload()
+                ->searchable(),
         ];
     }
 

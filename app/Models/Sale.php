@@ -5,6 +5,10 @@ namespace App\Models;
 use App\Enums\DiscountTypeEnum;
 use App\Models\Traits\SerialGenerationTrait;
 use App\Models\Traits\TenantTrait;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Set;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -65,6 +69,43 @@ class Sale extends Model
         'formatted_remaining_amount',
         'formatted_discount',
     ];
+
+    /**
+     * @return array
+     */
+    public static function getPayDueAmountForm(): array
+    {
+        return [
+            Group::make([
+                TextInput::make('paid_amount')
+                    ->hint(function ($record) {
+                        return 'You need to pay '.$record->formatted_remaining_amount;
+                    })
+                    ->minValue(1)
+                    ->maxValue(function ($record): float {
+                        return $record->remaining_amount;
+                    })
+                    ->numeric()
+                    ->required()
+                    ->hintAction(
+                        Action::make('pay_in_full')
+                            ->icon('heroicon-m-arrow-down-tray')
+                            ->action(function (Set $set, $state, $record) {
+                                $set('paid_amount', $record->remaining_amount);
+                            })
+                    ),
+                TextInput::make('reference_number'),
+            ]),
+        ];
+    }
+
+    /**
+     * @return float
+     */
+    public function getRemainingAmountAttribute(): float
+    {
+        return $this->total_amount - $this->paid_amount;
+    }
 
     /**
      * @return string

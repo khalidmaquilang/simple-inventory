@@ -68,7 +68,12 @@ class InviteResource extends Resource
                     ->icon('heroicon-o-inbox-stack')
                     ->requiresConfirmation()
                     ->action(function ($record) {
-                        Mail::to($record->email)->send(new UserInvitationMail($record));
+                        Mail::to($record->email)
+                            ->queue(
+                                (new UserInvitationMail($record))
+                                    ->onQueue('short-running-queue')
+                            );
+
                         Notification::make()
                             ->success()
                             ->title('Invitation sent')

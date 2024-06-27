@@ -15,6 +15,9 @@ class PurchaseOrder extends Model
 {
     use HasFactory, SerialGenerationTrait, SoftDeletes, TenantTrait;
 
+    /**
+     * @var string[]
+     */
     protected $fillable = [
         'company_id',
         'purchase_code',

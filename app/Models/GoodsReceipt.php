@@ -15,6 +15,23 @@ class GoodsReceipt extends Model
     /**
      * @var string[]
      */
+    protected $fillable = [
+        'company_id',
+        'grn_code',
+        'purchase_order_id',
+        'user_id',
+        'received_date',
+        'sku',
+        'name',
+        'quantity',
+        'unit_cost',
+        'product_id',
+        'notes',
+    ];
+
+    /**
+     * @var string[]
+     */
     protected $appends = [
         'total_cost',
         'formatted_total_cost',
