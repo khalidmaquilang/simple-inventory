@@ -107,8 +107,14 @@ class StockMovementsRelationManager extends RelationManager
                 ->modifyQueryUsing(fn ($query) => $query->where('type', StockMovementEnum::SALE)),
             'adjustment' => Tab::make('Adjustment')
                 ->modifyQueryUsing(fn ($query) => $query->where('type', StockMovementEnum::ADJUSTMENT)),
-            'return' => Tab::make('Return')
+            'return' => Tab::make('Customer Return')
                 ->modifyQueryUsing(fn ($query) => $query->where('type', StockMovementEnum::RETURN)),
+            'transfer' => Tab::make('Transfer')
+                ->modifyQueryUsing(fn ($query) => $query->where('type', StockMovementEnum::TRANSFER)),
+            'write_off' => Tab::make('Write Off')
+                ->modifyQueryUsing(fn ($query) => $query->where('type', StockMovementEnum::WRITE_OFF)),
+            'return_supplier' => Tab::make('Return To Supplier')
+                ->modifyQueryUsing(fn ($query) => $query->where('type', StockMovementEnum::RTO)),
         ];
     }
 
