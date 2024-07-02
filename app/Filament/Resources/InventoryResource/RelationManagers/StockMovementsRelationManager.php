@@ -5,6 +5,7 @@ namespace App\Filament\Resources\InventoryResource\RelationManagers;
 use App\Enums\GoodsIssueTypeEnum;
 use App\Enums\PurchaseOrderEnum;
 use App\Enums\StockMovementEnum;
+use App\Filament\Exports\StockMovementExporter;
 use App\Models\Customer;
 use App\Models\StockMovement;
 use Filament\Forms;
@@ -90,6 +91,8 @@ class StockMovementsRelationManager extends RelationManager
                             $livewire
                         )
                     ),
+                Tables\Actions\ExportAction::make()
+                    ->exporter(StockMovementExporter::class),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
