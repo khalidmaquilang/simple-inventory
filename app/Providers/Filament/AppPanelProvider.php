@@ -48,6 +48,11 @@ class AppPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->favicon('favicon.ico')
+            ->brandName('Stock Manager Online')
+            ->brandLogo('logo.jpg')
+            ->darkModeBrandLogo('logo-transparent.png')
+//            ->brandLogoHeight('10rem')
             ->font('Poppins')
             ->userMenuItems([
                 MenuItem::make()
@@ -123,7 +128,7 @@ class AppPanelProvider extends PanelProvider
             ], isPersistent: true)
             ->renderHook(
                 'panels::head.start',
-                fn () => view('analyticsTag'),
+                fn() => view('analyticsTag'),
             );
     }
 }
