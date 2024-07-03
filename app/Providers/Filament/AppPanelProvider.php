@@ -48,6 +48,7 @@ class AppPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->favicon('favicon.ico')
             ->font('Poppins')
             ->userMenuItems([
                 MenuItem::make()
