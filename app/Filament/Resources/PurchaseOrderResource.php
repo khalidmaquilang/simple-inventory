@@ -188,13 +188,28 @@ class PurchaseOrderResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('shipping_fee')
                     ->sortable()
-                    ->money(fn ($record) => $record->company->getCurrency()),
-                Tables\Columns\TextColumn::make('total_amount')
-                    ->sortable()
-                    ->money(fn ($record) => $record->company->getCurrency()),
+                    ->money(fn ($record) => $record->company->getCurrency())
+                    ->summarize([
+                        Tables\Columns\Summarizers\Sum::make()
+                            ->money(filament()->getTenant()->getCurrency())
+                            ->label('Total Shipping Fee'),
+                    ]),
                 Tables\Columns\TextColumn::make('remaining_amount')
                     ->sortable()
-                    ->money(fn ($record) => $record->company->getCurrency()),
+                    ->money(fn ($record) => $record->company->getCurrency())
+                    ->summarize([
+                        Tables\Columns\Summarizers\Sum::make()
+                            ->money(filament()->getTenant()->getCurrency())
+                            ->label('Total Remaining Amount'),
+                    ]),
+                Tables\Columns\TextColumn::make('total_amount')
+                    ->sortable()
+                    ->money(fn ($record) => $record->company->getCurrency())
+                    ->summarize([
+                        Tables\Columns\Summarizers\Sum::make()
+                            ->money(filament()->getTenant()->getCurrency())
+                            ->label('Total Amount'),
+                    ]),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->sortable(),

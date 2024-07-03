@@ -12,6 +12,22 @@ class StockMovement extends Model
     use HasFactory;
 
     /**
+     * @var string[]
+     */
+    protected $fillable = [
+        'company_id',
+        'user_id',
+        'inventory_id',
+        'customer_id',
+        'supplier_id',
+        'reference_number',
+        'quantity_before_adjustment',
+        'quantity',
+        'type',
+        'note',
+    ];
+
+    /**
      * The attributes that should be cast to native types.
      *
      * @var array

@@ -23,6 +23,7 @@ class CategoryResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('category_id')
+                    ->label('Parent Category')
                     ->relationship('category', 'name', ignoreRecord: true)
                     ->nullable(),
                 Forms\Components\TextInput::make('name')

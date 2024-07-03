@@ -244,13 +244,28 @@ class SaleResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('shipping_fee')
                     ->money(fn ($record) => $record->company->getCurrency())
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('total_amount')
-                    ->money(fn ($record) => $record->company->getCurrency())
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize([
+                        Tables\Columns\Summarizers\Sum::make()
+                            ->money(filament()->getTenant()->getCurrency())
+                            ->label('Total Shipping Fee'),
+                    ]),
                 Tables\Columns\TextColumn::make('remaining_amount')
                     ->money(fn ($record) => $record->company->getCurrency())
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize([
+                        Tables\Columns\Summarizers\Sum::make()
+                            ->money(filament()->getTenant()->getCurrency())
+                            ->label('Total Remaining Amount'),
+                    ]),
+                Tables\Columns\TextColumn::make('total_amount')
+                    ->money(fn ($record) => $record->company->getCurrency())
+                    ->sortable()
+                    ->summarize([
+                        Tables\Columns\Summarizers\Sum::make()
+                            ->money(filament()->getTenant()->getCurrency())
+                            ->label('Total Amount'),
+                    ]),
                 Tables\Columns\TextColumn::make('customer.name')
                     ->numeric()
                     ->sortable(),
