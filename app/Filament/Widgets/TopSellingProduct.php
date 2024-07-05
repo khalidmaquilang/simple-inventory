@@ -28,10 +28,9 @@ class TopSellingProduct extends BaseWidget
                 TextColumn::make('sku'),
                 TextColumn::make('name'),
                 TextColumn::make('total_quantity_sold')
-                    ->sortable(),
+                    ->numeric(),
                 TextColumn::make('total_revenue')
-                    ->money(filament()->getTenant()->getCurrency())
-                    ->sortable(),
+                    ->money(filament()->getTenant()->getCurrency()),
             ]);
     }
 }
