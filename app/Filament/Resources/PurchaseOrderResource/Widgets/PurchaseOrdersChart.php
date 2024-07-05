@@ -17,7 +17,7 @@ class PurchaseOrdersChart extends ChartWidget
      *
      * @var string|null
      */
-    protected static ?string $heading = 'Purchase Order';
+    protected static ?string $heading = 'Purchase Orders';
 
     public ?string $filter = 'today';
 

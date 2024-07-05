@@ -17,7 +17,7 @@ class SalesChart extends ChartWidget
      *
      * @var string|null
      */
-    protected static ?string $heading = 'Sales This Month';
+    protected static ?string $heading = 'Sales';
 
     public ?string $filter = 'today';
 
