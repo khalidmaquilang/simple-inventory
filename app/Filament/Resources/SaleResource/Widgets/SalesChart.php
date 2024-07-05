@@ -2,23 +2,15 @@
 
 namespace App\Filament\Resources\SaleResource\Widgets;
 
+use App\Filament\Widgets\Traits\ChartFilterTrait;
 use App\Models\Sale;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
-use Carbon\Carbon;
-use Filament\Facades\Filament;
-use Illuminate\Support\Facades\DB;
-use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
+use Filament\Widgets\ChartWidget;
+use Flowframe\Trend\TrendValue;
 
-class SalesChart extends ApexChartWidget
+class SalesChart extends ChartWidget
 {
-    use HasWidgetShield;
-
-    /**
-     * Chart Id
-     *
-     * @var string
-     */
-    protected static ?string $chartId = 'salesChart';
+    use ChartFilterTrait, HasWidgetShield;
 
     /**
      * Widget Title
@@ -27,96 +19,40 @@ class SalesChart extends ApexChartWidget
      */
     protected static ?string $heading = 'Sales This Month';
 
+    public ?string $filter = 'today';
+
     protected static ?int $sort = 5;
 
     /**
-     * Chart options (series, labels, types, size, animations...)
-     * https://apexcharts.com/docs/options
-     *
      * @return array
      */
-    protected function getOptions(): array
+    protected function getData(): array
     {
+        $activeFilter = $this->filter;
+
+        $companyId = filament()->getTenant()->id;
+
+        $saleOrder = $this->cacheTrend(
+            "sales_filter_widget_{$companyId}_{$activeFilter}",
+            fn () => $this->getTrendByFilter(Sale::class, $activeFilter, 'total_amount', 'sale_date')
+        );
+
         return [
-            'chart' => [
-                'type' => 'line',
-                'height' => 300,
-            ],
-            'series' => [
+            'datasets' => [
                 [
-                    'name' => 'Total Amount',
-                    'data' => $this->getTotalAmountPerDay(),
+                    'label' => 'Sales',
+                    'data' => $saleOrder->map(fn (TrendValue $value) => $value->aggregate),
                 ],
             ],
-            'xaxis' => [
-                'categories' => $this->daysOfTheMonth(),
-                'labels' => [
-                    'style' => [
-                        'fontFamily' => 'inherit',
-                    ],
-                ],
-            ],
-            'yaxis' => [
-                'labels' => [
-                    'style' => [
-                        'fontFamily' => 'inherit',
-                    ],
-                ],
-            ],
-            'colors' => ['#f59e0b'],
-            'stroke' => [
-                'curve' => 'smooth',
-            ],
+            'labels' => $saleOrder->map(fn (TrendValue $value) => $value->date),
         ];
     }
 
     /**
-     * @return array
+     * @return string
      */
-    protected function getTotalAmountPerDay(): array
+    protected function getType(): string
     {
-        $salesOrder = cache()->remember('sales_order_widget_'.Filament::getTenant()->id, now()->addMinutes(3), function () {
-            return Sale::select(
-                DB::raw('DATE_FORMAT(sale_date, "%e") as date'),
-                DB::raw('SUM(total_amount) as sum_total_amount')
-            )
-                ->whereYear('sale_date', Carbon::now()->year)
-                ->whereMonth('sale_date', Carbon::now()->month)
-                ->where('company_id', Filament::getTenant()->id)
-                ->groupBy('date')
-                ->orderBy('date')
-                ->get()
-                ->pluck('sum_total_amount', 'date')
-                ->toArray();
-        });
-
-        $data = [];
-        for ($day = 1; $day <= count($this->daysOfTheMonth()); $day++) {
-            if (isset($salesOrder[$day])) {
-                $data[] = (float) $salesOrder[$day];
-
-                continue;
-            }
-
-            $data[] = 0;
-        }
-
-        return $data;
-    }
-
-    /**
-     * @return array
-     */
-    protected function daysOfTheMonth(): array
-    {
-        $now = Carbon::now();
-        $daysInMonth = $now->daysInMonth;
-
-        $daysArray = [];
-        for ($day = 1; $day <= $daysInMonth; $day++) {
-            $daysArray[] = $day;
-        }
-
-        return $daysArray;
+        return 'line';
     }
 }

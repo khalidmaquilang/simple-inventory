@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Filament\Resources\PurchaseOrderResource\Widgets;
+namespace App\Filament\Widgets;
 
 use App\Filament\Widgets\Traits\ChartFilterTrait;
 use App\Models\PurchaseOrder;
+use App\Models\Sale;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\ChartWidget;
 use Flowframe\Trend\TrendValue;
 
-class PurchaseOrdersChart extends ChartWidget
+class SalesAndPurchaseOrdersChart extends ChartWidget
 {
     use ChartFilterTrait, HasWidgetShield;
 
-    /**
-     * Widget Title
-     *
-     * @var string|null
-     */
-    protected static ?string $heading = 'Purchase Order';
+    protected static ?string $heading = 'Sales And Purchase Orders Chart';
 
     public ?string $filter = 'today';
 
-    protected static ?int $sort = 4;
+    protected int|string|array $columnSpan = 'full';
+
+    protected static ?string $maxHeight = '300px';
+
+    protected static ?int $sort = 6;
 
     /**
      * @return array|mixed[]
@@ -33,8 +33,12 @@ class PurchaseOrdersChart extends ChartWidget
         $companyId = filament()->getTenant()->id;
 
         $purchaseOrder = $this->cacheTrend(
-            "purchase_order_widget_{$companyId}_{$activeFilter}",
+            "purchase_order_filter_widget_{$companyId}_{$activeFilter}",
             fn () => $this->getTrendByFilter(PurchaseOrder::class, $activeFilter, 'total_amount', 'order_date')
+        );
+        $saleOrder = $this->cacheTrend(
+            "sales_filter_widget_{$companyId}_{$activeFilter}",
+            fn () => $this->getTrendByFilter(Sale::class, $activeFilter, 'total_amount', 'sale_date')
         );
 
         return [
@@ -42,17 +46,22 @@ class PurchaseOrdersChart extends ChartWidget
                 [
                     'label' => 'Purchase Orders',
                     'data' => $purchaseOrder->map(fn (TrendValue $value) => $value->aggregate),
+                    'backgroundColor' => '#4B0082',
+                    'borderColor' => '#8A2BE2',
+                ],
+                [
+                    'label' => 'Sale Orders',
+                    'data' => $saleOrder->map(fn (TrendValue $value) => $value->aggregate),
+                    'backgroundColor' => '#FFA500',
+                    'borderColor' => '#A0522D',
                 ],
             ],
             'labels' => $purchaseOrder->map(fn (TrendValue $value) => $value->date),
         ];
     }
 
-    /**
-     * @return string
-     */
     protected function getType(): string
     {
-        return 'line';
+        return 'bar';
     }
 }

@@ -2,32 +2,36 @@
 
 namespace App\Filament\Widgets;
 
-use App\Filament\Resources\ProductResource;
+use App\Repositories\ProductRepository;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 
-class LowStockProduct extends BaseWidget
+class TopSellingProduct extends BaseWidget
 {
     use HasWidgetShield;
 
-    protected static ?int $sort = 7;
+    protected static ?int $sort = 8;
 
     public function table(Table $table): Table
     {
+        $repo = app(ProductRepository::class);
+
         return $table
             ->query(
-                ProductResource::getEloquentQuery()->whereHas('inventory', function ($query) {
-                    $query->whereColumn('quantity_on_hand', '<', 'reorder_point');
-                })
+                $repo->getTopProducts()
             )
-            ->heading('Low On Stock Products')
+            ->heading('Top Selling Products')
             ->defaultPaginationPageOption(5)
             ->columns([
                 TextColumn::make('sku'),
                 TextColumn::make('name'),
-                TextColumn::make('inventory.quantity_on_hand'),
+                TextColumn::make('total_quantity_sold')
+                    ->sortable(),
+                TextColumn::make('total_revenue')
+                    ->money(filament()->getTenant()->getCurrency())
+                    ->sortable(),
             ]);
     }
 }
