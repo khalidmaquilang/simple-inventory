@@ -21,7 +21,7 @@ class SalesChart extends ChartWidget
 
     public ?string $filter = 'today';
 
-    protected static ?int $sort = 5;
+    protected static ?int $sort = 7;
 
     /**
      * @return array

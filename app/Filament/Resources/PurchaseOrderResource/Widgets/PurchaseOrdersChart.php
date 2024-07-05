@@ -21,7 +21,7 @@ class PurchaseOrdersChart extends ChartWidget
 
     public ?string $filter = 'today';
 
-    protected static ?int $sort = 4;
+    protected static ?int $sort = 6;
 
     /**
      * @return array|mixed[]

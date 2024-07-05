@@ -12,7 +12,7 @@ class TopSellingProduct extends BaseWidget
 {
     use HasWidgetShield;
 
-    protected static ?int $sort = 8;
+    protected static ?int $sort = 5;
 
     public function table(Table $table): Table
     {
