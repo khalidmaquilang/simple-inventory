@@ -21,7 +21,7 @@ class SalesAndPurchaseOrdersChart extends ChartWidget
 
     protected static ?string $maxHeight = '300px';
 
-    protected static ?int $sort = 6;
+    protected static ?int $sort = 8;
 
     /**
      * @return array|mixed[]
