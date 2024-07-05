@@ -76,7 +76,6 @@ class AppPanelProvider extends PanelProvider
                 OverlookWidget::class,
                 PurchaseOrdersChart::class,
                 SalesChart::class,
-                LowStockProduct::class,
             ])
             ->middleware([
                 EncryptCookies::class,
