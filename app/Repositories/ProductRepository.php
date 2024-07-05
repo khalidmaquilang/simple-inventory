@@ -25,7 +25,7 @@ class ProductRepository extends BaseRepository
             ->select(
                 'products.*',
                 DB::raw(
-                    'SUM(sale_items.quantity) as total_quantity_sold, SUM(sale_items.quantity) * SUM(sale_items.unit_cost) as total_revenue'
+                    'SUM(sale_items.quantity) as total_quantity_sold, SUM(sale_items.quantity * sale_items.unit_cost) as total_revenue'
                 )
             )
             ->join('sale_items', 'products.id', '=', 'sale_items.product_id')

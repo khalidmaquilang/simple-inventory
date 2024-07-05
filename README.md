@@ -73,7 +73,7 @@ docker run --rm \
 ## Deploying Prod
 
 - `composer install --prefer-dist --no-dev -o`
-- `php artisan migrate`
+- `php artisan migrate --force`
 - `php artisan icon:cache`
 - `php artisan filament:cache-components`
 - `php artisan optimize`
