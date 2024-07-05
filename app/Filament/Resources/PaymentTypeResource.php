@@ -16,7 +16,9 @@ class PaymentTypeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?string $navigationGroup = 'Finance';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {

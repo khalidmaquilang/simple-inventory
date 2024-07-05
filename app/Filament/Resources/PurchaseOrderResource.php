@@ -24,7 +24,9 @@ class PurchaseOrderResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?string $navigationGroup = 'Procurement';
+
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {

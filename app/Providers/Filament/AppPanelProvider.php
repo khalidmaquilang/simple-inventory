@@ -18,6 +18,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
+use Filament\Navigation\NavigationGroup;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -63,6 +64,13 @@ class AppPanelProvider extends PanelProvider
 
                         return $company->isSuperCompany();
                     }),
+            ])
+            ->navigationGroups([
+                'Procurement' => NavigationGroup::make(fn () => 'Procurement'),
+                'Inventory' => NavigationGroup::make(fn () => 'Inventory'),
+                'Sale' => NavigationGroup::make(fn () => 'Sale'),
+                'Finance' => NavigationGroup::make(fn () => 'Finance'),
+                'Settings' => NavigationGroup::make(fn () => 'Settings'),
             ])
             ->maxContentWidth(MaxWidth::Full)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
@@ -114,6 +122,7 @@ class AppPanelProvider extends PanelProvider
                     ->setTitle('My Profile')
                     ->setNavigationLabel('My Profile')
                     ->setIcon('heroicon-o-user')
+                    ->setNavigationGroup('Settings')
                     ->shouldShowDeleteAccountForm(false),
             ])
             ->tenant(Company::class, slugAttribute: 'slug')

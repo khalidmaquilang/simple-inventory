@@ -19,7 +19,9 @@ class GoodsIssueResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-archive-box-arrow-down';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?string $navigationGroup = 'Inventory';
+
+    protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
     {
