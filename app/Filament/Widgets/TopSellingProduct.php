@@ -20,10 +20,11 @@ class TopSellingProduct extends BaseWidget
 
         return $table
             ->query(
-                $repo->getTopProducts()
+                $repo->getTopSellingProducts()
             )
-            ->heading('Top Selling Products')
-            ->defaultPaginationPageOption(5)
+            ->heading('Top 10 Selling Products')
+            ->defaultPaginationPageOption(10)
+            ->paginated(false)
             ->columns([
                 TextColumn::make('sku'),
                 TextColumn::make('name'),
