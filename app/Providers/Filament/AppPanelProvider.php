@@ -114,6 +114,7 @@ class AppPanelProvider extends PanelProvider
                     ->setTitle('My Profile')
                     ->setNavigationLabel('My Profile')
                     ->setIcon('heroicon-o-user')
+                    ->setNavigationGroup('Settings')
                     ->shouldShowDeleteAccountForm(false),
             ])
             ->tenant(Company::class, slugAttribute: 'slug')

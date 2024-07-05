@@ -21,7 +21,9 @@ class InventoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
-    protected static ?int $navigationSort = 9;
+    protected static ?string $navigationGroup = 'Inventory';
+
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {
