@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Facades\Filament;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -9,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 
 class TotalOverview extends BaseWidget
 {
+    use HasWidgetShield;
+
     protected function getStats(): array
     {
         $range = range(1, 5);

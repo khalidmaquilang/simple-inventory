@@ -22,7 +22,9 @@ class Subscriptions extends Page implements HasInfolists, HasTable
 
     protected static ?string $navigationIcon = 'heroicon-o-arrow-path';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?string $navigationGroup = 'Finance';
+
+    protected static ?int $navigationSort = 2;
 
     protected static string $view = 'filament.pages.subscriptions';
 

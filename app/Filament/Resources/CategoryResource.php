@@ -16,13 +16,16 @@ class CategoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?string $navigationGroup = 'Inventory';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Select::make('category_id')
+                    ->label('Parent Category')
                     ->relationship('category', 'name', ignoreRecord: true)
                     ->nullable(),
                 Forms\Components\TextInput::make('name')

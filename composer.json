@@ -13,6 +13,7 @@
         "awcodes/overlook": "^2.2",
         "bezhansalleh/filament-shield": "^3.2",
         "filament/filament": "^3.2",
+        "flowframe/laravel-trend": "^0.2.0",
         "joaopaulolndev/filament-edit-profile": "^1.0",
         "koalafacade/filament-alertbox": "^1.0",
         "laravel/framework": "^11.9",
