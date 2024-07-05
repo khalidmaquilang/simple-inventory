@@ -18,7 +18,7 @@ class ProductRepository extends BaseRepository
     /**
      * @return mixed
      */
-    public function getTopProducts(): mixed
+    public function getTopSellingProducts(): mixed
     {
         return $this->model
             ->withoutGlobalScopes()
@@ -31,6 +31,7 @@ class ProductRepository extends BaseRepository
             ->join('sale_items', 'products.id', '=', 'sale_items.product_id')
             ->where('sale_items.company_id', filament()->getTenant()->id)
             ->groupBy('products.id')
+            ->limit(10)
             ->orderByDesc('total_quantity_sold');
     }
 }
