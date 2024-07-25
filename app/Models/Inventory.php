@@ -15,6 +15,18 @@ class Inventory extends Model
     /**
      * @var string[]
      */
+    protected $fillable = [
+        'company_id',
+        'user_id',
+        'unit_id',
+        'product_id',
+        'quantity_on_hand',
+        'average_cost',
+    ];
+
+    /**
+     * @var string[]
+     */
     protected $appends = [
         'formatted_average_cost',
     ];
@@ -25,6 +37,14 @@ class Inventory extends Model
     public function getFormattedAverageCostAttribute(): string
     {
         return number_format($this->average_cost, 2).' '.$this->company->getCurrency();
+    }
+
+    /**
+     * @return string
+     */
+    public function getQuantityUnit(): string
+    {
+        return "{$this->quantity_on_hand} {$this->unit->abbreviation}";
     }
 
     /**
@@ -60,5 +80,13 @@ class Inventory extends Model
     public function stockMovements(): HasMany
     {
         return $this->hasMany(StockMovement::class);
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function unit(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class);
     }
 }

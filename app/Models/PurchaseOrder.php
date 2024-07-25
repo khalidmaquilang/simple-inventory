@@ -56,6 +56,11 @@ class PurchaseOrder extends Model
     ];
 
     /**
+     * @var string[]
+     */
+    protected $with = ['goodsReceipts'];
+
+    /**
      * @return string
      */
     public function getFormattedRemainingAmountAttribute(): string

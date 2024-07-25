@@ -18,7 +18,7 @@ class ProductResource extends Resource
 
     protected static ?string $navigationGroup = 'Inventory';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {
@@ -38,6 +38,9 @@ class ProductResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('unit.abbreviation')
+                    ->label('Base unit')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('purchase_price')
                     ->money(fn ($record) => $record->company->getCurrency())
                     ->sortable(),

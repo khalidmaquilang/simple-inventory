@@ -21,7 +21,7 @@ class StockMovementSubscriber
             $inventory = $this->createInventory($event->productId, $event->userId);
         }
 
-        StockMovement::create([
+        $stockMovement = StockMovement::create([
             'inventory_id' => $inventory->id,
             'user_id' => $event->userId,
             'supplier_id' => $event->supplierId ?? null,
@@ -33,11 +33,11 @@ class StockMovementSubscriber
         ]);
 
         if ($event instanceof GoodsReceiptCreated) {
-            $inventory->updateAverageCost($event->quantity, $event->unitCost);
+            $inventory->updateAverageCost($stockMovement->quantity_base_unit, $event->unitCost);
         }
 
         $inventory->update([
-            'quantity_on_hand' => $inventory->quantity_on_hand + $event->quantity,
+            'quantity_on_hand' => $inventory->quantity_on_hand + $stockMovement->quantity_base_unit,
         ]);
     }
 

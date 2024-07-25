@@ -23,7 +23,7 @@ class InventoryResource extends Resource
 
     protected static ?string $navigationGroup = 'Inventory';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
     {
@@ -58,8 +58,10 @@ class InventoryResource extends Resource
                 Tables\Columns\TextColumn::make('product.name')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('quantity_on_hand')
+                    ->formatStateUsing(fn ($record) => $record->getQuantityUnit())
                     ->sortable(),
                 Tables\Columns\TextColumn::make('average_cost')
+                    ->sortable()
                     ->money(fn ($record) => $record->company->getCurrency()),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Created By'),

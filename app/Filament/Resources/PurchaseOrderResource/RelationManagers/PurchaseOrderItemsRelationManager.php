@@ -19,10 +19,12 @@ class PurchaseOrderItemsRelationManager extends RelationManager
                     ->label('SKU'),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Product Name'),
-                Tables\Columns\TextColumn::make('quantity'),
+                Tables\Columns\TextColumn::make('quantity')
+                    ->formatStateUsing(fn ($record) => $record->getQuantityUnit()),
                 Tables\Columns\TextColumn::make('unit_cost')
                     ->money(fn ($record) => $record->company->getCurrency()),
-                Tables\Columns\TextColumn::make('quantity_received'),
+                Tables\Columns\TextColumn::make('quantity_received')
+                    ->formatStateUsing(fn ($state, $record) => $state. ' ' . $record->unit->abbreviation),
                 Tables\Columns\TextColumn::make('remaining_quantity')
                     ->getStateUsing(function ($record): int {
                         return $record->quantity - $record->quantity_received;

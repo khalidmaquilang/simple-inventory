@@ -15,6 +15,7 @@ use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Models\StockMovement;
 use App\Models\Supplier;
+use App\Models\Unit;
 use App\Observers\CustomerObserver;
 use App\Observers\GoodsIssueObserver;
 use App\Observers\GoodsReceiptObserver;
@@ -27,6 +28,7 @@ use App\Observers\SaleItemObserver;
 use App\Observers\SaleObserver;
 use App\Observers\StockMovementObserver;
 use App\Observers\SupplierObserver;
+use App\Observers\UnitObserver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
@@ -63,6 +65,7 @@ class AppServiceProvider extends ServiceProvider
         GoodsIssue::observe(GoodsIssueObserver::class);
         Product::observe(ProductObserver::class);
         Inventory::observe(InventoryObserver::class);
+        Unit::observe(UnitObserver::class);
 
         Event::subscribe(StockMovementSubscriber::class);
     }

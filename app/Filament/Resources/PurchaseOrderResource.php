@@ -46,6 +46,7 @@ class PurchaseOrderResource extends Resource
                     ->headers([
                         Header::make('Product Name'),
                         Header::make('Quantity'),
+                        Header::make('Unit'),
                         Header::make('Unit Cost'),
                         Header::make('Total Cost'),
                     ])
@@ -53,6 +54,10 @@ class PurchaseOrderResource extends Resource
                         Forms\Components\Hidden::make('sku'),
                         Forms\Components\Hidden::make('unit_cost'),
                         Forms\Components\Hidden::make('name'),
+                        Forms\Components\Hidden::make('base_unit_id')
+                            ->dehydrated(false),
+                        Forms\Components\Hidden::make('conversion_factor')
+                            ->dehydrated(false),
                         Forms\Components\Select::make('product_id')
                             ->relationship('product', 'sku_name_format')
                             ->live()
@@ -61,6 +66,9 @@ class PurchaseOrderResource extends Resource
                                     $set('sku', '');
                                     $set('name', '');
                                     $set('quantity', '');
+                                    $set('unit_id', '');
+                                    $set('base_unit_id', '');
+                                    $set('conversion_factor', '');
                                     $set('unit_cost', '');
                                     $set('formatted_unit_cost', '');
 
@@ -71,6 +79,9 @@ class PurchaseOrderResource extends Resource
                                 $set('sku', $product->sku);
                                 $set('name', $product->name);
                                 $set('quantity', '');
+                                $set('unit_id', '');
+                                $set('base_unit_id', $product->unit_id);
+                                $set('conversion_factor', $product->unit->conversion_factor);
                                 $set('unit_cost', $product->purchase_price);
                                 $set('formatted_unit_cost', number_format($product->purchase_price, 2));
                             })
@@ -98,6 +109,10 @@ class PurchaseOrderResource extends Resource
                             })
                             ->required()
                             ->numeric(),
+                        Forms\Components\Select::make('unit_id')
+                            ->relationship('unit', 'abbreviation')
+                            ->live()
+                            ->required(),
                         Forms\Components\TextInput::make('formatted_unit_cost')
                             ->suffix($currency)
                             ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
@@ -314,6 +329,11 @@ class PurchaseOrderResource extends Resource
         $subtotal = $selectedProducts->reduce(function ($subtotal, $product) {
             return $subtotal + ((float) $product['unit_cost'] * $product['quantity']);
         }, 0);
+
+        // check if the unit is a base unit
+
+        // if not then multiply the quantity with the conversion_factor
+
         $set('sub_total', number_format($subtotal, 2));
 
         $shippingFee = (float) $get('shipping_fee');

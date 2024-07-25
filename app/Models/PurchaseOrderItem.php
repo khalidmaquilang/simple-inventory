@@ -11,6 +11,17 @@ class PurchaseOrderItem extends Model
 {
     use HasFactory, TenantTrait;
 
+    protected $fillable = [
+        'company_id',
+        'sku',
+        'name',
+        'quantity',
+        'unit_cost',
+        'purchase_order_id',
+        'product_id',
+        'unit_id',
+    ];
+
     /**
      * The attributes that should be cast to native types.
      *
@@ -30,14 +41,27 @@ class PurchaseOrderItem extends Model
     ];
 
     /**
+     * @var string[]
+     */
+    protected $with = ['unit', 'purchaseOrder'];
+
+    /**
      * @return int
      */
     public function getQuantityReceivedAttribute(): int
     {
         return $this->purchaseOrder
-            ->goodsReceipts()
+            ->goodsReceipts
             ->where('product_id', $this->product_id)
             ->sum('quantity');
+    }
+
+    /**
+     * @return string
+     */
+    public function getQuantityUnit(): string
+    {
+        return "{$this->quantity} {$this->unit->abbreviation}";
     }
 
     public function purchaseOrder(): BelongsTo
@@ -48,5 +72,13 @@ class PurchaseOrderItem extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function unit(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class);
     }
 }

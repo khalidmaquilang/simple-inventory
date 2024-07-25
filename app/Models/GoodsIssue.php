@@ -13,6 +13,27 @@ class GoodsIssue extends Model
 {
     use HasFactory, SerialGenerationTrait, TenantTrait;
 
+    /**
+     * @var string[]
+     */
+    protected $fillable = [
+        'company_id',
+        'sale_id',
+        'user_id',
+        'unit_id',
+        'customer_id',
+        'supplier_id',
+        'gin_code',
+        'issue_date',
+        'sku',
+        'name',
+        'quantity',
+        'quantity_base_unit',
+        'product_id',
+        'type',
+        'notes',
+    ];
+
     protected $casts = [
         'type' => GoodsIssueTypeEnum::class,
     ];

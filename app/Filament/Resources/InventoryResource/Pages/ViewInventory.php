@@ -22,7 +22,8 @@ class ViewInventory extends ViewRecord
                     ->columns(4)
                     ->schema([
                         TextEntry::make('product.name'),
-                        TextEntry::make('quantity_on_hand'),
+                        TextEntry::make('quantity_on_hand')
+                            ->formatStateUsing(fn ($state, $record) => "{$record->getQuantityUnit()}"),
                         TextEntry::make('formatted_average_cost')
                             ->label('Average Cost'),
                         TextEntry::make('product.reorder_point')

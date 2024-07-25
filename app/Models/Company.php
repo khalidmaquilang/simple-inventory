@@ -198,6 +198,14 @@ class Company extends Model implements HasCurrentTenantLabel
     }
 
     /**
+     * @return HasMany
+     */
+    public function units(): HasMany
+    {
+        return $this->hasMany(Unit::class);
+    }
+
+    /**
      * @return string
      */
     public function getCurrentTenantLabel(): string

@@ -28,15 +28,25 @@ class StockMovementsRelationManager extends RelationManager
                 Forms\Components\Fieldset::make('Stock Movement')
                     ->schema([
                         Forms\Components\TextInput::make('reference_number'),
+                        Forms\Components\Select::make('type')
+                            ->options(StockMovementEnum::class)
+                            ->required(),
                         Forms\Components\TextInput::make('quantity')
                             ->hint('For outgoing products, use negative values.')
                             ->minValue(fn () => ($this->getOwnerRecord()->quantity_on_hand) * -1)
                             ->numeric()
                             ->required(),
-                        Forms\Components\Select::make('type')
-                            ->options(StockMovementEnum::class)
+                        Forms\Components\Select::make('unit_id')
+                            ->relationship('unit', 'abbreviation',
+                                modifyQueryUsing: function ($query) {
+                                    $unit_id = $this->getOwnerRecord()->product->unit_id;
+
+                                    return $query->where('id', $unit_id)
+                                        ->orWhere('unit_id', $unit_id);
+                                })
                             ->required(),
-                        Forms\Components\Textarea::make('note'),
+                        Forms\Components\Textarea::make('note')
+                            ->columnSpanFull(),
                     ]),
                 Forms\Components\Fieldset::make('From/To')
                     ->schema([
@@ -65,14 +75,18 @@ class StockMovementsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('reference_number')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('quantity_before_adjustment'),
-                Tables\Columns\TextColumn::make('quantity'),
+                Tables\Columns\TextColumn::make('quantity')
+                    ->formatStateUsing(fn ($record) => $record->getQuantityUnit()),
+                Tables\Columns\TextColumn::make('quantity_base_unit')
+                    ->formatStateUsing(fn ($record) => $record->getQuantityBaseUnit()),
                 Tables\Columns\TextColumn::make('type')
                     ->badge()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('supplier.company_name'),
                 Tables\Columns\TextColumn::make('customer.name'),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('Created By'),
+                    ->label('Created By')
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 DateRangeFilter::make('created_at'),
@@ -135,7 +149,7 @@ class StockMovementsRelationManager extends RelationManager
         $inventory = $stockMovement->inventory;
 
         $inventory->update([
-            'quantity_on_hand' => $inventory->quantity_on_hand + $stockMovement->quantity,
+            'quantity_on_hand' => $inventory->quantity_on_hand + $stockMovement->quantity_base_unit,
         ]);
 
         $livewire->dispatch('refresh');

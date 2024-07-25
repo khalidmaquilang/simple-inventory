@@ -21,6 +21,7 @@ class Product extends Model
     protected $fillable = [
         'company_id',
         'category_id',
+        'unit_id',
         'sku',
         'name',
         'purchase_price',
@@ -69,6 +70,10 @@ class Product extends Model
             TextInput::make('name')
                 ->required()
                 ->maxLength(255),
+            Select::make('unit_id')
+                ->label('Base unit')
+                ->relationship('unit', 'abbreviation')
+                ->required(),
             TextInput::make('purchase_price')
                 ->required()
                 ->numeric(),
@@ -100,10 +105,19 @@ class Product extends Model
     }
 
     /**
+     * @return BelongsTo
+     */
+    public function unit(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class);
+    }
+
+    /**
      * @return int
      */
     public function getCurrentStockAttribute(): int
     {
         return optional($this->inventory)->quantity_on_hand ?? 0;
     }
+
 }
