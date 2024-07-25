@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Enums\SubscriptionStatusEnum;
 use App\Events\PrepareFreemium;
+use App\Jobs\SendSubscriptionExpiredJob;
 use App\Services\SubscriptionService;
 use Illuminate\Console\Command;
 
@@ -34,6 +35,9 @@ class CheckExpiredSubscriptions extends Command
             $subscription->save();
 
             event(new PrepareFreemium($subscription->company));
+
+            SendSubscriptionExpiredJob::dispatch($subscription->company)
+                ->onQueue('short-running-queue');
         }
     }
 }
