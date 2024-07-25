@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\PurchaseOrderResource\Pages;
 
 use App\Filament\Resources\PurchaseOrderResource;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Section;
@@ -51,6 +52,24 @@ class ViewPurchaseOrder extends ViewRecord
                     ]),
 
             ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('Complete')
+                ->requiresConfirmation()
+                ->color('success')
+                ->icon('heroicon-m-check')
+                ->action(fn ($record) => $record->setCompleted())
+                ->visible(fn ($record) => $record->isAvailable()),
+            Action::make('Cancel')
+                ->requiresConfirmation()
+                ->color('danger')
+                ->icon('heroicon-m-x-mark')
+                ->action(fn ($record) => $record->setCancelled())
+                ->visible(fn ($record) => $record->isAvailable()),
+        ];
     }
 
     /**

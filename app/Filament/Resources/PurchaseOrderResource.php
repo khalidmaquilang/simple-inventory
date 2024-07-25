@@ -263,13 +263,13 @@ class PurchaseOrderResource extends Resource
                             $record->paid_amount += $data['paid_amount'];
                             $record->save();
                         }),
-                    Tables\Actions\Action::make('Completed')
+                    Tables\Actions\Action::make('Complete')
                         ->requiresConfirmation()
                         ->color('success')
                         ->icon('heroicon-m-check')
                         ->action(fn ($record) => $record->setCompleted())
                         ->visible(fn ($record) => $record->isAvailable()),
-                    Tables\Actions\Action::make('Cancelled')
+                    Tables\Actions\Action::make('Cancel')
                         ->requiresConfirmation()
                         ->color('danger')
                         ->icon('heroicon-m-x-mark')
