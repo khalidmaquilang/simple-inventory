@@ -119,9 +119,13 @@ class SubscriptionsRelationManager extends RelationManager
         }
 
         $data['status'] = SubscriptionStatusEnum::ACTIVE;
-        $data['end_date'] = $plan->billing_cycle === BillingCycleEnum::MONTHLY ? (new Carbon(
-            $data['start_date']
-        ))->addMonth() : (new Carbon($data['start_date']))->addYear();
+
+        if (empty($data['end_date'])) {
+            $data['end_date'] = $plan->billing_cycle === BillingCycleEnum::MONTHLY ? (new Carbon(
+                $data['start_date']
+            ))->addMonth() : (new Carbon($data['start_date']))->addYear();
+        }
+
         $data['total_amount'] = $plan->price + ($data['extra_users'] * 100); //100php per user
 
         $subscription = $this->ownerRecord->getActiveSubscription();
