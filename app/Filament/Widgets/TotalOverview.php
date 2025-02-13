@@ -87,8 +87,8 @@ class TotalOverview extends BaseWidget
     {
         return cache()->remember('widget-total-amount-'.$tableName.'-'.Filament::getTenant()->id, 60 * 3, function () use ($tableName) {
             $query = DB::table($tableName)
-            ->selectRaw('SUM(total_amount) as total_amount')
-            ->where('company_id', Filament::getTenant()->id);
+                ->selectRaw('SUM(total_amount) as total_amount')
+                ->where('company_id', Filament::getTenant()->id);
 
             if ($tableName === 'purchase_orders') {
                 $query->where('status', '!=', 'cancelled');
