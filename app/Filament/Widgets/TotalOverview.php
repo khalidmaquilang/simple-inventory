@@ -91,7 +91,7 @@ class TotalOverview extends BaseWidget
             ->where('company_id', Filament::getTenant()->id);
 
             if ($tableName === 'purchase_orders') {
-                $query->where('status', '!=', 'cancel');
+                $query->where('status', '!=', 'cancelled');
             }
 
             return $query->value('total_amount') ?? 0;
