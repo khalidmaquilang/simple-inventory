@@ -72,17 +72,14 @@ class TodayOverview extends BaseWidget
     protected function getTotalDue($tableName): string
     {
         $column = $tableName === 'sales' ? 'sale_date' : 'order_date';
-
         return cache()->remember('widget-today-total-due-'.$tableName.'-'.Filament::getTenant()->id, 60 * 3, function () use ($tableName, $column) {
             $query = DB::table($tableName)
                 ->selectRaw('SUM(total_amount - paid_amount) as total_due')
                 ->whereBetween($column, [now()->startOfDay(), now()->endOfDay()])
                 ->where('company_id', Filament::getTenant()->id);
-
             if ($tableName === 'purchase_orders') {
                 $query->where('status', '!=', 'cancelled');
             }
-
             return $query->value('total_due') ?? 0;
         });
     }
@@ -94,17 +91,14 @@ class TodayOverview extends BaseWidget
     protected function getTotalAmount($tableName): string
     {
         $column = $tableName === 'sales' ? 'sale_date' : 'order_date';
-
         return cache()->remember('widget-today-total-amount-'.$tableName.'-'.Filament::getTenant()->id, 60 * 3, function () use ($tableName, $column) {
             $query = DB::table($tableName)
                 ->selectRaw('SUM(total_amount) as total_amount')
                 ->whereBetween($column, [now()->startOfDay(), now()->endOfDay()])
                 ->where('company_id', Filament::getTenant()->id);
-
             if ($tableName === 'purchase_orders') {
                 $query->where('status', '!=', 'cancelled');
             }
-
             return $query->value('total_amount') ?? 0;
         });
     }
