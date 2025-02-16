@@ -72,10 +72,15 @@ class TotalOverview extends BaseWidget
     protected function getTotalDue($tableName): string
     {
         return cache()->remember('widget-total-due-'.$tableName.'-'.Filament::getTenant()->id, 60 * 3, function () use ($tableName) {
-            return DB::table($tableName)
+            $query = DB::table($tableName)
                 ->selectRaw('SUM(total_amount - paid_amount) as total_due')
-                ->where('company_id', Filament::getTenant()->id)
-                ->value('total_due') ?? 0;
+                ->where('company_id', Filament::getTenant()->id);
+
+            if ($tableName === 'purchase_orders') {
+                $query->where('status', '!=', 'cancelled');
+            }
+
+            return $query->value('total_due') ?? 0;
         });
     }
 
@@ -86,10 +91,15 @@ class TotalOverview extends BaseWidget
     protected function getTotalAmount($tableName): string
     {
         return cache()->remember('widget-total-amount-'.$tableName.'-'.Filament::getTenant()->id, 60 * 3, function () use ($tableName) {
-            return DB::table($tableName)
+            $query = DB::table($tableName)
                 ->selectRaw('SUM(total_amount) as total_amount')
-                ->where('company_id', Filament::getTenant()->id)
-                ->value('total_amount') ?? 0;
+                ->where('company_id', Filament::getTenant()->id);
+
+            if ($tableName === 'purchase_orders') {
+                $query->where('status', '!=', 'cancelled');
+            }
+
+            return $query->value('total_amount') ?? 0;
         });
     }
 
