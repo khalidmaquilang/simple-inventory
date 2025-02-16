@@ -75,9 +75,11 @@ class TotalOverview extends BaseWidget
             $query = DB::table($tableName)
                 ->selectRaw('SUM(total_amount - paid_amount) as total_due')
                 ->where('company_id', Filament::getTenant()->id);
+
             if ($tableName === 'purchase_orders') {
                 $query->where('status', '!=', 'cancelled');
             }
+
             return $query->value('total_due') ?? 0;
         });
     }
@@ -92,9 +94,11 @@ class TotalOverview extends BaseWidget
             $query = DB::table($tableName)
                 ->selectRaw('SUM(total_amount) as total_amount')
                 ->where('company_id', Filament::getTenant()->id);
+
             if ($tableName === 'purchase_orders') {
                 $query->where('status', '!=', 'cancelled');
             }
+
             return $query->value('total_amount') ?? 0;
         });
     }
