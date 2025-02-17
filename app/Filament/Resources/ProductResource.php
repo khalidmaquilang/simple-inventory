@@ -31,7 +31,7 @@ class ProductResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('product_image')
-                    ->label('Product Image')
+                    ->label('Image')
                     ->square()
                     ->size(50),
                 Tables\Columns\TextColumn::make('category.name')
