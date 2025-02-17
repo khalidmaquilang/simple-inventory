@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Traits\TenantTrait;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -22,6 +23,7 @@ class Product extends Model
         'company_id',
         'category_id',
         'sku',
+        'product_image',
         'name',
         'purchase_price',
         'selling_price',
@@ -66,6 +68,13 @@ class Product extends Model
                 ])
                 ->required()
                 ->maxLength(255),
+            FileUpload::make('product_image')
+                ->label('Product Image')
+                ->image()
+                ->directory('products')
+                ->visibility('public')
+                ->preserveFilenames()
+                ->maxSize(2048),
             TextInput::make('name')
                 ->required()
                 ->maxLength(255),
