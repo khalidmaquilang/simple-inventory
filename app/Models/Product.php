@@ -74,8 +74,7 @@ class Product extends Model
                 ->directory('products')
                 ->visibility('public')
                 ->preserveFilenames()
-                ->maxSize(2048)
-                ->columnSpan(1),
+                ->maxSize(2048),
             TextInput::make('name')
                 ->required()
                 ->maxLength(255),
