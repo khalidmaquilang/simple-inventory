@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('company_id')->index();
             $table->foreignId('category_id');
             $table->string('sku');
-            $table->string('product_image')->nullable();
             $table->string('name');
             $table->decimal('purchase_price');
             $table->decimal('selling_price');
