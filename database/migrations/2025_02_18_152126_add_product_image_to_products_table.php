@@ -14,6 +14,7 @@ class AddProductImageToProductsTable extends Migration
             }
         });
     }
+
     public function down()
     {
         Schema::table('products', function (Blueprint $table) {
@@ -23,3 +24,4 @@ class AddProductImageToProductsTable extends Migration
         });
     }
 }
+    
