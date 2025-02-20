@@ -23,7 +23,7 @@ class CustomerFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'email' => $this->faker->safeEmail(),
-            'phone' => $this->faker->numerify('09#########'),
+            'phone' => $this->faker->phoneNumber(),
             'address' => $this->faker->text(),
             'gender' => $this->faker->randomElement(['male', 'female']),
             'user_id' => User::factory(),
