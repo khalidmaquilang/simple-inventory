@@ -60,7 +60,7 @@ class PurchaseOrder extends Model
      */
     public function getFormattedRemainingAmountAttribute(): string
     {
-        return number_format($this->remaining_amount, 2).' '.$this->company->getCurrency();
+        return number_format($this->remaining_amount, 2) . ' ' . $this->company->getCurrency();
     }
 
     /**
@@ -135,5 +135,10 @@ class PurchaseOrder extends Model
     public function goodsReceipts(): HasMany
     {
         return $this->hasMany(GoodsReceipt::class);
+    }
+
+    public function paymentHistories()
+    {
+        return $this->hasMany(PaymentHistory::class, 'purchase_order_id');
     }
 }

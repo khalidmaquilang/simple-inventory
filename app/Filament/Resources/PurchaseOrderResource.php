@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Exports\PurchaseOrderExporter;
 use App\Filament\Resources\PurchaseOrderResource\Pages;
 use App\Filament\Resources\PurchaseOrderResource\Widgets\PurchaseOrderLimit;
+use App\Models\PaymentHistory;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
 use Awcodes\TableRepeater\Components\TableRepeater;
@@ -262,6 +263,12 @@ class PurchaseOrderResource extends Resource
                         ->action(function ($record, array $data) {
                             $record->paid_amount += $data['paid_amount'];
                             $record->save();
+                            PaymentHistory::create([
+                                'purchase_order_id' => $record->id,
+                                'amount_paid' => $data['paid_amount'],
+                                'remaining_balance' => max(0, $record->remaining_amount - $data['paid_amount']), 
+                                'payment_date' => now(),
+                            ]);                            
                         }),
                     Tables\Actions\Action::make('Complete')
                         ->requiresConfirmation()
@@ -290,7 +297,7 @@ class PurchaseOrderResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            \App\Filament\Resources\PurchaseOrderResource\RelationManagers\PaymentHistoriesRelationManager::class,
         ];
     }
 
