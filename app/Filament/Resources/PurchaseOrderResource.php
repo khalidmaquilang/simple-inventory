@@ -266,9 +266,9 @@ class PurchaseOrderResource extends Resource
                             PaymentHistory::create([
                                 'purchase_order_id' => $record->id,
                                 'amount_paid' => $data['paid_amount'],
-                                'remaining_balance' => max(0, $record->remaining_amount - $data['paid_amount']), 
+                                'remaining_balance' => max(0, $record->remaining_amount - $data['paid_amount']),
                                 'payment_date' => now(),
-                            ]);                            
+                            ]);
                         }),
                     Tables\Actions\Action::make('Complete')
                         ->requiresConfirmation()
