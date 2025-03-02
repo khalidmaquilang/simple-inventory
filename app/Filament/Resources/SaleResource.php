@@ -9,6 +9,7 @@ use App\Filament\Resources\SaleResource\Pages;
 use App\Filament\Resources\SaleResource\Widgets\SaleLimit;
 use App\Models\Customer;
 use App\Models\Inventory;
+use App\Models\PaymentHistory;
 use App\Models\Product;
 use App\Models\Sale;
 use Awcodes\TableRepeater\Components\TableRepeater;
@@ -306,6 +307,13 @@ class SaleResource extends Resource
                             $record->paid_amount += $data['paid_amount'];
                             $record->reference_number = $data['reference_number'];
                             $record->save();
+                            PaymentHistory::create([
+                                'payable_id' => $record->id,
+                                'payable_type' => get_class($record),
+                                'amount_paid' => $data['paid_amount'],
+                                'remaining_balance' => max(0, $record->remaining_amount - $data['paid_amount']),
+                                'payment_date' => now(),
+                            ]);
                         }),
                     Tables\Actions\Action::make('Download Invoice')
                         ->icon('heroicon-o-document-arrow-down')
