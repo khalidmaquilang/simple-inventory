@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Exports\PurchaseOrderExporter;
+use App\Filament\RelationManagers\PaymentHistoriesRelationManager;
 use App\Filament\Resources\PurchaseOrderResource\Pages;
 use App\Filament\Resources\PurchaseOrderResource\Widgets\PurchaseOrderLimit;
 use App\Models\PaymentHistory;
@@ -297,7 +298,7 @@ class PurchaseOrderResource extends Resource
     public static function getRelations(): array
     {
         return [
-            \App\Filament\RelationManagers\PaymentHistoriesRelationManager::class,
+            PaymentHistoriesRelationManager::class,
         ];
     }
 
