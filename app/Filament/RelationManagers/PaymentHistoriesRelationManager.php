@@ -2,9 +2,8 @@
 
 namespace App\Filament\RelationManagers;
 
-use Filament\Forms;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -12,7 +11,7 @@ use Filament\Tables\Table;
 
 class PaymentHistoriesRelationManager extends RelationManager
 {
-    protected static string $relationship = 'paymentHistories'; 
+    protected static string $relationship = 'paymentHistories';
 
     public function form(Form $form): Form
     {
@@ -34,15 +33,15 @@ class PaymentHistoriesRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('amount_paid')
                     ->sortable()
-                    ->money(fn ($record) => $record->payable->getCurrency()), 
+                    ->money(fn ($record) => $record->payable->getCurrency()),
                 Tables\Columns\TextColumn::make('remaining_balance')
                     ->sortable()
-                    ->money(fn ($record) => $record->payable->getCurrency()), 
+                    ->money(fn ($record) => $record->payable->getCurrency()),
                 Tables\Columns\TextColumn::make('payment_date')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('payable_type')
-                    ->label('Payment For') 
+                    ->label('Payment For')
                     ->sortable(),
             ])
             ->filters([])
