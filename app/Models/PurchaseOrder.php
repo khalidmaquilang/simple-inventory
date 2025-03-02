@@ -139,6 +139,6 @@ class PurchaseOrder extends Model
 
     public function paymentHistories()
     {
-        return $this->hasMany(PaymentHistory::class, 'purchase_order_id');
+        return $this->morphMany(PaymentHistory::class, 'payable');
     }
 }

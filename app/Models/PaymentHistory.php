@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class PaymentHistory extends Model
 {
@@ -13,15 +13,16 @@ class PaymentHistory extends Model
     protected $table = 'payment_histories';
 
     protected $fillable = [
-        'purchase_order_id',
+        'payable_id',
+        'payable_type',
         'amount_paid',
         'remaining_balance',
         'payment_date',
     ];
 
-    public function purchaseOrder(): BelongsTo
+    public function payable(): MorphTo
     {
-        return $this->belongsTo(PurchaseOrder::class);
+        return $this->morphTo();
     }
 
     protected static function boot()
@@ -29,10 +30,10 @@ class PaymentHistory extends Model
         parent::boot();
 
         static::creating(function ($payment) {
-            $purchaseOrder = $payment->purchaseOrder;
-            if ($purchaseOrder) {
-                $newRemainingBalance = max(0, $purchaseOrder->remaining_amount - $payment->amount_paid);
-                $purchaseOrder->update(['remaining_amount' => $newRemainingBalance]);
+            $payable = $payment->payable;
+            if ($payable) {
+                $newRemainingBalance = max(0, $payable->remaining_amount - $payment->amount_paid);
+                $payable->update(['remaining_amount' => $newRemainingBalance]);
             }
         });
     }

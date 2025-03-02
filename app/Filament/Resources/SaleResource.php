@@ -327,7 +327,7 @@ class SaleResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            \App\Filament\RelationManagers\PaymentHistoriesRelationManager::class,
         ];
     }
 

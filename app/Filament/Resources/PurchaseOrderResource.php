@@ -297,7 +297,7 @@ class PurchaseOrderResource extends Resource
     public static function getRelations(): array
     {
         return [
-            \App\Filament\Resources\PurchaseOrderResource\RelationManagers\PaymentHistoriesRelationManager::class,
+            \App\Filament\RelationManagers\PaymentHistoriesRelationManager::class,
         ];
     }
 

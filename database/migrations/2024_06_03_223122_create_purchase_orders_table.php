@@ -20,7 +20,7 @@ return new class extends Migration
             $table->enum('status', ['pending', 'received', 'partially_received', 'cancelled']);
             $table->decimal('total_amount');
             $table->decimal('paid_amount');
-            $table->foreignId('supplier_id');
+            $table->foreignId('supplier_id');   
             $table->foreignId('payment_type_id');
             $table->foreignId('user_id')->index();
             $table->timestamps();
