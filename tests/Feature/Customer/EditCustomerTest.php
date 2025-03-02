@@ -45,10 +45,7 @@ class EditCustomerTest extends TestCase
     {
         $user = $this->login(['update_customer', 'view_any_customer']);
 
-        $newCustomer = Customer::factory()->make([
-            'user_id' => $user->id,
-            'phone' => '09123456789'
-            ])->toArray();
+        $newCustomer = Customer::factory()->make(['user_id' => $user->id])->toArray();
 
         Livewire::test(CustomerResource\Pages\EditCustomer::class, [
             'record' => Customer::factory()->create()->getRouteKey(),
