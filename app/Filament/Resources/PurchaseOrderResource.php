@@ -8,7 +8,7 @@ use App\Filament\Resources\PurchaseOrderResource\Pages;
 use App\Filament\Resources\PurchaseOrderResource\Widgets\PurchaseOrderLimit;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
-use App\Models\Traits\HandlesPaymentHistory;
+use App\Services\PaymentHistoryService;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use Filament\Facades\Filament;
@@ -22,8 +22,6 @@ use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class PurchaseOrderResource extends Resource
 {
-    use HandlesPaymentHistory;
-
     protected static ?string $model = PurchaseOrder::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
@@ -267,7 +265,7 @@ class PurchaseOrderResource extends Resource
                             $record->paid_amount += $data['paid_amount'];
                             $record->save();
 
-                            static::recordPaymentHistory($record, $data);
+                            app(PaymentHistoryService::class)->recordPayment($record, $data);
                         }),
                     Tables\Actions\Action::make('Complete')
                         ->requiresConfirmation()

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Models\Traits;
+namespace App\Repositories;
 
 use App\Models\PaymentHistory;
 
-trait HandlesPaymentHistory
+class PaymentHistoryRepository
 {
-    public function recordPaymentHistory($record, array $data)
+    public function createPaymentHistory($record, array $data)
     {
         return PaymentHistory::create([
             'payable_id' => $record->id,

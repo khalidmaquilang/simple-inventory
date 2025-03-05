@@ -11,7 +11,7 @@ use App\Models\Customer;
 use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\Sale;
-use App\Models\Traits\HandlesPaymentHistory;
+use App\Services\PaymentHistoryService;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use Filament\Facades\Filament;
@@ -25,8 +25,6 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class SaleResource extends Resource
 {
-    use HandlesPaymentHistory;
-
     protected static ?string $model = Sale::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
@@ -310,7 +308,7 @@ class SaleResource extends Resource
                             $record->reference_number = $data['reference_number'];
                             $record->save();
 
-                            static::recordPaymentHistory($record, $data);
+                            app(PaymentHistoryService::class)->recordPayment($record, $data);
                         }),
                     Tables\Actions\Action::make('Download Invoice')
                         ->icon('heroicon-o-document-arrow-down')
