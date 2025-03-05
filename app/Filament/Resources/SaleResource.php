@@ -9,7 +9,6 @@ use App\Filament\Resources\SaleResource\Pages;
 use App\Filament\Resources\SaleResource\Widgets\SaleLimit;
 use App\Models\Customer;
 use App\Models\Inventory;
-use App\Models\PaymentHistory;
 use App\Models\Product;
 use App\Models\Sale;
 use Awcodes\TableRepeater\Components\TableRepeater;
@@ -22,9 +21,12 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use App\Models\Traits\HandlesPaymentHistory;
 
 class SaleResource extends Resource
 {
+    use HandlesPaymentHistory;
+
     protected static ?string $model = Sale::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
@@ -307,13 +309,8 @@ class SaleResource extends Resource
                             $record->paid_amount += $data['paid_amount'];
                             $record->reference_number = $data['reference_number'];
                             $record->save();
-                            PaymentHistory::create([
-                                'payable_id' => $record->id,
-                                'payable_type' => get_class($record),
-                                'amount_paid' => $data['paid_amount'],
-                                'remaining_balance' => max(0, $record->remaining_amount - $data['paid_amount']),
-                                'payment_date' => now(),
-                            ]);
+                            
+                            static::recordPaymentHistory($record, $data);
                         }),
                     Tables\Actions\Action::make('Download Invoice')
                         ->icon('heroicon-o-document-arrow-down')

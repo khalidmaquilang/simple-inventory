@@ -6,7 +6,6 @@ use App\Filament\Exports\PurchaseOrderExporter;
 use App\Filament\RelationManagers\PaymentHistoriesRelationManager;
 use App\Filament\Resources\PurchaseOrderResource\Pages;
 use App\Filament\Resources\PurchaseOrderResource\Widgets\PurchaseOrderLimit;
-use App\Models\PaymentHistory;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
 use Awcodes\TableRepeater\Components\TableRepeater;
@@ -19,9 +18,12 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
+use App\Models\Traits\HandlesPaymentHistory;
 
 class PurchaseOrderResource extends Resource
 {
+    use HandlesPaymentHistory;
+
     protected static ?string $model = PurchaseOrder::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
@@ -264,13 +266,8 @@ class PurchaseOrderResource extends Resource
                         ->action(function ($record, array $data) {
                             $record->paid_amount += $data['paid_amount'];
                             $record->save();
-                            PaymentHistory::create([
-                                'payable_id' => $record->id,
-                                'payable_type' => get_class($record),
-                                'amount_paid' => $data['paid_amount'],
-                                'remaining_balance' => max(0, $record->remaining_amount - $data['paid_amount']),
-                                'payment_date' => now(),
-                            ]);
+                            
+                            static::recordPaymentHistory($record, $data);
                         }),
                     Tables\Actions\Action::make('Complete')
                         ->requiresConfirmation()

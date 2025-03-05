@@ -13,20 +13,6 @@ class PaymentHistoriesRelationManager extends RelationManager
 {
     protected static string $relationship = 'paymentHistories';
 
-    public function form(Form $form): Form
-    {
-        return $form->schema([
-            TextInput::make('amount_paid')
-                ->required()
-                ->numeric()
-                ->minValue(1),
-            TextInput::make('remaining_balance')
-                ->disabled(),
-            DatePicker::make('payment_date')
-                ->required(),
-        ]);
-    }
-
     public function table(Table $table): Table
     {
         return $table
@@ -45,13 +31,8 @@ class PaymentHistoriesRelationManager extends RelationManager
                     ->sortable(),
             ])
             ->filters([])
-            ->headerActions([
-                Tables\Actions\CreateAction::make(),
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
+            ->headerActions([])
+            ->actions([])
             ->defaultSort('payment_date', 'desc');
     }
 }
