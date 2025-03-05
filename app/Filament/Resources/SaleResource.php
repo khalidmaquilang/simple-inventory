@@ -11,6 +11,7 @@ use App\Models\Customer;
 use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\Sale;
+use App\Models\Traits\HandlesPaymentHistory;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use Filament\Facades\Filament;
@@ -21,7 +22,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
-use App\Models\Traits\HandlesPaymentHistory;
 
 class SaleResource extends Resource
 {
@@ -309,7 +309,7 @@ class SaleResource extends Resource
                             $record->paid_amount += $data['paid_amount'];
                             $record->reference_number = $data['reference_number'];
                             $record->save();
-                            
+
                             static::recordPaymentHistory($record, $data);
                         }),
                     Tables\Actions\Action::make('Download Invoice')

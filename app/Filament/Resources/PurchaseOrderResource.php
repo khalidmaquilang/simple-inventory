@@ -8,6 +8,7 @@ use App\Filament\Resources\PurchaseOrderResource\Pages;
 use App\Filament\Resources\PurchaseOrderResource\Widgets\PurchaseOrderLimit;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
+use App\Models\Traits\HandlesPaymentHistory;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use Filament\Facades\Filament;
@@ -18,7 +19,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
-use App\Models\Traits\HandlesPaymentHistory;
 
 class PurchaseOrderResource extends Resource
 {
@@ -266,7 +266,7 @@ class PurchaseOrderResource extends Resource
                         ->action(function ($record, array $data) {
                             $record->paid_amount += $data['paid_amount'];
                             $record->save();
-                            
+
                             static::recordPaymentHistory($record, $data);
                         }),
                     Tables\Actions\Action::make('Complete')
