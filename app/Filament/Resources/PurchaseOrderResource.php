@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Exports\PurchaseOrderExporter;
-use App\Filament\RelationManagers\PaymentHistoriesRelationManager;
 use App\Filament\Resources\PurchaseOrderResource\Pages;
 use App\Filament\Resources\PurchaseOrderResource\Widgets\PurchaseOrderLimit;
 use App\Models\Product;

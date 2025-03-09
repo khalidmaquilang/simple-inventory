@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Enums\DiscountTypeEnum;
 use App\Filament\Exports\SaleExporter;
-use App\Filament\RelationManagers\PaymentHistoriesRelationManager;
 use App\Filament\Resources\SaleResource\Pages;
 use App\Filament\Resources\SaleResource\Widgets\SaleLimit;
 use App\Models\Customer;

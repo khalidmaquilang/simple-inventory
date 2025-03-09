@@ -9,11 +9,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class PaymentHistoriesRelationManager extends RelationManager
 {
-    protected static string $relationship = 'paymentHistories'; 
+    protected static string $relationship = 'paymentHistories';
 
     public function getOwnerRecord(): Model
     {
-        return parent::getOwnerRecord(); 
+        return parent::getOwnerRecord();
     }
 
     public function table(Table $table): Table
