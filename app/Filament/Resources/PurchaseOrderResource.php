@@ -262,10 +262,14 @@ class PurchaseOrderResource extends Resource
                         ->icon('heroicon-m-banknotes')
                         ->visible(fn ($record) => $record->remaining_amount > 0)
                         ->action(function ($record, array $data) {
-                            $record->paid_amount += $data['paid_amount'];
+                            $paidAmount = (float) $data['paid_amount'];
+                            $record->remaining_amount -= $paidAmount;
+                            $record->paid_amount += $paidAmount;
                             $record->save();
 
-                            app(PaymentHistoryService::class)->recordPayment($record, $data);
+                            app(PaymentHistoryService::class)->recordPayment($record, [
+                                'paid_amount' => $paidAmount,
+                            ]);
                         }),
                     Tables\Actions\Action::make('Complete')
                         ->requiresConfirmation()
@@ -294,7 +298,7 @@ class PurchaseOrderResource extends Resource
     public static function getRelations(): array
     {
         return [
-            PaymentHistoriesRelationManager::class,
+            //
         ];
     }
 

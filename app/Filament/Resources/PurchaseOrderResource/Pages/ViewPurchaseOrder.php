@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PurchaseOrderResource\Pages;
 
+use App\Filament\RelationManagers\PaymentHistoriesRelationManager;
 use App\Filament\Resources\PurchaseOrderResource;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -80,6 +81,7 @@ class ViewPurchaseOrder extends ViewRecord
         return [
             PurchaseOrderResource\RelationManagers\PurchaseOrderItemsRelationManager::class,
             PurchaseOrderResource\RelationManagers\GoodsReceiptsRelationManager::class,
+            PurchaseOrderResource\RelationManagers\PaymentHistoriesRelationManager::class
         ];
     }
 }
