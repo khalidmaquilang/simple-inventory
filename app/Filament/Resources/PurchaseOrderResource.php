@@ -17,7 +17,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Log;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class PurchaseOrderResource extends Resource
@@ -262,17 +261,13 @@ class PurchaseOrderResource extends Resource
                         ->icon('heroicon-m-banknotes')
                         ->visible(fn ($record) => $record->remaining_amount > 0)
                         ->action(function ($record, array $data) {
-                            Log::info('Before updating paid amount', ['record' => $record, 'data' => $data]);
                             $paidAmount = (float) $data['paid_amount'];
                             $record->paid_amount += $paidAmount;
                             $record->save();
 
-                            Log::info('Before calling recordPayment', ['record' => $record, 'paidAmount' => $paidAmount]);
                             app(PaymentHistoryService::class)->recordPayment($record, [
                                 'paid_amount' => $paidAmount,
                             ]);
-
-                            Log::info('After calling recordPayment');
                         }),
                     Tables\Actions\Action::make('Complete')
                         ->requiresConfirmation()

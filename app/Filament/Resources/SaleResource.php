@@ -303,25 +303,28 @@ class SaleResource extends Resource
                         ->icon('heroicon-m-banknotes')
                         ->visible(fn ($record) => $record->remaining_amount > 0)
                         ->action(function ($record, array $data) {
-                            $record->paid_amount += $data['paid_amount'];
+                            $paidAmount = (float) $data['paid_amount'];
+                            $record->paid_amount += $paidAmount;
                             $record->reference_number = $data['reference_number'];
                             $record->save();
 
-                            app(PaymentHistoryService::class)->recordPayment($record, $data);
+                            app(PaymentHistoryService::class)->recordPayment($record, [
+                                'paid_amount' => $paidAmount,
+                            ]);
                         }),
                     Tables\Actions\Action::make('Download Invoice')
                         ->icon('heroicon-o-document-arrow-down')
                         ->color('success')
                         ->url(fn (Sale $record) => route('app.sales.generate-invoice', [
-                            'company' => filament()->getTenant()->id,
-                            'sale' => $record,
-                        ]))
+                                'company' => filament()->getTenant()->id,
+                                'sale' => $record,
+                            ]))
                         ->openUrlInNewTab(),
                 ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    ExportBulkAction::make(),
+                        ExportBulkAction::make(),
                 ]),
             ])
             ->defaultSort('sale_date', 'desc');
