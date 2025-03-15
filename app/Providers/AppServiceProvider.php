@@ -27,6 +27,7 @@ use App\Observers\SaleItemObserver;
 use App\Observers\SaleObserver;
 use App\Observers\StockMovementObserver;
 use App\Observers\SupplierObserver;
+use App\Repositories\PaymentHistoryRepository;
 use App\Services\PaymentHistoryService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
@@ -44,7 +45,7 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
         $this->app->singleton(PaymentHistoryService::class, function ($app) {
-            return new PaymentHistoryService($app->make(\App\Repositories\PaymentHistoryRepository::class));
+            return new PaymentHistoryService($app->make(PaymentHistoryRepository::class));
         });
     }
 

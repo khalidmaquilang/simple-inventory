@@ -32,8 +32,8 @@ class PaymentHistory extends Model
         static::creating(function ($payment) {
             $payable = $payment->payable;
             if ($payable) {
-                $newRemainingBalance = max(0, $payable->remaining_amount - $payment->amount_paid);
-                $payable->update(['remaining_amount' => $newRemainingBalance]);
+                $newRemainingBalance = max(0, $payable->total_amount - ($payable->paid_amount + $payment->amount_paid));
+                $payment->remaining_balance = $newRemainingBalance;
             }
         });
     }
