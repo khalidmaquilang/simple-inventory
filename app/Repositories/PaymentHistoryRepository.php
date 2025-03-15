@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\PaymentHistory;
-use Illuminate\Support\Facades\Log;
 
 class PaymentHistoryRepository
 {
