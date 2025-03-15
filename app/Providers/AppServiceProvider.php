@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use App\Services\PaymentHistoryService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -42,6 +43,9 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->environment() === 'production') {
             URL::forceScheme('https');
         }
+        $this->app->singleton(PaymentHistoryService::class, function ($app) {
+            return new PaymentHistoryService($app->make(\App\Repositories\PaymentHistoryRepository::class));
+        });
     }
 
     /**

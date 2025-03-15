@@ -141,4 +141,9 @@ class PurchaseOrder extends Model
     {
         return $this->morphMany(PaymentHistory::class, 'payable');
     }
+
+    public function setRemainingAmountAttribute($value)
+    {
+        unset($this->attributes['remaining_amount']);
+    }
 }
