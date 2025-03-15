@@ -316,15 +316,15 @@ class SaleResource extends Resource
                         ->icon('heroicon-o-document-arrow-down')
                         ->color('success')
                         ->url(fn (Sale $record) => route('app.sales.generate-invoice', [
-                                'company' => filament()->getTenant()->id,
-                                'sale' => $record,
-                            ]))
+                            'company' => filament()->getTenant()->id,
+                            'sale' => $record,
+                        ]))
                         ->openUrlInNewTab(),
                 ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                        ExportBulkAction::make(),
+                    ExportBulkAction::make(),
                 ]),
             ])
             ->defaultSort('sale_date', 'desc');
