@@ -318,7 +318,7 @@ class SaleResource extends Resource
                         ->url(fn (Sale $record) => route('app.sales.generate-invoice', [
                                 'company' => filament()->getTenant()->id,
                                 'sale' => $record,
-                            ]))
+                            ]))s
                         ->openUrlInNewTab(),
                 ]),
             ])
