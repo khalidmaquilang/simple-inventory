@@ -41,7 +41,10 @@ class CreateCustomerTest extends TestCase
     {
         $user = $this->login(['create_customer', 'view_any_customer']);
 
-        $customer = Customer::factory()->make(['user_id' => $user->id])->toArray();
+        $customer = Customer::factory()->make([
+            'user_id' => $user->id,
+            'phone' => '09291530090',
+        ])->toArray();
 
         Livewire::test(CustomerResource\Pages\CreateCustomer::class)
             ->fillForm($customer)
