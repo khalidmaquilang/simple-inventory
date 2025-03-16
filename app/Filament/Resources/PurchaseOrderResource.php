@@ -7,6 +7,7 @@ use App\Filament\Resources\PurchaseOrderResource\Pages;
 use App\Filament\Resources\PurchaseOrderResource\Widgets\PurchaseOrderLimit;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
+use App\Services\PaymentHistoryService;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use Filament\Facades\Filament;
@@ -260,8 +261,13 @@ class PurchaseOrderResource extends Resource
                         ->icon('heroicon-m-banknotes')
                         ->visible(fn ($record) => $record->remaining_amount > 0)
                         ->action(function ($record, array $data) {
-                            $record->paid_amount += $data['paid_amount'];
+                            $paidAmount = (float) $data['paid_amount'];
+                            $record->paid_amount += $paidAmount;
                             $record->save();
+
+                            app(PaymentHistoryService::class)->recordPayment($record, [
+                                'paid_amount' => $paidAmount,
+                            ]);
                         }),
                     Tables\Actions\Action::make('Complete')
                         ->requiresConfirmation()

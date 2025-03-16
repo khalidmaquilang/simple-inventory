@@ -80,6 +80,7 @@ class ViewPurchaseOrder extends ViewRecord
         return [
             PurchaseOrderResource\RelationManagers\PurchaseOrderItemsRelationManager::class,
             PurchaseOrderResource\RelationManagers\GoodsReceiptsRelationManager::class,
+            PurchaseOrderResource\RelationManagers\PaymentHistoriesRelationManager::class,
         ];
     }
 }

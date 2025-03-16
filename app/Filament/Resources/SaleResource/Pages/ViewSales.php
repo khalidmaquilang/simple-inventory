@@ -87,6 +87,7 @@ class ViewSales extends ViewRecord
     {
         return [
             SaleResource\RelationManagers\SaleItemsRelationManager::class,
+            SaleResource\RelationManagers\PaymentHistoriesRelationManager::class,
         ];
     }
 }
