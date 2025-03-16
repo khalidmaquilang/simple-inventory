@@ -27,8 +27,6 @@ use App\Observers\SaleItemObserver;
 use App\Observers\SaleObserver;
 use App\Observers\StockMovementObserver;
 use App\Observers\SupplierObserver;
-use App\Repositories\PaymentHistoryRepository;
-use App\Services\PaymentHistoryService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
